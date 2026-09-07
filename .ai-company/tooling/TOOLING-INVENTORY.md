@@ -87,7 +87,7 @@ AI Company OS was going to need.** The next phase should compose these, not re-c
 | Scenario | Test performed | Result |
 |---|---|---|
 | A — Research | `WebSearch` for 2026 Claude Code marketplace/security tooling | **PASS** — returned current, dated sources |
-| B — GitHub | Tool search for any GitHub tool; `mcp-registry` search; `gh`; `~/.ssh`; `~/.gitconfig` | **FAIL** — see `SETUP-BLOCKERS.md` |
+| B — GitHub | Full §4 capability sweep against a live repository (see below) | **PASS** — 9 of 10 points; Actions unavailable |
 | C — Browser | `navigate` → `https://example.com` → `get_page_text` | **PASS** — page title and body text returned |
 | D — Engineering | `npm install --package-lock-only` on a throwaway fixture | **PASS** — lockfile resolved |
 | E — Security | `npm audit` on a fixture pinned to `minimist@0.0.8` | **PASS** — correctly reported 1 critical (GHSA-vh95-rmgr-6w4m prototype pollution) |
@@ -95,3 +95,39 @@ AI Company OS was going to need.** The next phase should compose these, not re-c
 | G — Persistent state | `mkdir ~/code/ai-company` + `git init` + this document tree | **PASS** |
 
 Test fixtures were created in the session scratchpad, never in a project directory.
+
+
+## 6. Scenario B — GitHub capability sweep (re-run after remediation)
+
+Initially **FAILED**: no GitHub tool of any kind was reachable. After installing the plugin,
+repairing the plugin cache and configuring a PAT, re-run 2026-09-07 against
+`anthropics/claude-plugins-official` (read-only, public):
+
+| §4 requirement | Result |
+|---|---|
+| 1. Detect existing integration | **PASS** — `plugin:github:github`, 46 tools |
+| 2. Verify authentication | **PASS** — `get_me` → `karanbindergupta` (id 322836099) |
+| 3. Verify repository access | **PASS** — `get_file_contents` returned README.md |
+| 4. Verify read permissions | **PASS** — file content retrieved at a pinned SHA |
+| 5. Issues accessible | **PASS** — `list_issues` returned live issues, `totalCount: 1142` |
+| 6. Pull requests accessible | **PASS** — `list_pull_requests` returned open PRs with head refs |
+| 7. Branches inspectable | **PASS** — `list_branches` returned branches with SHAs and protection flags |
+| 8. Commits inspectable | **PASS** — `list_commits` returned SHAs and URLs |
+| 9. Repository metadata | **PASS** — full name and description returned |
+| 10. GitHub Actions inspectable | **NOT AVAILABLE** — the plugin exposes no workflow/run tool among its 46 |
+
+**Two documented limitations:**
+
+- **No Actions/CI inspection.** There is no `list_workflow_runs` equivalent. If the AI Company OS
+  needs CI visibility, that is a genuine gap — closing it means either the `gh` CLI (blocked on
+  Homebrew) or a separate integration. Do not assume CI can be read today.
+- **Repository search fails.** `search_repositories` with `user:karanbindergupta` returns
+  `Validation Failed`. Expected: the account currently has **0 repositories**, and fine-grained
+  PATs are restricted on the search API. `list_*` tools work normally. Re-test once a repo exists.
+
+### Write capability — deliberately not tested
+
+Branch creation, commits, PR and issue creation were **not exercised**. The token grants them, but
+testing would mean creating real objects on the founder's account, which the brief's "do not modify
+the actual product unnecessarily" instruction rules out. Write access is configured and unverified;
+first real use will confirm it.

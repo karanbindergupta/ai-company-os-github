@@ -43,8 +43,17 @@ Legend — **A**vailable · **M**issing · **D**uplicate · **R**equired now · 
 
 ## Summary counts
 
-- **Available and verified by execution:** 7 (research, browser, parallel, persistence, npm audit, npm toolchain, remote-trigger reachability)
+- **Available and verified by execution:** 8 (research, browser, parallel, persistence, npm audit, npm toolchain, remote-trigger reachability, **GitHub read across repos/branches/commits/issues/PRs**)
 - **Available, not exercised:** 18
 - **Installed by this preflight:** 1 (`claude-security`)
 - **Blocked on founder authorization:** 1 (14 PM connectors). GitHub and git identity resolved 2026-09-07
 - **Deliberately skipped:** 9 (see `TOOLING-POLICY.md`)
+
+## Known gaps after remediation
+
+| Gap | Impact | Path to closing it |
+|---|---|---|
+| GitHub Actions / CI cannot be inspected | Release-management and QA agents cannot read build status | `gh` CLI (needs Homebrew) or a separate CI integration |
+| `search_repositories` rejected | Minor — `list_*` tools cover the need | Re-test once the account owns a repository |
+| GitHub **write** paths unverified | Branch/commit/PR creation untested by design | Confirmed on first real use |
+| `claude-security` never exercised | Installed, 7 agents registered, but no scan has run | Nothing to scan — repo holds 9 markdown files, 0 source files |
