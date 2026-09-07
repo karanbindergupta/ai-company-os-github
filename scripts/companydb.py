@@ -563,6 +563,23 @@ def cmd_dashboard(argv):
     esc = c.execute("SELECT * FROM escalations WHERE status='open' AND level=4").fetchall()
     ok(f"\nAWAITING FOUNDER  {len(esc)}")
     for e in esc: ok(f"  {e['id']} {e['subject']}\n      recommends: {e['recommendation'][:60]}")
+    # sections required by the Professional Capability Layer (spec section 31)
+    q_prod = "SELECT COUNT(*) FROM tasks WHERE department='product'"
+    q_fin  = "SELECT COUNT(*) FROM decisions WHERE domain IN ('pricing','business_model','major_financial_commitment')"
+    q_expc = "SELECT COUNT(*) FROM experiments WHERE status='complete'"
+    q_low  = "SELECT COUNT(*) FROM evidence WHERE confidence='LOW'"
+    q_con  = "SELECT COUNT(*) FROM evidence WHERE contradicting NOT IN ('','none found')"
+    ok(f"\nPRODUCT        {one(q_prod)} product tasks")
+    ok(f"               knowledge graph: {one('SELECT COUNT(*) FROM knowledge_edges')} edges"
+       "  (trace: companydb.py trace <node>)")
+    ok(f"\nFINANCE        {one(q_fin)} economic decisions on record")
+    ok(f"GROWTH         {one('SELECT COUNT(*) FROM experiments')} experiments ({one(q_expc)} with results)")
+    ok(f"\nRESEARCH       {one('SELECT COUNT(*) FROM research')} studies, "
+       f"{one('SELECT COUNT(*) FROM evidence')} evidence records")
+    ok(f"               {one(q_low)} LOW-confidence claims, {one(q_con)} with contradicting evidence")
+    ok(f"\nAGENTS         {one('SELECT COUNT(*) FROM agents')} registered, "
+       f"{one('SELECT COUNT(DISTINCT role) FROM agent_performance')} with performance records")
+    ok("               scorecard: python3 scripts/agent_scorecard.py")
     ok(f"\nAUDIT LOG      {one('SELECT COUNT(*) FROM audit_log')} recorded events")
     ok("=" * 62)
 
