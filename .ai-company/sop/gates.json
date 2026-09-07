@@ -115,6 +115,16 @@
         "FOUNDER AUTHORIZATION OBTAINED"
       ],
       "founder_required": true
+    },
+    "gate_retest": {
+      "owner": "qa-lead",
+      "blocks": "exec_review",
+      "criteria": [
+        "Every remediated finding retested and verified closed",
+        "Regression pass run against the whole product, not only the fixed areas",
+        "No NEW defects introduced by the remediation",
+        "Evidence recorded for each retested item"
+      ]
     }
   }
 }

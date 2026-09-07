@@ -2,7 +2,7 @@
 role: innovation-strategist
 title: Innovation Strategist
 department: strategy-research
-reports_to: chief-research-officer
+reports_to: cro-research
 seniority: specialist
 primary_artifact: .ai-company/research/innovation.md
 ---

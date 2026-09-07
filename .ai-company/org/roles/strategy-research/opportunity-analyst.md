@@ -2,7 +2,7 @@
 role: opportunity-analyst
 title: Opportunity Analyst
 department: strategy-research
-reports_to: chief-research-officer
+reports_to: cro-research
 seniority: specialist
 primary_artifact: .ai-company/research/opportunities.md
 ---

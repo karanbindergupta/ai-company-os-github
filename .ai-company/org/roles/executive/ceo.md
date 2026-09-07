@@ -40,6 +40,10 @@ Final internal authority on mission, priority, department activation and conflic
 | Mission charter | `.ai-company/mission/charter.md` |
 | Executive decisions | `.ai-company/decisions/` |
 | Founder decision packages | `.ai-company/decisions/founder/` |
+| Founder intake | `.ai-company/mission/intake.md` |
+| Executive debate ruling | `.ai-company/decisions/executive-debate.md` |
+| Master Brief | `.ai-company/briefs/MASTER-BRIEF.md` |
+| Founder release package | `.ai-company/decisions/founder/release-package.md` |
 
 ## Tools
 `Read, Write, Edit, Grep, Glob, WebSearch, WebFetch`

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "count": 106,
+  "count": 107,
   "roles": [
     {
       "slug": "accessibility-designer",
@@ -22,7 +22,7 @@
     },
     {
       "slug": "brand-strategist-creative",
-      "title": "Brand Strategist (Creative)",
+      "title": "Brand Application Lead",
       "department": "creative",
       "reports_to": "creative-director",
       "seniority": "specialist",
@@ -678,6 +678,15 @@
       "path": ".ai-company/org/roles/quality/accessibility-tester.md"
     },
     {
+      "slug": "architecture-auditor",
+      "title": "Architecture Auditor",
+      "department": "quality",
+      "reports_to": "cro-risk",
+      "seniority": "specialist",
+      "artifact": ".ai-company/audits/architecture.md",
+      "path": ".ai-company/org/roles/quality/architecture-auditor.md"
+    },
+    {
       "slug": "code-reviewer",
       "title": "Code Reviewer",
       "department": "quality",
@@ -823,9 +832,9 @@
     },
     {
       "slug": "brand-strategist-research",
-      "title": "Brand Strategist (Strategy)",
+      "title": "Brand Strategy Lead",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/design/brand-strategy.md",
       "path": ".ai-company/org/roles/strategy-research/brand-strategist-research.md"
@@ -834,7 +843,7 @@
       "slug": "business-model-strategist",
       "title": "Business Model Strategist",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/decisions/business-model.md",
       "path": ".ai-company/org/roles/strategy-research/business-model-strategist.md"
@@ -843,7 +852,7 @@
       "slug": "competitor-intelligence",
       "title": "Competitive Intelligence Analyst",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/competitors.md",
       "path": ".ai-company/org/roles/strategy-research/competitor-intelligence.md"
@@ -852,7 +861,7 @@
       "slug": "customer-researcher",
       "title": "Customer Researcher",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/customers.md",
       "path": ".ai-company/org/roles/strategy-research/customer-researcher.md"
@@ -861,7 +870,7 @@
       "slug": "feasibility-analyst",
       "title": "Feasibility Analyst",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/feasibility.md",
       "path": ".ai-company/org/roles/strategy-research/feasibility-analyst.md"
@@ -870,7 +879,7 @@
       "slug": "features-strategist",
       "title": "Features Strategist",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/product/features.md",
       "path": ".ai-company/org/roles/strategy-research/features-strategist.md"
@@ -879,7 +888,7 @@
       "slug": "financial-strategist",
       "title": "Financial Strategist",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/finance/projections.md",
       "path": ".ai-company/org/roles/strategy-research/financial-strategist.md"
@@ -888,7 +897,7 @@
       "slug": "industry-researcher",
       "title": "Industry Researcher",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/industry.md",
       "path": ".ai-company/org/roles/strategy-research/industry-researcher.md"
@@ -897,7 +906,7 @@
       "slug": "innovation-strategist",
       "title": "Innovation Strategist",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/innovation.md",
       "path": ".ai-company/org/roles/strategy-research/innovation-strategist.md"
@@ -906,7 +915,7 @@
       "slug": "market-researcher",
       "title": "Market Researcher",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/market.md",
       "path": ".ai-company/org/roles/strategy-research/market-researcher.md"
@@ -915,7 +924,7 @@
       "slug": "opportunity-analyst",
       "title": "Opportunity Analyst",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/opportunities.md",
       "path": ".ai-company/org/roles/strategy-research/opportunity-analyst.md"
@@ -924,7 +933,7 @@
       "slug": "pricing-strategist",
       "title": "Pricing Strategist",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/finance/pricing.md",
       "path": ".ai-company/org/roles/strategy-research/pricing-strategist.md"
@@ -933,7 +942,7 @@
       "slug": "problem-solver",
       "title": "Problem Solver",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/incidents/",
       "path": ".ai-company/org/roles/strategy-research/problem-solver.md"
@@ -942,7 +951,7 @@
       "slug": "rnd-specialist",
       "title": "R&D Specialist",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/rnd/",
       "path": ".ai-company/org/roles/strategy-research/rnd-specialist.md"
@@ -951,7 +960,7 @@
       "slug": "trend-analyst",
       "title": "Trend Analyst",
       "department": "strategy-research",
-      "reports_to": "chief-research-officer",
+      "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/trends.md",
       "path": ".ai-company/org/roles/strategy-research/trend-analyst.md"

@@ -1,0 +1,58 @@
+{
+  "run_id": "run_f21d94c76c",
+  "created": "2026-09-07T13:37:50+00:00",
+  "updated": "2026-09-07T13:44:49+00:00",
+  "status": "active",
+  "industry": "Local food marketplace",
+  "idea": "A marketplace connecting customers with independent local home chefs",
+  "constraints": "solo founder, pre-revenue",
+  "current_phase": "research",
+  "completed_phases": [
+    "intake",
+    "mission",
+    "discovery"
+  ],
+  "gates": {
+    "gate_research": {
+      "status": "failed",
+      "by": "cro-research",
+      "note": "5 of 6 artifacts missing; competitors.md is partial pending geography",
+      "at": "2026-09-07T13:44:49+00:00"
+    },
+    "gate_debate": {
+      "status": "pending"
+    },
+    "gate_brief": {
+      "status": "pending"
+    },
+    "gate_product_spec": {
+      "status": "pending"
+    },
+    "gate_architecture": {
+      "status": "pending"
+    },
+    "gate_design": {
+      "status": "pending"
+    },
+    "gate_plan": {
+      "status": "pending"
+    },
+    "gate_qa": {
+      "status": "pending"
+    },
+    "gate_security": {
+      "status": "pending"
+    },
+    "gate_audit": {
+      "status": "pending"
+    },
+    "gate_exec": {
+      "status": "pending"
+    },
+    "gate_release": {
+      "status": "pending"
+    }
+  },
+  "escalations": [],
+  "notes": []
+}

@@ -362,7 +362,7 @@
       "depends_on": [
         "remediate"
       ],
-      "gate": "gate_qa"
+      "gate": "gate_retest"
     },
     {
       "id": "exec_review",

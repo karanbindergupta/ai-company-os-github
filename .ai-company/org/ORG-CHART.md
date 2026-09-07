@@ -1,9 +1,9 @@
 # ORG CHART
 
-**106 roles across 10 departments.**
+**107 roles across 10 departments.**
 
-Roles are *role packs* in `.ai-company/org/roles/`, adopted by the 18 executable subagents in
-`.claude/agents/`. See `.ai-company/docs/ARCHITECTURE.md` for why the org is split this way.
+Roles are *role packs* in `.ai-company/org/roles/`, adopted by the executable subagents in
+`.claude/agents/`. Regenerate with `scripts/audit_org.py` after any change.
 
 ## Executive Council (11)
 
@@ -25,21 +25,21 @@ Roles are *role packs* in `.ai-company/org/roles/`, adopted by the 18 executable
 
 | Role | Reports to | Primary artifact |
 |---|---|---|
-| [Brand Strategist (Strategy)](roles/strategy-research/brand-strategist-research.md) | `chief-research-officer` | `.ai-company/design/brand-strategy.md` |
-| [Business Model Strategist](roles/strategy-research/business-model-strategist.md) | `chief-research-officer` | `.ai-company/decisions/business-model.md` |
-| [Competitive Intelligence Analyst](roles/strategy-research/competitor-intelligence.md) | `chief-research-officer` | `.ai-company/research/competitors.md` |
-| [Customer Researcher](roles/strategy-research/customer-researcher.md) | `chief-research-officer` | `.ai-company/research/customers.md` |
-| [Feasibility Analyst](roles/strategy-research/feasibility-analyst.md) | `chief-research-officer` | `.ai-company/research/feasibility.md` |
-| [Features Strategist](roles/strategy-research/features-strategist.md) | `chief-research-officer` | `.ai-company/product/features.md` |
-| [Financial Strategist](roles/strategy-research/financial-strategist.md) | `chief-research-officer` | `.ai-company/finance/projections.md` |
-| [Industry Researcher](roles/strategy-research/industry-researcher.md) | `chief-research-officer` | `.ai-company/research/industry.md` |
-| [Innovation Strategist](roles/strategy-research/innovation-strategist.md) | `chief-research-officer` | `.ai-company/research/innovation.md` |
-| [Market Researcher](roles/strategy-research/market-researcher.md) | `chief-research-officer` | `.ai-company/research/market.md` |
-| [Opportunity Analyst](roles/strategy-research/opportunity-analyst.md) | `chief-research-officer` | `.ai-company/research/opportunities.md` |
-| [Pricing Strategist](roles/strategy-research/pricing-strategist.md) | `chief-research-officer` | `.ai-company/finance/pricing.md` |
-| [Problem Solver](roles/strategy-research/problem-solver.md) | `chief-research-officer` | `.ai-company/incidents/` |
-| [R&D Specialist](roles/strategy-research/rnd-specialist.md) | `chief-research-officer` | `.ai-company/research/rnd/` |
-| [Trend Analyst](roles/strategy-research/trend-analyst.md) | `chief-research-officer` | `.ai-company/research/trends.md` |
+| [Brand Strategy Lead](roles/strategy-research/brand-strategist-research.md) | `cro-research` | `.ai-company/design/brand-strategy.md` |
+| [Business Model Strategist](roles/strategy-research/business-model-strategist.md) | `cro-research` | `.ai-company/decisions/business-model.md` |
+| [Competitive Intelligence Analyst](roles/strategy-research/competitor-intelligence.md) | `cro-research` | `.ai-company/research/competitors.md` |
+| [Customer Researcher](roles/strategy-research/customer-researcher.md) | `cro-research` | `.ai-company/research/customers.md` |
+| [Feasibility Analyst](roles/strategy-research/feasibility-analyst.md) | `cro-research` | `.ai-company/research/feasibility.md` |
+| [Features Strategist](roles/strategy-research/features-strategist.md) | `cro-research` | `.ai-company/product/features.md` |
+| [Financial Strategist](roles/strategy-research/financial-strategist.md) | `cro-research` | `.ai-company/finance/projections.md` |
+| [Industry Researcher](roles/strategy-research/industry-researcher.md) | `cro-research` | `.ai-company/research/industry.md` |
+| [Innovation Strategist](roles/strategy-research/innovation-strategist.md) | `cro-research` | `.ai-company/research/innovation.md` |
+| [Market Researcher](roles/strategy-research/market-researcher.md) | `cro-research` | `.ai-company/research/market.md` |
+| [Opportunity Analyst](roles/strategy-research/opportunity-analyst.md) | `cro-research` | `.ai-company/research/opportunities.md` |
+| [Pricing Strategist](roles/strategy-research/pricing-strategist.md) | `cro-research` | `.ai-company/finance/pricing.md` |
+| [Problem Solver](roles/strategy-research/problem-solver.md) | `cro-research` | `.ai-company/incidents/` |
+| [R&D Specialist](roles/strategy-research/rnd-specialist.md) | `cro-research` | `.ai-company/research/rnd/` |
+| [Trend Analyst](roles/strategy-research/trend-analyst.md) | `cro-research` | `.ai-company/research/trends.md` |
 
 ## Product (10)
 
@@ -62,7 +62,7 @@ Roles are *role packs* in `.ai-company/org/roles/`, adopted by the 18 executable
 |---|---|---|
 | [Accessibility Designer](roles/creative/accessibility-designer.md) | `creative-director` | `.ai-company/design/accessibility.md` |
 | [Brand Designer](roles/creative/brand-designer.md) | `creative-director` | `.ai-company/design/brand-identity.md` |
-| [Brand Strategist (Creative)](roles/creative/brand-strategist-creative.md) | `creative-director` | `.ai-company/design/brand-application.md` |
+| [Brand Application Lead](roles/creative/brand-strategist-creative.md) | `creative-director` | `.ai-company/design/brand-application.md` |
 | [Content Designer](roles/creative/content-designer.md) | `creative-director` | `.ai-company/design/content.md` |
 | [Creative Auditor](roles/creative/creative-auditor.md) | `creative-director` | `.ai-company/audits/creative.md` |
 | [Design System Architect](roles/creative/design-system-architect.md) | `creative-director` | `.ai-company/design/design-system.md` |
@@ -97,11 +97,12 @@ Roles are *role packs* in `.ai-company/org/roles/`, adopted by the 18 executable
 | [Site Reliability Engineer](roles/engineering/sre.md) | `cto` | `.ai-company/engineering/reliability.md` |
 | [Systems Architect](roles/engineering/systems-architect.md) | `principal-architect` | `.ai-company/architecture/systems.md` |
 
-## Quality (9)
+## Quality (10)
 
 | Role | Reports to | Primary artifact |
 |---|---|---|
 | [Accessibility Tester](roles/quality/accessibility-tester.md) | `qa-lead` | `.ai-company/qa/accessibility.md` |
+| [Architecture Auditor](roles/quality/architecture-auditor.md) | `cro-risk` | `.ai-company/audits/architecture.md` |
 | [Code Reviewer](roles/quality/code-reviewer.md) | `qa-lead` | `.ai-company/qa/reviews/` |
 | [End-to-End Tester](roles/quality/e2e-tester.md) | `qa-lead` | `.ai-company/qa/e2e.md` |
 | [Performance Tester](roles/quality/performance-tester.md) | `qa-lead` | `.ai-company/qa/performance-tests.md` |
@@ -161,29 +162,12 @@ Roles are *role packs* in `.ai-company/org/roles/`, adopted by the 18 executable
 | [Role Author](roles/people/role-author.md) | `chief-people-officer` | `.ai-company/org/roles/<department>/<slug>.md` |
 | [Role Researcher](roles/people/role-researcher.md) | `chief-people-officer` | `.ai-company/org/hiring/research/` |
 
-## Reporting
-
-```
-founder
-  └── ceo
-        ├── coo ──────────── operations, release management
-        ├── cto ──────────── engineering, architecture, quality
-        ├── cfo ──────────── finance, pricing
-        ├── cmo ──────────── growth, marketing
-        ├── cpo ──────────── product
-        ├── cso ──────────── strategy
-        ├── cro-research ─── research
-        ├── cro-risk ─────── risk, audit
-        ├── ciso ─────────── security   (holds a release veto)
-        ├── creative-director  creative, brand, design
-        └── chief-people-officer  org design, hiring
-```
-
 ## Authority notes
 
-- The **CEO** resolves conflict between executives, but cannot override the CISO on security.
+- The **CEO** resolves executive conflict but cannot override the CISO on security.
 - The **CISO** holds a release veto. Only the **founder** may accept a security risk.
-- The **Release Manager** can stop any release but cannot authorize one — that is the founder's.
-- The **Chief People Officer** may add role packs, but creating a new executable subagent
-  requires founder approval because it permanently costs orchestrator context.
-- Auditors are independent: no role may audit work it produced or specified.
+- The **Release Manager** can stop any release but cannot authorize one.
+- **Auditors report to the Chief Risk Officer**, not to the department they audit. The
+  Architecture Auditor reports to the CRO, not the CTO, so the audit is genuinely independent.
+- The **Chief People Officer** may add role packs; creating a new executable subagent needs
+  founder approval, because each one permanently costs orchestrator context.

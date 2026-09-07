@@ -151,14 +151,23 @@ def cmd_task_add(argv):
     for req in ("title", "owner"):
         if req not in kw: die(f"usage: task-add title=... owner=... [phase=] [deps=a,b] [criteria=...] [parallel_group=]")
     d = jload(TASKS, {"version":1,"tasks":[]}); r = _run()
-    tid = kw.get("id") or f"T{len(d['tasks'])+1:03d}"
+    # Monotonic ids. Never derive from len(): deleting a task would reuse a number and
+    # silently rewire another task's dependencies. Found by the 2026-09-07 dry run.
+    seq = d.get("next_id", 0)
+    for t in d["tasks"]:
+        if t["id"].startswith("T") and t["id"][1:].isdigit(): seq = max(seq, int(t["id"][1:]))
+    tid = kw.get("id") or f"T{seq+1:03d}"
     if any(t["id"] == tid for t in d["tasks"]): die(f"task id '{tid}' already exists")
+    d["next_id"] = max(seq + 1, d.get("next_id", 0))
     t = {"id": tid, "title": kw["title"], "owner": kw["owner"],
          "phase": kw.get("phase", r["current_phase"]),
          "status": "todo", "deps": [x for x in kw.get("deps","").split(",") if x],
          "criteria": [c for c in kw.get("criteria","").split(";") if c],
          "parallel_group": kw.get("parallel_group",""), "evidence": [],
          "attempts": 0, "created": now()}
+    if tid in t["deps"]: die(f"task '{tid}' cannot depend on itself")
+    unknown = [x for x in t["deps"] if x not in {y["id"] for y in d["tasks"]}]
+    if unknown: die(f"unknown dependencies: {', '.join(unknown)} - add them before this task")
     d["tasks"].append(t); jdump(TASKS, d); event("task_add", task=tid, owner=t["owner"])
     print(f"added {tid}: {t['title']} -> {t['owner']}")
 

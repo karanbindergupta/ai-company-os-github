@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "T002",
+      "title": "Research: industry",
+      "owner": "industry-researcher",
+      "phase": "research",
+      "status": "todo",
+      "deps": [],
+      "criteria": [],
+      "parallel_group": "research-sweep",
+      "evidence": [],
+      "attempts": 0,
+      "created": "2026-09-07T13:38:38+00:00"
+    },
+    {
+      "id": "T003",
+      "title": "Research: market",
+      "owner": "market-researcher",
+      "phase": "research",
+      "status": "todo",
+      "deps": [],
+      "criteria": [],
+      "parallel_group": "research-sweep",
+      "evidence": [],
+      "attempts": 0,
+      "created": "2026-09-07T13:38:38+00:00"
+    },
+    {
+      "id": "T004",
+      "title": "Research: customer",
+      "owner": "customer-researcher",
+      "phase": "research",
+      "status": "todo",
+      "deps": [],
+      "criteria": [],
+      "parallel_group": "research-sweep",
+      "evidence": [],
+      "attempts": 0,
+      "created": "2026-09-07T13:38:38+00:00"
+    },
+    {
+      "id": "T006",
+      "title": "Synthesize research",
+      "owner": "cro-research",
+      "phase": "research",
+      "status": "todo",
+      "deps": [
+        "T002",
+        "T003",
+        "T004"
+      ],
+      "criteria": [],
+      "parallel_group": "",
+      "evidence": [],
+      "attempts": 0,
+      "created": "2026-09-07T13:42:25+00:00"
+    }
+  ],
+  "next_id": 7
+}

@@ -37,6 +37,7 @@ Authority over scheduling, parallelism, task assignment and re-assignment. Canno
 |---|---|
 | Operations report | `.ai-company/state/operations.md` |
 | Task graph | `.ai-company/state/tasks.json` |
+| Remediation plan | `.ai-company/state/remediation.md` |
 
 ## Tools
 `Read, Write, Edit, Grep, Glob, WebSearch, WebFetch`

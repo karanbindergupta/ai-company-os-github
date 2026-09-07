@@ -1,0 +1,19 @@
+{"ts": "2026-09-07T13:37:50+00:00", "event": "run_init", "run_id": "run_f21d94c76c", "industry": "Local food marketplace"}
+{"ts": "2026-09-07T13:38:16+00:00", "event": "task_add", "task": "T001", "owner": "ceo"}
+{"ts": "2026-09-07T13:38:16+00:00", "event": "task_add", "task": "T002", "owner": "chief-vibes-officer"}
+{"ts": "2026-09-07T13:38:38+00:00", "event": "task_update", "task": "T001", "status": "failed"}
+{"ts": "2026-09-07T13:38:38+00:00", "event": "task_update", "task": "T001", "status": "failed"}
+{"ts": "2026-09-07T13:38:38+00:00", "event": "task_add", "task": "T002", "owner": "industry-researcher"}
+{"ts": "2026-09-07T13:38:38+00:00", "event": "task_add", "task": "T003", "owner": "market-researcher"}
+{"ts": "2026-09-07T13:38:38+00:00", "event": "task_add", "task": "T004", "owner": "customer-researcher"}
+{"ts": "2026-09-07T13:38:38+00:00", "event": "task_add", "task": "T005", "owner": "competitor-intelligence"}
+{"ts": "2026-09-07T13:38:38+00:00", "event": "task_add", "task": "T006", "owner": "cro-research"}
+{"ts": "2026-09-07T13:42:25+00:00", "event": "task_add", "task": "T006", "owner": "cro-research"}
+{"ts": "2026-09-07T13:42:25+00:00", "event": "task_add", "task": "T007", "owner": "ceo"}
+{"ts": "2026-09-07T13:42:59+00:00", "event": "phase_complete", "phase": "intake"}
+{"ts": "2026-09-07T13:42:59+00:00", "event": "phase_start", "phase": "mission"}
+{"ts": "2026-09-07T13:44:00+00:00", "event": "phase_complete", "phase": "mission"}
+{"ts": "2026-09-07T13:44:49+00:00", "event": "phase_start", "phase": "discovery"}
+{"ts": "2026-09-07T13:44:49+00:00", "event": "phase_complete", "phase": "discovery"}
+{"ts": "2026-09-07T13:44:49+00:00", "event": "phase_start", "phase": "research"}
+{"ts": "2026-09-07T13:44:49+00:00", "event": "gate", "gate": "gate_research", "verdict": "fail"}

@@ -2,7 +2,7 @@
 role: industry-researcher
 title: Industry Researcher
 department: strategy-research
-reports_to: chief-research-officer
+reports_to: cro-research
 seniority: specialist
 primary_artifact: .ai-company/research/industry.md
 ---

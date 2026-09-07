@@ -34,6 +34,7 @@ Deliberately try to break the product before someone hostile does. **Defensive o
 | Artifact | Path |
 |---|---|
 | Red team findings | `.ai-company/security/red-team.md` |
+| Adversarial review | `.ai-company/audits/adversarial.md` |
 
 ## Tools
 `Read, Write, Edit, Grep, Glob, Bash`

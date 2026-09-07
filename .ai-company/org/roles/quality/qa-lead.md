@@ -35,6 +35,7 @@ Can block release on quality grounds. Independent of engineering leads.
 |---|---|
 | Test strategy | `.ai-company/qa/strategy.md` |
 | QA report | `.ai-company/qa/report.md` |
+| Retest results | `.ai-company/qa/retest.md` |
 
 ## Tools
 `Read, Write, Edit, Grep, Glob, Bash`

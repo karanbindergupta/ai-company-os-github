@@ -2,7 +2,7 @@
 role: competitor-intelligence
 title: Competitive Intelligence Analyst
 department: strategy-research
-reports_to: chief-research-officer
+reports_to: cro-research
 seniority: specialist
 primary_artifact: .ai-company/research/competitors.md
 ---

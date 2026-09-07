@@ -38,6 +38,7 @@ Final authority on stack, architecture and engineering standards. Can block rele
 |---|---|
 | Technical position | `.ai-company/architecture/cto-position.md` |
 | Engineering standards | `.ai-company/engineering/standards.md` |
+| Engineering artifacts | `.ai-company/engineering/` |
 
 ## Tools
 `Read, Write, Edit, Grep, Glob, WebSearch, WebFetch`

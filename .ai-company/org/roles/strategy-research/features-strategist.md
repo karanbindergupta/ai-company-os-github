@@ -2,7 +2,7 @@
 role: features-strategist
 title: Features Strategist
 department: strategy-research
-reports_to: chief-research-officer
+reports_to: cro-research
 seniority: specialist
 primary_artifact: .ai-company/product/features.md
 ---

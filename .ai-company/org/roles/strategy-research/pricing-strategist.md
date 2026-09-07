@@ -2,7 +2,7 @@
 role: pricing-strategist
 title: Pricing Strategist
 department: strategy-research
-reports_to: chief-research-officer
+reports_to: cro-research
 seniority: specialist
 primary_artifact: .ai-company/finance/pricing.md
 ---
