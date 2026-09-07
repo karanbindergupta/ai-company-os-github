@@ -1,44 +1,62 @@
 ---
 artifact: mission-charter
 role: ceo
+name: Nadia Okonkwo
 phase: mission
 status: complete
-confidence: high
+confidence: MEDIUM
 updated: 2026-09-07
 ---
-# Mission Charter — DRY RUN
+# Mission Charter — run_63de3f6ebc
 
-> **This is an organizational test mission.** Its purpose is to exercise the company, not to
-> found a venture. Artifacts marked `status: partial` are honestly incomplete, not placeholders.
+## Founder's input
+**Industry:** airline / travel booking.
+**Idea:** make buying airline tickets easy for diaspora travellers — Indian, Pakistani,
+Bangladeshi, African communities — who still rely on human travel agents. Ambition: Europe-wide.
+**Constraints:** solo founder, pre-revenue, wants genuine innovation rather than a thinner Skyscanner.
 
-## The objective, restated
-The founder asked for a marketplace. Evidence says the real objective is narrower:
+## The objective as I read it
+The founder named a **customer** and a **behaviour**, not a product. That is the right way round,
+and it is why I am not letting anyone design a booking flow yet.
 
-> Determine whether a **lawful, economically viable** home-chef marketplace can be operated in a
-> specific jurisdiction, and if so, solve the cold-start problem on the supply side.
+The stated objective is "make it easy." The real objective is: **capture the value currently
+intermediated by diaspora travel agents, for the traveller and for us.**
 
-The founder named a solution. The company's first duty is to establish the problem.
+## The assumption everything rests on
+> *Diaspora travellers use agents because booking is hard.*
 
-## Success criteria
-1. Jurisdictions where the intended activity is lawful are identified with citations.
-2. Differentiation against Shef and WoodSpoon is stated or honestly declared absent.
-3. Unit economics close at a defensible take rate, or the model is declared non-viable.
-4. The riskiest assumption is named and tested before any code is written.
+First-pass evidence contradicts this. Agents appear to hold **structurally hidden inventory** —
+consolidator net fares that are restricted from online display [S1]. If that holds, "easier
+booking" is not a competitive product. It is a worse agent.
+
+**This is the single most important thing to establish, and it is not yet established.**
+Kwame's artifact is `status: partial`. I will not fund scope on it.
 
 ## Departments activated
 | Activated | Why |
 |---|---|
-| Strategy & Research | The premise is unvalidated and competitors already exist |
-| Security (Compliance) | **Regulation is the binding constraint** — unusually, this leads |
-| Product | The problem must be defined before scope |
-| Finance | Marketplace take-rate economics decide viability |
+| Strategy & Research | The premise is unproven. Everything waits on this |
+| Product (discovery only) | To hold the boundary between problem and solution |
+| Finance | Net-fare economics decide whether any of this works |
+| Risk | RISK-001 is open and material |
+| Security / Compliance | Selling flights is regulated — IATA, bonding, consumer protection |
 
-## Departments NOT activated, and why
-Engineering, Creative, Quality, Growth, Operations. **There is nothing to build yet.** Activating
-them now would produce work that the research phase may invalidate. They activate at
-`product_spec` if the mission survives.
+**Not yet activated:** Engineering, Creative, Growth, Operations. There is nothing to build,
+brand or sell until the inventory question is answered. Activating them now would produce
+confident work on a premise that may be wrong.
 
-## Standing instruction to the organization
-The evidence already contradicts the founder's framing. If research confirms the model is
-unlawful in the target geography or undifferentiated against incumbents, **recommend against
-building it**. That is a successful outcome of this mission, not a failure.
+## Success criteria for this phase
+1. Establish whether net-fare access is the real reason for agent reliance — evidenced.
+2. Establish what access actually requires (accreditation, bonding, capital).
+3. Establish the real motivations of diaspora customers — primary research, not inference.
+4. Only then: decide whether the product is a consumer platform, an agent-enablement platform,
+   or something else entirely.
+
+## What I am explicitly NOT doing
+- Not scoping features.
+- Not choosing a stack.
+- Not accepting "we'll be easier to use" as a differentiator.
+
+## Escalation to the founder
+See `.ai-company/decisions/founder/premise-reframe.md`. The evidence suggests the idea should
+change shape. That is the founder's call, not mine.

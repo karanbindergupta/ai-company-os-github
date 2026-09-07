@@ -30,3 +30,13 @@ Format: `[ID] Title — Publisher — URL — published — retrieved — TIER`
 [S6] Hotplate alternatives — CB Insights — https://www.cbinsights.com/company/hotplate/alternatives-competitors
      — retrieved 2026-09-07 — TIER 2
 ```
+
+## Mission run_63de3f6ebc - diaspora airline platform, 2026-09-07
+```
+[S1] Sky Bird Travel - airline consolidator - https://skybirdtravel.com
+     - retrieved 2026-09-07 - TIER 2 (vendor describing its own mechanism)
+[S2] Airline Consolidators: Debunking Misconceptions - Travel Professional News
+     - https://travelprofessionalnews.com - retrieved 2026-09-07 - TIER 2/3
+     NOTE: 45-60% discount claim is UNVERIFIED and the publication serves agents.
+[S3] What Is a Flight Consolidator - tripgic.com - retrieved 2026-09-07 - TIER 3
+```

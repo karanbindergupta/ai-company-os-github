@@ -1,23 +1,16 @@
 {
-  "run_id": "run_f21d94c76c",
-  "created": "2026-09-07T13:37:50+00:00",
-  "updated": "2026-09-07T13:44:49+00:00",
-  "status": "archived",
-  "industry": "Local food marketplace",
-  "idea": "A marketplace connecting customers with independent local home chefs",
-  "constraints": "solo founder, pre-revenue",
-  "current_phase": "research",
-  "completed_phases": [
-    "intake",
-    "mission",
-    "discovery"
-  ],
+  "run_id": "run_63de3f6ebc",
+  "created": "2026-09-07T21:32:49+00:00",
+  "updated": "2026-09-07T21:32:49+00:00",
+  "status": "active",
+  "industry": "Airline / travel booking",
+  "idea": "Platform making airline tickets easy for diaspora travellers - Indian, Pakistani, Bangladeshi, African - who still rely on human travel agents. Ambition: expand across Europe.",
+  "constraints": "solo founder; pre-revenue; wants genuine innovation, not a thinner Skyscanner",
+  "current_phase": "intake",
+  "completed_phases": [],
   "gates": {
     "gate_research": {
-      "status": "failed",
-      "by": "cro-research",
-      "note": "5 of 6 artifacts missing; competitors.md is partial pending geography",
-      "at": "2026-09-07T13:44:49+00:00"
+      "status": "pending"
     },
     "gate_debate": {
       "status": "pending"
@@ -51,10 +44,11 @@
     },
     "gate_release": {
       "status": "pending"
+    },
+    "gate_retest": {
+      "status": "pending"
     }
   },
   "escalations": [],
-  "notes": [
-    "Dry run 2026-09-07: organization test, not a real venture. See .ai-company/audits/organization.md"
-  ]
+  "notes": []
 }

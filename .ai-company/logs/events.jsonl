@@ -17,3 +17,5 @@
 {"ts": "2026-09-07T13:44:49+00:00", "event": "phase_complete", "phase": "discovery"}
 {"ts": "2026-09-07T13:44:49+00:00", "event": "phase_start", "phase": "research"}
 {"ts": "2026-09-07T13:44:49+00:00", "event": "gate", "gate": "gate_research", "verdict": "fail"}
+{"ts": "2026-09-07T21:32:49+00:00", "event": "run_init", "run_id": "run_63de3f6ebc", "industry": "Airline / travel booking"}
+{"ts": "2026-09-07T21:32:49+00:00", "event": "phase_start", "phase": "intake"}
