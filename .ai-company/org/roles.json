@@ -9,7 +9,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/accessibility.md",
-      "path": ".ai-company/org/roles/creative/accessibility-designer.md"
+      "path": ".ai-company/org/roles/creative/accessibility-designer.md",
+      "name": "Idris Karam"
     },
     {
       "slug": "brand-designer",
@@ -18,7 +19,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/brand-identity.md",
-      "path": ".ai-company/org/roles/creative/brand-designer.md"
+      "path": ".ai-company/org/roles/creative/brand-designer.md",
+      "name": "Anouk Devries"
     },
     {
       "slug": "brand-strategist-creative",
@@ -27,7 +29,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/brand-application.md",
-      "path": ".ai-company/org/roles/creative/brand-strategist-creative.md"
+      "path": ".ai-company/org/roles/creative/brand-strategist-creative.md",
+      "name": "Ravi Chandrasekar"
     },
     {
       "slug": "content-designer",
@@ -36,7 +39,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/content.md",
-      "path": ".ai-company/org/roles/creative/content-designer.md"
+      "path": ".ai-company/org/roles/creative/content-designer.md",
+      "name": "Poppy Ashworth"
     },
     {
       "slug": "creative-auditor",
@@ -45,7 +49,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/audits/creative.md",
-      "path": ".ai-company/org/roles/creative/creative-auditor.md"
+      "path": ".ai-company/org/roles/creative/creative-auditor.md",
+      "name": "Genevieve Thorne"
     },
     {
       "slug": "design-system-architect",
@@ -54,7 +59,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/design-system.md",
-      "path": ".ai-company/org/roles/creative/design-system-architect.md"
+      "path": ".ai-company/org/roles/creative/design-system-architect.md",
+      "name": "Freya Lindholm"
     },
     {
       "slug": "interaction-designer",
@@ -63,7 +69,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/interaction.md",
-      "path": ".ai-company/org/roles/creative/interaction-designer.md"
+      "path": ".ai-company/org/roles/creative/interaction-designer.md",
+      "name": "Emeka Nwosu"
     },
     {
       "slug": "motion-specialist",
@@ -72,7 +79,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/motion.md",
-      "path": ".ai-company/org/roles/creative/motion-specialist.md"
+      "path": ".ai-company/org/roles/creative/motion-specialist.md",
+      "name": "Sable Moreau"
     },
     {
       "slug": "positioning-writer",
@@ -81,7 +89,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/positioning-copy.md",
-      "path": ".ai-company/org/roles/creative/positioning-writer.md"
+      "path": ".ai-company/org/roles/creative/positioning-writer.md",
+      "name": "Caspian Wilde"
     },
     {
       "slug": "ui-designer",
@@ -90,7 +99,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/ui/",
-      "path": ".ai-company/org/roles/creative/ui-designer.md"
+      "path": ".ai-company/org/roles/creative/ui-designer.md",
+      "name": "Juno Takahashi"
     },
     {
       "slug": "ux-designer",
@@ -99,7 +109,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/ux/",
-      "path": ".ai-company/org/roles/creative/ux-designer.md"
+      "path": ".ai-company/org/roles/creative/ux-designer.md",
+      "name": "Lars Bj\u00f8rnstad"
     },
     {
       "slug": "ux-researcher",
@@ -108,7 +119,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/design/ux-research.md",
-      "path": ".ai-company/org/roles/creative/ux-researcher.md"
+      "path": ".ai-company/org/roles/creative/ux-researcher.md",
+      "name": "Meera Iyer"
     },
     {
       "slug": "visual-designer",
@@ -117,7 +129,8 @@
       "reports_to": "creative-director",
       "seniority": "specialist",
       "artifact": ".ai-company/artifacts/visual/",
-      "path": ".ai-company/org/roles/creative/visual-designer.md"
+      "path": ".ai-company/org/roles/creative/visual-designer.md",
+      "name": "Rocco Bellini"
     },
     {
       "slug": "ai-ml-engineer",
@@ -126,7 +139,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": ".ai-company/architecture/ml-design.md",
-      "path": ".ai-company/org/roles/engineering/ai-ml-engineer.md"
+      "path": ".ai-company/org/roles/engineering/ai-ml-engineer.md",
+      "name": "Tanvi Sridhar"
     },
     {
       "slug": "api-specialist",
@@ -135,7 +149,8 @@
       "reports_to": "backend-lead",
       "seniority": "specialist",
       "artifact": ".ai-company/architecture/api-spec.md",
-      "path": ".ai-company/org/roles/engineering/api-specialist.md"
+      "path": ".ai-company/org/roles/engineering/api-specialist.md",
+      "name": "Roland Adeyemi"
     },
     {
       "slug": "backend-engineer",
@@ -144,7 +159,8 @@
       "reports_to": "backend-lead",
       "seniority": "specialist",
       "artifact": "(source files in the product repository)",
-      "path": ".ai-company/org/roles/engineering/backend-engineer.md"
+      "path": ".ai-company/org/roles/engineering/backend-engineer.md",
+      "name": "Lyra Kowalczyk"
     },
     {
       "slug": "backend-lead",
@@ -153,7 +169,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": ".ai-company/engineering/backend-plan.md",
-      "path": ".ai-company/org/roles/engineering/backend-lead.md"
+      "path": ".ai-company/org/roles/engineering/backend-lead.md",
+      "name": "Desmond Achterberg"
     },
     {
       "slug": "cloud-architect",
@@ -162,7 +179,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": ".ai-company/architecture/infrastructure.md",
-      "path": ".ai-company/org/roles/engineering/cloud-architect.md"
+      "path": ".ai-company/org/roles/engineering/cloud-architect.md",
+      "name": "Salvador Reyes"
     },
     {
       "slug": "data-engineer",
@@ -171,7 +189,8 @@
       "reports_to": "database-architect",
       "seniority": "specialist",
       "artifact": "(source files)",
-      "path": ".ai-company/org/roles/engineering/data-engineer.md"
+      "path": ".ai-company/org/roles/engineering/data-engineer.md",
+      "name": "Cormac Blaise"
     },
     {
       "slug": "database-architect",
@@ -180,7 +199,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": ".ai-company/architecture/data-model.md",
-      "path": ".ai-company/org/roles/engineering/database-architect.md"
+      "path": ".ai-company/org/roles/engineering/database-architect.md",
+      "name": "Vera Stanislav"
     },
     {
       "slug": "devops-engineer",
@@ -189,7 +209,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": "(source files)",
-      "path": ".ai-company/org/roles/engineering/devops-engineer.md"
+      "path": ".ai-company/org/roles/engineering/devops-engineer.md",
+      "name": "Anika Brennholt"
     },
     {
       "slug": "frontend-engineer",
@@ -198,7 +219,8 @@
       "reports_to": "frontend-lead",
       "seniority": "specialist",
       "artifact": "(source files in the product repository)",
-      "path": ".ai-company/org/roles/engineering/frontend-engineer.md"
+      "path": ".ai-company/org/roles/engineering/frontend-engineer.md",
+      "name": "Suki Tanabe"
     },
     {
       "slug": "frontend-lead",
@@ -207,7 +229,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": ".ai-company/engineering/frontend-plan.md",
-      "path": ".ai-company/org/roles/engineering/frontend-lead.md"
+      "path": ".ai-company/org/roles/engineering/frontend-lead.md",
+      "name": "Mateo Escobar"
     },
     {
       "slug": "infrastructure-engineer",
@@ -216,7 +239,8 @@
       "reports_to": "cloud-architect",
       "seniority": "specialist",
       "artifact": "(source files)",
-      "path": ".ai-company/org/roles/engineering/infrastructure-engineer.md"
+      "path": ".ai-company/org/roles/engineering/infrastructure-engineer.md",
+      "name": "Petra Novakova"
     },
     {
       "slug": "integration-engineer",
@@ -225,7 +249,8 @@
       "reports_to": "backend-lead",
       "seniority": "specialist",
       "artifact": ".ai-company/architecture/integrations.md",
-      "path": ".ai-company/org/roles/engineering/integration-engineer.md"
+      "path": ".ai-company/org/roles/engineering/integration-engineer.md",
+      "name": "Fionn \u00d3 Braon\u00e1in"
     },
     {
       "slug": "mobile-engineer",
@@ -234,7 +259,8 @@
       "reports_to": "frontend-lead",
       "seniority": "specialist",
       "artifact": "(source files)",
-      "path": ".ai-company/org/roles/engineering/mobile-engineer.md"
+      "path": ".ai-company/org/roles/engineering/mobile-engineer.md",
+      "name": "Halima Yusuf"
     },
     {
       "slug": "performance-engineer",
@@ -243,7 +269,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": ".ai-company/qa/performance.md",
-      "path": ".ai-company/org/roles/engineering/performance-engineer.md"
+      "path": ".ai-company/org/roles/engineering/performance-engineer.md",
+      "name": "Kenji Morrow"
     },
     {
       "slug": "principal-architect",
@@ -252,7 +279,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": ".ai-company/architecture/architecture.md",
-      "path": ".ai-company/org/roles/engineering/principal-architect.md"
+      "path": ".ai-company/org/roles/engineering/principal-architect.md",
+      "name": "Sasha Malenkov"
     },
     {
       "slug": "solution-architect",
@@ -261,7 +289,8 @@
       "reports_to": "principal-architect",
       "seniority": "specialist",
       "artifact": ".ai-company/architecture/solutions/",
-      "path": ".ai-company/org/roles/engineering/solution-architect.md"
+      "path": ".ai-company/org/roles/engineering/solution-architect.md",
+      "name": "Hugo Nakamura"
     },
     {
       "slug": "sre",
@@ -270,7 +299,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": ".ai-company/engineering/reliability.md",
-      "path": ".ai-company/org/roles/engineering/sre.md"
+      "path": ".ai-company/org/roles/engineering/sre.md",
+      "name": "Julian Ostrowski"
     },
     {
       "slug": "systems-architect",
@@ -279,7 +309,8 @@
       "reports_to": "principal-architect",
       "seniority": "specialist",
       "artifact": ".ai-company/architecture/systems.md",
-      "path": ".ai-company/org/roles/engineering/systems-architect.md"
+      "path": ".ai-company/org/roles/engineering/systems-architect.md",
+      "name": "Beatrix Coyle"
     },
     {
       "slug": "ceo",
@@ -288,7 +319,8 @@
       "reports_to": "founder",
       "seniority": "executive",
       "artifact": ".ai-company/mission/charter.md",
-      "path": ".ai-company/org/roles/executive/ceo.md"
+      "path": ".ai-company/org/roles/executive/ceo.md",
+      "name": "Nadia Okonkwo"
     },
     {
       "slug": "cfo",
@@ -297,7 +329,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/finance/model.md",
-      "path": ".ai-company/org/roles/executive/cfo.md"
+      "path": ".ai-company/org/roles/executive/cfo.md",
+      "name": "Helena Brandt"
     },
     {
       "slug": "ciso",
@@ -306,7 +339,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/security/posture.md",
-      "path": ".ai-company/org/roles/executive/ciso.md"
+      "path": ".ai-company/org/roles/executive/ciso.md",
+      "name": "Rune Halvorsen"
     },
     {
       "slug": "cmo",
@@ -315,7 +349,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/marketing/gtm.md",
-      "path": ".ai-company/org/roles/executive/cmo.md"
+      "path": ".ai-company/org/roles/executive/cmo.md",
+      "name": "Zara Haddad"
     },
     {
       "slug": "coo",
@@ -324,7 +359,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/state/operations.md",
-      "path": ".ai-company/org/roles/executive/coo.md"
+      "path": ".ai-company/org/roles/executive/coo.md",
+      "name": "Marcus Vaillancourt"
     },
     {
       "slug": "cpo",
@@ -333,7 +369,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/product/strategy.md",
-      "path": ".ai-company/org/roles/executive/cpo.md"
+      "path": ".ai-company/org/roles/executive/cpo.md",
+      "name": "Tomas Lindqvist"
     },
     {
       "slug": "creative-director",
@@ -342,7 +379,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/design/creative-direction.md",
-      "path": ".ai-company/org/roles/executive/creative-director.md"
+      "path": ".ai-company/org/roles/executive/creative-director.md",
+      "name": "Sunita Kapoor"
     },
     {
       "slug": "cro-research",
@@ -351,7 +389,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/research/synthesis.md",
-      "path": ".ai-company/org/roles/executive/cro-research.md"
+      "path": ".ai-company/org/roles/executive/cro-research.md",
+      "name": "Amara Diallo"
     },
     {
       "slug": "cro-risk",
@@ -360,7 +399,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/risks/register.md",
-      "path": ".ai-company/org/roles/executive/cro-risk.md"
+      "path": ".ai-company/org/roles/executive/cro-risk.md",
+      "name": "Gideon Marsh"
     },
     {
       "slug": "cso",
@@ -369,7 +409,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/decisions/strategy.md",
-      "path": ".ai-company/org/roles/executive/cso.md"
+      "path": ".ai-company/org/roles/executive/cso.md",
+      "name": "Ivo Petrenko"
     },
     {
       "slug": "cto",
@@ -378,7 +419,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/architecture/cto-position.md",
-      "path": ".ai-company/org/roles/executive/cto.md"
+      "path": ".ai-company/org/roles/executive/cto.md",
+      "name": "Priya Raghunathan"
     },
     {
       "slug": "acquisition-specialist",
@@ -387,7 +429,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/acquisition.md",
-      "path": ".ai-company/org/roles/growth/acquisition-specialist.md"
+      "path": ".ai-company/org/roles/growth/acquisition-specialist.md",
+      "name": "Tariq Benkirane"
     },
     {
       "slug": "analytics-specialist",
@@ -396,7 +439,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/analytics.md",
-      "path": ".ai-company/org/roles/growth/analytics-specialist.md"
+      "path": ".ai-company/org/roles/growth/analytics-specialist.md",
+      "name": "Wendell Achterberg"
     },
     {
       "slug": "content-strategist",
@@ -405,7 +449,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/content-strategy.md",
-      "path": ".ai-company/org/roles/growth/content-strategist.md"
+      "path": ".ai-company/org/roles/growth/content-strategist.md",
+      "name": "Marek Zielinski"
     },
     {
       "slug": "copywriter",
@@ -414,7 +459,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/copy/",
-      "path": ".ai-company/org/roles/growth/copywriter.md"
+      "path": ".ai-company/org/roles/growth/copywriter.md",
+      "name": "Clementine Hale"
     },
     {
       "slug": "cro-specialist",
@@ -423,7 +469,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/conversion.md",
-      "path": ".ai-company/org/roles/growth/cro-specialist.md"
+      "path": ".ai-company/org/roles/growth/cro-specialist.md",
+      "name": "Ines Barbosa"
     },
     {
       "slug": "customer-success-strategist",
@@ -432,7 +479,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/customer-success.md",
-      "path": ".ai-company/org/roles/growth/customer-success-strategist.md"
+      "path": ".ai-company/org/roles/growth/customer-success-strategist.md",
+      "name": "Saoirse Lynch"
     },
     {
       "slug": "growth-strategist",
@@ -441,7 +489,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/growth.md",
-      "path": ".ai-company/org/roles/growth/growth-strategist.md"
+      "path": ".ai-company/org/roles/growth/growth-strategist.md",
+      "name": "Obi Chukwuma"
     },
     {
       "slug": "marketing-strategist",
@@ -450,7 +499,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/strategy.md",
-      "path": ".ai-company/org/roles/growth/marketing-strategist.md"
+      "path": ".ai-company/org/roles/growth/marketing-strategist.md",
+      "name": "Solveig Aamodt"
     },
     {
       "slug": "seo-specialist",
@@ -459,7 +509,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/seo.md",
-      "path": ".ai-company/org/roles/growth/seo-specialist.md"
+      "path": ".ai-company/org/roles/growth/seo-specialist.md",
+      "name": "Perrine Lambert"
     },
     {
       "slug": "social-strategist",
@@ -468,7 +519,8 @@
       "reports_to": "cmo",
       "seniority": "specialist",
       "artifact": ".ai-company/marketing/social.md",
-      "path": ".ai-company/org/roles/growth/social-strategist.md"
+      "path": ".ai-company/org/roles/growth/social-strategist.md",
+      "name": "Kofi Mensah"
     },
     {
       "slug": "agent-performance-auditor",
@@ -477,7 +529,8 @@
       "reports_to": "coo",
       "seniority": "specialist",
       "artifact": ".ai-company/audits/organization.md",
-      "path": ".ai-company/org/roles/operations/agent-performance-auditor.md"
+      "path": ".ai-company/org/roles/operations/agent-performance-auditor.md",
+      "name": "Honora Deeprose"
     },
     {
       "slug": "cost-optimizer",
@@ -486,7 +539,8 @@
       "reports_to": "cfo",
       "seniority": "specialist",
       "artifact": ".ai-company/state/cost-report.md",
-      "path": ".ai-company/org/roles/operations/cost-optimizer.md"
+      "path": ".ai-company/org/roles/operations/cost-optimizer.md",
+      "name": "Bram Vosberg"
     },
     {
       "slug": "delivery-manager",
@@ -495,7 +549,8 @@
       "reports_to": "coo",
       "seniority": "specialist",
       "artifact": ".ai-company/engineering/integration.md",
-      "path": ".ai-company/org/roles/operations/delivery-manager.md"
+      "path": ".ai-company/org/roles/operations/delivery-manager.md",
+      "name": "Emil Rasmussen"
     },
     {
       "slug": "documentation-specialist",
@@ -504,7 +559,8 @@
       "reports_to": "coo",
       "seniority": "specialist",
       "artifact": ".ai-company/docs/INDEX.md",
-      "path": ".ai-company/org/roles/operations/documentation-specialist.md"
+      "path": ".ai-company/org/roles/operations/documentation-specialist.md",
+      "name": "Aurelio Santos"
     },
     {
       "slug": "knowledge-manager",
@@ -513,7 +569,8 @@
       "reports_to": "coo",
       "seniority": "specialist",
       "artifact": ".ai-company/knowledge/",
-      "path": ".ai-company/org/roles/operations/knowledge-manager.md"
+      "path": ".ai-company/org/roles/operations/knowledge-manager.md",
+      "name": "Xiomara Reyes-Tan"
     },
     {
       "slug": "project-manager",
@@ -522,7 +579,8 @@
       "reports_to": "coo",
       "seniority": "specialist",
       "artifact": ".ai-company/state/project-plan.md",
-      "path": ".ai-company/org/roles/operations/project-manager.md"
+      "path": ".ai-company/org/roles/operations/project-manager.md",
+      "name": "Greta Halloran"
     },
     {
       "slug": "technical-writer",
@@ -531,7 +589,8 @@
       "reports_to": "coo",
       "seniority": "specialist",
       "artifact": ".ai-company/docs/",
-      "path": ".ai-company/org/roles/operations/technical-writer.md"
+      "path": ".ai-company/org/roles/operations/technical-writer.md",
+      "name": "Prudence Okafor"
     },
     {
       "slug": "chief-people-officer",
@@ -540,7 +599,8 @@
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/org/hiring/decisions.md",
-      "path": ".ai-company/org/roles/people/chief-people-officer.md"
+      "path": ".ai-company/org/roles/people/chief-people-officer.md",
+      "name": "Ingeborg Sandoval"
     },
     {
       "slug": "onboarding-specialist",
@@ -549,7 +609,8 @@
       "reports_to": "chief-people-officer",
       "seniority": "specialist",
       "artifact": ".ai-company/org/hiring/onboarding.md",
-      "path": ".ai-company/org/roles/people/onboarding-specialist.md"
+      "path": ".ai-company/org/roles/people/onboarding-specialist.md",
+      "name": "Talia Mbeki"
     },
     {
       "slug": "org-designer",
@@ -558,7 +619,8 @@
       "reports_to": "chief-people-officer",
       "seniority": "specialist",
       "artifact": ".ai-company/org/org-design.md",
-      "path": ".ai-company/org/roles/people/org-designer.md"
+      "path": ".ai-company/org/roles/people/org-designer.md",
+      "name": "Femi Adebayo"
     },
     {
       "slug": "role-author",
@@ -567,7 +629,8 @@
       "reports_to": "chief-people-officer",
       "seniority": "specialist",
       "artifact": ".ai-company/org/roles/<department>/<slug>.md",
-      "path": ".ai-company/org/roles/people/role-author.md"
+      "path": ".ai-company/org/roles/people/role-author.md",
+      "name": "Rustam Ibragimov"
     },
     {
       "slug": "role-researcher",
@@ -576,7 +639,8 @@
       "reports_to": "chief-people-officer",
       "seniority": "specialist",
       "artifact": ".ai-company/org/hiring/research/",
-      "path": ".ai-company/org/roles/people/role-researcher.md"
+      "path": ".ai-company/org/roles/people/role-researcher.md",
+      "name": "Liesel Hartmann"
     },
     {
       "slug": "acceptance-criteria-specialist",
@@ -585,7 +649,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/product/acceptance-criteria.md",
-      "path": ".ai-company/org/roles/product/acceptance-criteria-specialist.md"
+      "path": ".ai-company/org/roles/product/acceptance-criteria-specialist.md",
+      "name": "Yara Mansour"
     },
     {
       "slug": "business-analyst",
@@ -594,7 +659,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/product/analysis.md",
-      "path": ".ai-company/org/roles/product/business-analyst.md"
+      "path": ".ai-company/org/roles/product/business-analyst.md",
+      "name": "Wren Castellano"
     },
     {
       "slug": "feature-specialist",
@@ -603,7 +669,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/product/features/",
-      "path": ".ai-company/org/roles/product/feature-specialist.md"
+      "path": ".ai-company/org/roles/product/feature-specialist.md",
+      "name": "Nikhil Varma"
     },
     {
       "slug": "product-auditor",
@@ -612,7 +679,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/audits/product.md",
-      "path": ".ai-company/org/roles/product/product-auditor.md"
+      "path": ".ai-company/org/roles/product/product-auditor.md",
+      "name": "Constance Whitlock"
     },
     {
       "slug": "product-discovery-specialist",
@@ -621,7 +689,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/product/discovery.md",
-      "path": ".ai-company/org/roles/product/product-discovery-specialist.md"
+      "path": ".ai-company/org/roles/product/product-discovery-specialist.md",
+      "name": "Aoife Mulcahy"
     },
     {
       "slug": "product-manager",
@@ -630,7 +699,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/product/requirements.md",
-      "path": ".ai-company/org/roles/product/product-manager.md"
+      "path": ".ai-company/org/roles/product/product-manager.md",
+      "name": "Theo Almeida"
     },
     {
       "slug": "product-owner",
@@ -639,7 +709,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/product/acceptance.md",
-      "path": ".ai-company/org/roles/product/product-owner.md"
+      "path": ".ai-company/org/roles/product/product-owner.md",
+      "name": "Ingrid Solheim"
     },
     {
       "slug": "product-strategist",
@@ -648,7 +719,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/product/product-strategy.md",
-      "path": ".ai-company/org/roles/product/product-strategist.md"
+      "path": ".ai-company/org/roles/product/product-strategist.md",
+      "name": "Rafael Duarte"
     },
     {
       "slug": "requirements-engineer",
@@ -657,7 +729,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/product/functional-requirements.md",
-      "path": ".ai-company/org/roles/product/requirements-engineer.md"
+      "path": ".ai-company/org/roles/product/requirements-engineer.md",
+      "name": "Sylvain Truffaut"
     },
     {
       "slug": "roadmap-strategist",
@@ -666,7 +739,8 @@
       "reports_to": "cpo",
       "seniority": "specialist",
       "artifact": ".ai-company/roadmap/roadmap.md",
-      "path": ".ai-company/org/roles/product/roadmap-strategist.md"
+      "path": ".ai-company/org/roles/product/roadmap-strategist.md",
+      "name": "Bodhi Ferreira"
     },
     {
       "slug": "accessibility-tester",
@@ -675,7 +749,8 @@
       "reports_to": "qa-lead",
       "seniority": "specialist",
       "artifact": ".ai-company/qa/accessibility.md",
-      "path": ".ai-company/org/roles/quality/accessibility-tester.md"
+      "path": ".ai-company/org/roles/quality/accessibility-tester.md",
+      "name": "Marisol Quintero"
     },
     {
       "slug": "architecture-auditor",
@@ -684,7 +759,8 @@
       "reports_to": "cro-risk",
       "seniority": "specialist",
       "artifact": ".ai-company/audits/architecture.md",
-      "path": ".ai-company/org/roles/quality/architecture-auditor.md"
+      "path": ".ai-company/org/roles/quality/architecture-auditor.md",
+      "name": "S\u00e9verine Lacroix"
     },
     {
       "slug": "code-reviewer",
@@ -693,7 +769,8 @@
       "reports_to": "qa-lead",
       "seniority": "specialist",
       "artifact": ".ai-company/qa/reviews/",
-      "path": ".ai-company/org/roles/quality/code-reviewer.md"
+      "path": ".ai-company/org/roles/quality/code-reviewer.md",
+      "name": "Anton Krieger"
     },
     {
       "slug": "e2e-tester",
@@ -702,7 +779,8 @@
       "reports_to": "qa-lead",
       "seniority": "specialist",
       "artifact": ".ai-company/qa/e2e.md",
-      "path": ".ai-company/org/roles/quality/e2e-tester.md"
+      "path": ".ai-company/org/roles/quality/e2e-tester.md",
+      "name": "Broderick Shaw"
     },
     {
       "slug": "performance-tester",
@@ -711,7 +789,8 @@
       "reports_to": "qa-lead",
       "seniority": "specialist",
       "artifact": ".ai-company/qa/performance-tests.md",
-      "path": ".ai-company/org/roles/quality/performance-tester.md"
+      "path": ".ai-company/org/roles/quality/performance-tester.md",
+      "name": "Arjun Balakrishnan"
     },
     {
       "slug": "qa-engineer",
@@ -720,7 +799,8 @@
       "reports_to": "qa-lead",
       "seniority": "specialist",
       "artifact": ".ai-company/qa/results/",
-      "path": ".ai-company/org/roles/quality/qa-engineer.md"
+      "path": ".ai-company/org/roles/quality/qa-engineer.md",
+      "name": "Dario Fenwick"
     },
     {
       "slug": "qa-lead",
@@ -729,7 +809,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": ".ai-company/qa/strategy.md",
-      "path": ".ai-company/org/roles/quality/qa-lead.md"
+      "path": ".ai-company/org/roles/quality/qa-lead.md",
+      "name": "Rosamund Pike-Hollis"
     },
     {
       "slug": "regression-tester",
@@ -738,7 +819,8 @@
       "reports_to": "qa-lead",
       "seniority": "specialist",
       "artifact": ".ai-company/qa/regression.md",
-      "path": ".ai-company/org/roles/quality/regression-tester.md"
+      "path": ".ai-company/org/roles/quality/regression-tester.md",
+      "name": "Ilse Vandermeer"
     },
     {
       "slug": "release-manager",
@@ -747,7 +829,8 @@
       "reports_to": "coo",
       "seniority": "specialist",
       "artifact": ".ai-company/qa/release-checklist.md",
-      "path": ".ai-company/org/roles/quality/release-manager.md"
+      "path": ".ai-company/org/roles/quality/release-manager.md",
+      "name": "Wilhelmina Cross"
     },
     {
       "slug": "test-automation-engineer",
@@ -756,7 +839,8 @@
       "reports_to": "qa-lead",
       "seniority": "specialist",
       "artifact": "(test files)",
-      "path": ".ai-company/org/roles/quality/test-automation-engineer.md"
+      "path": ".ai-company/org/roles/quality/test-automation-engineer.md",
+      "name": "Nyla Osei"
     },
     {
       "slug": "appsec-engineer",
@@ -765,7 +849,8 @@
       "reports_to": "ciso",
       "seniority": "specialist",
       "artifact": ".ai-company/security/appsec.md",
-      "path": ".ai-company/org/roles/security/appsec-engineer.md"
+      "path": ".ai-company/org/roles/security/appsec-engineer.md",
+      "name": "Zeynep Aydin"
     },
     {
       "slug": "compliance-specialist",
@@ -774,7 +859,8 @@
       "reports_to": "ciso",
       "seniority": "specialist",
       "artifact": ".ai-company/security/compliance.md",
-      "path": ".ai-company/org/roles/security/compliance-specialist.md"
+      "path": ".ai-company/org/roles/security/compliance-specialist.md",
+      "name": "Alistair Fenn"
     },
     {
       "slug": "dependency-auditor",
@@ -783,7 +869,8 @@
       "reports_to": "ciso",
       "seniority": "specialist",
       "artifact": ".ai-company/security/dependencies.md",
-      "path": ".ai-company/org/roles/security/dependency-auditor.md"
+      "path": ".ai-company/org/roles/security/dependency-auditor.md",
+      "name": "Ling Wei"
     },
     {
       "slug": "privacy-specialist",
@@ -792,7 +879,8 @@
       "reports_to": "ciso",
       "seniority": "specialist",
       "artifact": ".ai-company/security/privacy.md",
-      "path": ".ai-company/org/roles/security/privacy-specialist.md"
+      "path": ".ai-company/org/roles/security/privacy-specialist.md",
+      "name": "Esperanza Villalobos"
     },
     {
       "slug": "red-team",
@@ -801,7 +889,8 @@
       "reports_to": "ciso",
       "seniority": "specialist",
       "artifact": ".ai-company/security/red-team.md",
-      "path": ".ai-company/org/roles/security/red-team.md"
+      "path": ".ai-company/org/roles/security/red-team.md",
+      "name": "Corvus Blackwood"
     },
     {
       "slug": "security-architect",
@@ -810,7 +899,8 @@
       "reports_to": "ciso",
       "seniority": "specialist",
       "artifact": ".ai-company/security/architecture.md",
-      "path": ".ai-company/org/roles/security/security-architect.md"
+      "path": ".ai-company/org/roles/security/security-architect.md",
+      "name": "Malachi Dunne"
     },
     {
       "slug": "security-reviewer",
@@ -819,7 +909,8 @@
       "reports_to": "ciso",
       "seniority": "specialist",
       "artifact": ".ai-company/security/review.md",
-      "path": ".ai-company/org/roles/security/security-reviewer.md"
+      "path": ".ai-company/org/roles/security/security-reviewer.md",
+      "name": "Nadja Volkova"
     },
     {
       "slug": "threat-modeler",
@@ -828,7 +919,8 @@
       "reports_to": "ciso",
       "seniority": "specialist",
       "artifact": ".ai-company/security/threat-model.md",
-      "path": ".ai-company/org/roles/security/threat-modeler.md"
+      "path": ".ai-company/org/roles/security/threat-modeler.md",
+      "name": "Cassius Vale"
     },
     {
       "slug": "brand-strategist-research",
@@ -837,7 +929,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/design/brand-strategy.md",
-      "path": ".ai-company/org/roles/strategy-research/brand-strategist-research.md"
+      "path": ".ai-company/org/roles/strategy-research/brand-strategist-research.md",
+      "name": "Leocadia Vasquez"
     },
     {
       "slug": "business-model-strategist",
@@ -846,7 +939,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/decisions/business-model.md",
-      "path": ".ai-company/org/roles/strategy-research/business-model-strategist.md"
+      "path": ".ai-company/org/roles/strategy-research/business-model-strategist.md",
+      "name": "Camille Deveraux"
     },
     {
       "slug": "competitor-intelligence",
@@ -855,7 +949,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/competitors.md",
-      "path": ".ai-company/org/roles/strategy-research/competitor-intelligence.md"
+      "path": ".ai-company/org/roles/strategy-research/competitor-intelligence.md",
+      "name": "Silvia Marchetti"
     },
     {
       "slug": "customer-researcher",
@@ -864,7 +959,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/customers.md",
-      "path": ".ai-company/org/roles/strategy-research/customer-researcher.md"
+      "path": ".ai-company/org/roles/strategy-research/customer-researcher.md",
+      "name": "Kwame Boateng"
     },
     {
       "slug": "evidence-verifier",
@@ -873,7 +969,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/evidence/",
-      "path": ".ai-company/org/roles/strategy-research/evidence-verifier.md"
+      "path": ".ai-company/org/roles/strategy-research/evidence-verifier.md",
+      "name": "Hana Sato"
     },
     {
       "slug": "feasibility-analyst",
@@ -882,7 +979,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/feasibility.md",
-      "path": ".ai-company/org/roles/strategy-research/feasibility-analyst.md"
+      "path": ".ai-company/org/roles/strategy-research/feasibility-analyst.md",
+      "name": "Viktor B\u00e5lsrud"
     },
     {
       "slug": "features-strategist",
@@ -891,7 +989,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/product/features.md",
-      "path": ".ai-company/org/roles/strategy-research/features-strategist.md"
+      "path": ".ai-company/org/roles/strategy-research/features-strategist.md",
+      "name": "Dmitri Sorokin"
     },
     {
       "slug": "financial-strategist",
@@ -900,7 +999,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/finance/projections.md",
-      "path": ".ai-company/org/roles/strategy-research/financial-strategist.md"
+      "path": ".ai-company/org/roles/strategy-research/financial-strategist.md",
+      "name": "Rosalind Achebe"
     },
     {
       "slug": "industry-researcher",
@@ -909,7 +1009,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/industry.md",
-      "path": ".ai-company/org/roles/strategy-research/industry-researcher.md"
+      "path": ".ai-company/org/roles/strategy-research/industry-researcher.md",
+      "name": "Oren Ashkenazi"
     },
     {
       "slug": "innovation-strategist",
@@ -918,7 +1019,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/innovation.md",
-      "path": ".ai-company/org/roles/strategy-research/innovation-strategist.md"
+      "path": ".ai-company/org/roles/strategy-research/innovation-strategist.md",
+      "name": "Kai Tuiavii"
     },
     {
       "slug": "market-researcher",
@@ -927,7 +1029,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/market.md",
-      "path": ".ai-company/org/roles/strategy-research/market-researcher.md"
+      "path": ".ai-company/org/roles/strategy-research/market-researcher.md",
+      "name": "Delphine Roux"
     },
     {
       "slug": "opportunity-analyst",
@@ -936,7 +1039,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/opportunities.md",
-      "path": ".ai-company/org/roles/strategy-research/opportunity-analyst.md"
+      "path": ".ai-company/org/roles/strategy-research/opportunity-analyst.md",
+      "name": "Noor Al-Rashid"
     },
     {
       "slug": "pricing-strategist",
@@ -945,7 +1049,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/finance/pricing.md",
-      "path": ".ai-company/org/roles/strategy-research/pricing-strategist.md"
+      "path": ".ai-company/org/roles/strategy-research/pricing-strategist.md",
+      "name": "Anselm Kirchner"
     },
     {
       "slug": "problem-solver",
@@ -954,7 +1059,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/incidents/",
-      "path": ".ai-company/org/roles/strategy-research/problem-solver.md"
+      "path": ".ai-company/org/roles/strategy-research/problem-solver.md",
+      "name": "Ottoline Grieves"
     },
     {
       "slug": "research-auditor",
@@ -963,7 +1069,8 @@
       "reports_to": "cro-risk",
       "seniority": "specialist",
       "artifact": ".ai-company/audits/",
-      "path": ".ai-company/org/roles/strategy-research/research-auditor.md"
+      "path": ".ai-company/org/roles/strategy-research/research-auditor.md",
+      "name": "Bartholomew Quill"
     },
     {
       "slug": "research-director",
@@ -972,7 +1079,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/reports/",
-      "path": ".ai-company/org/roles/strategy-research/research-director.md"
+      "path": ".ai-company/org/roles/strategy-research/research-director.md",
+      "name": "Elias Norgaard"
     },
     {
       "slug": "research-synthesizer",
@@ -981,7 +1089,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/reports/",
-      "path": ".ai-company/org/roles/strategy-research/research-synthesizer.md"
+      "path": ".ai-company/org/roles/strategy-research/research-synthesizer.md",
+      "name": "Mireille Fontaine"
     },
     {
       "slug": "rnd-specialist",
@@ -990,7 +1099,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/rnd/",
-      "path": ".ai-company/org/roles/strategy-research/rnd-specialist.md"
+      "path": ".ai-company/org/roles/strategy-research/rnd-specialist.md",
+      "name": "Yusra Benali"
     },
     {
       "slug": "trend-analyst",
@@ -999,7 +1109,8 @@
       "reports_to": "cro-research",
       "seniority": "specialist",
       "artifact": ".ai-company/research/trends.md",
-      "path": ".ai-company/org/roles/strategy-research/trend-analyst.md"
+      "path": ".ai-company/org/roles/strategy-research/trend-analyst.md",
+      "name": "Jasper Wen"
     }
   ]
 }

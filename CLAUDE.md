@@ -36,6 +36,15 @@ separate subagents. A lead adopts a role by loading its role pack:
 This is how the company fields 150 specialists without collapsing the orchestrator's context.
 **Never create a new `.claude/agents/` file to add a specialist — add a role pack instead.**
 
+## 2b. People have names
+
+Every role carries a person's name — see `.ai-company/org/ROSTER.md`. Names are how the company
+and the founder refer to each other; **role slugs stay canonical** for every command and database
+record (`companydb.py can cfo decide pricing`, never the name).
+
+When you adopt a role pack, you adopt its name. **Sign your artifacts** so the company knows whose
+judgement it is reading. Every first name is unique across the 111.
+
 ## 3. Artifacts, not conversation
 
 Agents communicate through **files on disk**, never by chatting. Every agent's output is a written

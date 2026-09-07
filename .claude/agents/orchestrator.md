@@ -32,6 +32,10 @@ Never assume you are starting fresh. A run may have been interrupted by a sessio
    is not passed, or tasks are open. If it refuses, it is right and you are wrong.
 9. **Repeat** until all phases are complete.
 
+## Naming
+Agents have names (`.ai-company/org/ROSTER.md`). Dispatch by **role slug**; refer to results by
+name. "Helena flagged the payback risk" is how a report should read, not "the cfo agent output".
+
 ## Choosing departments
 Not every mission needs every department. Decide from the mission, and record the decision in the
 charter. A pure-research mission does not need engineering. A bug fix does not need brand strategy.
