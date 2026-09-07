@@ -6,8 +6,8 @@ Legend — **A**vailable · **M**issing · **D**uplicate · **R**equired now · 
 | # | Capability | Available | Missing | Duplicate | Required now | Action |
 |---|---|---|---|---|---|---|
 | 1 | Local git | ✅ git 2.50.1 | — | — | ✅ | None — present |
-| 2 | Git **identity** (`user.name` / `user.email`) | ❌ | ✅ no `~/.gitconfig` | — | ✅ | **BLOCKER** — founder must set (P0) |
-| 3 | GitHub repo/PR/issue access | ❌ | ✅ no MCP, no `gh`, no SSH | — | ✅ | **BLOCKER** — founder OAuth (P0) |
+| 2 | Git **identity** (`user.name` / `user.email`) | ✅ | — | — | ✅ | Set 2026-09-07 (`Karan`) |
+| 3 | GitHub repo/PR/issue access | ✅ **verified** | — | — | ✅ | Plugin installed + PAT configured; `get_me` → `karanbindergupta` |
 | 4 | Web research | ✅ `WebSearch` + `WebFetch` | — | — | ✅ | **Verified.** No search MCP installed — native is sufficient |
 | 5 | Browser automation / QA | ✅ `Claude_Browser` | — | ⚠️ 3 stacks | ✅ | **Verified.** Playwright deliberately NOT added |
 | 6 | Browser perf profiling | ✅ chrome-devtools MCP | — | — | ➖ | None |
@@ -23,7 +23,7 @@ Legend — **A**vailable · **M**issing · **D**uplicate · **R**equired now · 
 | 16 | Hooks | ✅ ECC, 7 event types | — | — | ✅ | Untouched. GateGuard flagged |
 | 17 | Dependency vuln scanning (Node) | ✅ `npm audit` | — | — | ✅ | **Verified** — caught GHSA-vh95-rmgr-6w4m |
 | 18 | Dependency vuln scanning (other langs) | ❌ | ✅ no `uv`/`trivy`/`grype` | — | ➖ | Deferred — no non-Node project exists |
-| 19 | Static analysis / SAST | ❌ → ✅ | was ✅ | — | ✅ | **Installed `claude-security` (P0)** |
+| 19 | Static analysis / SAST | ✅ **active** | — | — | ✅ | `claude-security` installed; 7 agents registered |
 | 20 | Secret detection | ⚠️ partial | ✅ no `gitleaks`/`trufflehog` | — | ✅ | `claude-security` + `ecc:security-scan` cover it; binaries blocked by no-Homebrew |
 | 21 | Supply-chain / SBOM | ❌ | ✅ no `syft` | — | ➖ | Deferred (P2) |
 | 22 | Database access | ✅ Supabase MCP + `sqlite3` | ⚠️ no `psql` | — | ➖ | None — no schema exists to inspect |
@@ -46,5 +46,5 @@ Legend — **A**vailable · **M**issing · **D**uplicate · **R**equired now · 
 - **Available and verified by execution:** 7 (research, browser, parallel, persistence, npm audit, npm toolchain, remote-trigger reachability)
 - **Available, not exercised:** 18
 - **Installed by this preflight:** 1 (`claude-security`)
-- **Blocked on founder authorization:** 3 (GitHub, git identity, 14 PM connectors)
+- **Blocked on founder authorization:** 1 (14 PM connectors). GitHub and git identity resolved 2026-09-07
 - **Deliberately skipped:** 9 (see `TOOLING-POLICY.md`)

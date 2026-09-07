@@ -29,23 +29,28 @@ plugin install in this environment:
    launched from the Dock, never sources it. The token must go in the `env` block of
    `~/.claude/settings.json`.
 
-### 1a. OUTSTANDING — rotate the access token
+### 1a. ~~Rotate the access token~~ — RESOLVED 2026-09-07
 
-The active token was pasted into a chat session on 2026-09-07 and must be treated as compromised.
-It is still in use, in **two** places, both plaintext on disk:
+A token was pasted into a chat session and had to be treated as compromised. It has been
+**revoked and replaced**. Evidence: the old token returned `token expired` from the GitHub MCP
+endpoint; the replacement authenticates as `karanbindergupta` via `get_me`. `~/.zshrc` no longer
+contains a token, and the credential now lives in exactly one place —
+`~/.claude/settings.json` → `env.GITHUB_PERSONAL_ACCESS_TOKEN`.
 
-- `~/.claude/settings.json` → `env.GITHUB_PERSONAL_ACCESS_TOKEN` (the one actually used)
-- `~/.zshrc` line 2 (redundant, never read by the app — delete it)
+**Operational notes for future credential work in this environment:**
 
-**Rotation procedure (founder-only; the agent never handles the token):**
-
-1. Delete the current token at <https://github.com/settings/personal-access-tokens>
-2. Generate a replacement at <https://github.com/settings/personal-access-tokens/new> —
-   fine-grained, 90-day expiry, **only select repositories**, permissions limited to Metadata
-   (read), Contents / Issues / Pull requests (read+write), Commit statuses / Actions (read)
-3. `open -e ~/.claude/settings.json`, replace the value inside the quotes, save
-4. `open -e ~/.zshrc`, delete line 2 entirely, save
-5. Quit Claude Code with ⌘Q and reopen
+- **`~/.zshrc` does not work.** zsh reads it only for interactive shells; the Dock-launched
+  desktop app never sources it. Credentials must go in the `env` block of
+  `~/.claude/settings.json`.
+- **Paste, never hand-select.** One rotation attempt failed because the value was
+  hand-selected in TextEdit and the `github_pat_` prefix was left behind — GitHub rejected it
+  with `Authorization header is badly formatted`. The reliable procedure is to have the agent
+  clear the field to `""` first, then click between the quotes and paste with ⌘V.
+- **Prefix matching is not identity.** All of an account's fine-grained PATs share a leading
+  segment (here `github_pat_11CM7B`), so a matching prefix does not mean a token was reused.
+  Verify by authenticating, not by comparing prefixes.
+- **Token still lives in plaintext on disk**, as `settings.json` requires. Mitigate with a short
+  expiry and repository-scoped permissions rather than by hiding the file.
 
 **Standing rule for the AI Company OS: no credential is ever pasted into a chat session, and no
 agent ever asks for one.** A secret's only route is browser → clipboard → editor → file.
