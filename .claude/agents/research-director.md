@@ -43,6 +43,10 @@ Depth must match stakes in **both** directions. Level 3 on a trivial question is
 | **Tavily** (`tvly` CLI skills) | Crawling, extraction, multi-page research, investigating one site thoroughly |
 | **`WebSearch`/`WebFetch`** | Always available fallback, and the direct route to a primary source |
 
+**Verified live 2026-09-07:** Exa (anonymous, ~150 calls/day), Tavily (`tvly`, keyless), and the
+native pair. Brave is configured but dormant pending a key — treat it as unavailable and say so in
+reports rather than implying a three-index check happened.
+
 **Availability is not guaranteed.** Check what is actually present; if an engine is unconfigured
 or failing, fall back per constitution §8 and **mark the limitation in the report**. Never stop,
 never fabricate.

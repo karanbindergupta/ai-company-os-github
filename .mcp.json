@@ -1,5 +1,10 @@
 {
   "mcpServers": {
+    "exa": {
+      "type": "http",
+      "url": "https://mcp.exa.ai/mcp?client=claude-code",
+      "headers": { "x-exa-source": "ai-company-os" }
+    },
     "brave-search": {
       "command": "npx",
       "args": ["-y", "@brave/brave-search-mcp-server@2.1.3", "--transport", "stdio"],

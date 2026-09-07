@@ -5,6 +5,19 @@ The Research Director routes each question to the cheapest engine that can answe
 > **Do not send every question to all three engines.** That is expensive, slow, and produces
 > three versions of the same answer rather than corroboration.
 
+## Live status (verified 2026-09-07)
+
+| Engine | Status | Access | Limits |
+|---|---|---|---|
+| **Exa** | **WORKING** | Anonymous tier — no key | ~3 QPS, ~150 calls/day. OAuth or an API key raises this |
+| **Tavily** | **WORKING** | Keyless — no key | Capped keyless quota; `tvly auth` raises it |
+| **Brave** | Configured, dormant | Needs `BRAVE_API_KEY` | Deferred by founder decision |
+| **WebSearch / WebFetch** | **WORKING** | Native | None |
+
+Two independent engines plus the native pair are live, so cross-engine verification works today
+**without any credential**. Brave would add a third independent index; until then, use Exa and
+Tavily as the two independent checks, and note in reports that Brave was unavailable.
+
 ## Engine selection
 
 ### EXA — deep and semantic
