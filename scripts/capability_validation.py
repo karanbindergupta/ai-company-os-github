@@ -88,8 +88,14 @@ t("13 FOUNDER  founder remains final authority on founder-level decisions",
 
 # 14 DUPLICATION TEST (section 43)
 dups=[]
-if (R/".ai-company/governance/company-constitution.md").exists() and (R/".ai-company/constitution/CONSTITUTION.md").exists():
-    dups.append("two constitutions")
+# A cross-reference pointer is not a duplicate; a second governing document is.
+# Distinguish by substance: a pointer is short and links to the canonical file.
+gov=R/".ai-company/governance/company-constitution.md"; canon=R/".ai-company/constitution/CONSTITUTION.md"
+if gov.exists() and canon.exists():
+    txt=gov.read_text()
+    is_pointer = len(txt) < 1500 and "constitution/CONSTITUTION.md" in txt
+    if not is_pointer:
+        dups.append("two substantive constitutions - governance/company-constitution.md is not a pointer")
 names=collections.Counter(p.stem for p in packs)
 dups += [f"duplicate role pack: {k}" for k,v in names.items() if v>1]
 agents=[p.stem for p in (R/".claude/agents").glob("*.md")]
