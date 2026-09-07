@@ -2,7 +2,7 @@
   "run_id": "run_f21d94c76c",
   "created": "2026-09-07T13:37:50+00:00",
   "updated": "2026-09-07T13:44:49+00:00",
-  "status": "archived",
+  "status": "active",
   "industry": "Local food marketplace",
   "idea": "A marketplace connecting customers with independent local home chefs",
   "constraints": "solo founder, pre-revenue",
@@ -54,7 +54,5 @@
     }
   },
   "escalations": [],
-  "notes": [
-    "Dry run 2026-09-07: organization test, not a real venture. See .ai-company/audits/organization.md"
-  ]
+  "notes": []
 }
