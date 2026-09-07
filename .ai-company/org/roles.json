@@ -1,0 +1,960 @@
+{
+  "version": 1,
+  "count": 106,
+  "roles": [
+    {
+      "slug": "accessibility-designer",
+      "title": "Accessibility Designer",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/accessibility.md",
+      "path": ".ai-company/org/roles/creative/accessibility-designer.md"
+    },
+    {
+      "slug": "brand-designer",
+      "title": "Brand Designer",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/brand-identity.md",
+      "path": ".ai-company/org/roles/creative/brand-designer.md"
+    },
+    {
+      "slug": "brand-strategist-creative",
+      "title": "Brand Strategist (Creative)",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/brand-application.md",
+      "path": ".ai-company/org/roles/creative/brand-strategist-creative.md"
+    },
+    {
+      "slug": "content-designer",
+      "title": "Content Designer",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/content.md",
+      "path": ".ai-company/org/roles/creative/content-designer.md"
+    },
+    {
+      "slug": "creative-auditor",
+      "title": "Creative Auditor",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/audits/creative.md",
+      "path": ".ai-company/org/roles/creative/creative-auditor.md"
+    },
+    {
+      "slug": "design-system-architect",
+      "title": "Design System Architect",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/design-system.md",
+      "path": ".ai-company/org/roles/creative/design-system-architect.md"
+    },
+    {
+      "slug": "interaction-designer",
+      "title": "Interaction Designer",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/interaction.md",
+      "path": ".ai-company/org/roles/creative/interaction-designer.md"
+    },
+    {
+      "slug": "motion-specialist",
+      "title": "Motion Specialist",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/motion.md",
+      "path": ".ai-company/org/roles/creative/motion-specialist.md"
+    },
+    {
+      "slug": "positioning-writer",
+      "title": "Positioning Writer",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/positioning-copy.md",
+      "path": ".ai-company/org/roles/creative/positioning-writer.md"
+    },
+    {
+      "slug": "ui-designer",
+      "title": "UI Designer",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/ui/",
+      "path": ".ai-company/org/roles/creative/ui-designer.md"
+    },
+    {
+      "slug": "ux-designer",
+      "title": "UX Designer",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/ux/",
+      "path": ".ai-company/org/roles/creative/ux-designer.md"
+    },
+    {
+      "slug": "ux-researcher",
+      "title": "UX Researcher",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/ux-research.md",
+      "path": ".ai-company/org/roles/creative/ux-researcher.md"
+    },
+    {
+      "slug": "visual-designer",
+      "title": "Visual Designer",
+      "department": "creative",
+      "reports_to": "creative-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/artifacts/visual/",
+      "path": ".ai-company/org/roles/creative/visual-designer.md"
+    },
+    {
+      "slug": "ai-ml-engineer",
+      "title": "AI/ML Engineer",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/architecture/ml-design.md",
+      "path": ".ai-company/org/roles/engineering/ai-ml-engineer.md"
+    },
+    {
+      "slug": "api-specialist",
+      "title": "API Specialist",
+      "department": "engineering",
+      "reports_to": "backend-lead",
+      "seniority": "specialist",
+      "artifact": ".ai-company/architecture/api-spec.md",
+      "path": ".ai-company/org/roles/engineering/api-specialist.md"
+    },
+    {
+      "slug": "backend-engineer",
+      "title": "Backend Engineer",
+      "department": "engineering",
+      "reports_to": "backend-lead",
+      "seniority": "specialist",
+      "artifact": "(source files in the product repository)",
+      "path": ".ai-company/org/roles/engineering/backend-engineer.md"
+    },
+    {
+      "slug": "backend-lead",
+      "title": "Backend Lead",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/engineering/backend-plan.md",
+      "path": ".ai-company/org/roles/engineering/backend-lead.md"
+    },
+    {
+      "slug": "cloud-architect",
+      "title": "Cloud Architect",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/architecture/infrastructure.md",
+      "path": ".ai-company/org/roles/engineering/cloud-architect.md"
+    },
+    {
+      "slug": "data-engineer",
+      "title": "Data Engineer",
+      "department": "engineering",
+      "reports_to": "database-architect",
+      "seniority": "specialist",
+      "artifact": "(source files)",
+      "path": ".ai-company/org/roles/engineering/data-engineer.md"
+    },
+    {
+      "slug": "database-architect",
+      "title": "Database Architect",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/architecture/data-model.md",
+      "path": ".ai-company/org/roles/engineering/database-architect.md"
+    },
+    {
+      "slug": "devops-engineer",
+      "title": "DevOps Engineer",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": "(source files)",
+      "path": ".ai-company/org/roles/engineering/devops-engineer.md"
+    },
+    {
+      "slug": "frontend-engineer",
+      "title": "Frontend Engineer",
+      "department": "engineering",
+      "reports_to": "frontend-lead",
+      "seniority": "specialist",
+      "artifact": "(source files in the product repository)",
+      "path": ".ai-company/org/roles/engineering/frontend-engineer.md"
+    },
+    {
+      "slug": "frontend-lead",
+      "title": "Frontend Lead",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/engineering/frontend-plan.md",
+      "path": ".ai-company/org/roles/engineering/frontend-lead.md"
+    },
+    {
+      "slug": "infrastructure-engineer",
+      "title": "Infrastructure Engineer",
+      "department": "engineering",
+      "reports_to": "cloud-architect",
+      "seniority": "specialist",
+      "artifact": "(source files)",
+      "path": ".ai-company/org/roles/engineering/infrastructure-engineer.md"
+    },
+    {
+      "slug": "integration-engineer",
+      "title": "Integration Engineer",
+      "department": "engineering",
+      "reports_to": "backend-lead",
+      "seniority": "specialist",
+      "artifact": ".ai-company/architecture/integrations.md",
+      "path": ".ai-company/org/roles/engineering/integration-engineer.md"
+    },
+    {
+      "slug": "mobile-engineer",
+      "title": "Mobile Engineer",
+      "department": "engineering",
+      "reports_to": "frontend-lead",
+      "seniority": "specialist",
+      "artifact": "(source files)",
+      "path": ".ai-company/org/roles/engineering/mobile-engineer.md"
+    },
+    {
+      "slug": "performance-engineer",
+      "title": "Performance Engineer",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/qa/performance.md",
+      "path": ".ai-company/org/roles/engineering/performance-engineer.md"
+    },
+    {
+      "slug": "principal-architect",
+      "title": "Principal Architect",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/architecture/architecture.md",
+      "path": ".ai-company/org/roles/engineering/principal-architect.md"
+    },
+    {
+      "slug": "solution-architect",
+      "title": "Solution Architect",
+      "department": "engineering",
+      "reports_to": "principal-architect",
+      "seniority": "specialist",
+      "artifact": ".ai-company/architecture/solutions/",
+      "path": ".ai-company/org/roles/engineering/solution-architect.md"
+    },
+    {
+      "slug": "sre",
+      "title": "Site Reliability Engineer",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/engineering/reliability.md",
+      "path": ".ai-company/org/roles/engineering/sre.md"
+    },
+    {
+      "slug": "systems-architect",
+      "title": "Systems Architect",
+      "department": "engineering",
+      "reports_to": "principal-architect",
+      "seniority": "specialist",
+      "artifact": ".ai-company/architecture/systems.md",
+      "path": ".ai-company/org/roles/engineering/systems-architect.md"
+    },
+    {
+      "slug": "ceo",
+      "title": "Chief Executive Officer",
+      "department": "executive",
+      "reports_to": "founder",
+      "seniority": "executive",
+      "artifact": ".ai-company/mission/charter.md",
+      "path": ".ai-company/org/roles/executive/ceo.md"
+    },
+    {
+      "slug": "cfo",
+      "title": "Chief Financial Officer",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/finance/model.md",
+      "path": ".ai-company/org/roles/executive/cfo.md"
+    },
+    {
+      "slug": "ciso",
+      "title": "Chief Information Security Officer",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/security/posture.md",
+      "path": ".ai-company/org/roles/executive/ciso.md"
+    },
+    {
+      "slug": "cmo",
+      "title": "Chief Marketing Officer",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/marketing/gtm.md",
+      "path": ".ai-company/org/roles/executive/cmo.md"
+    },
+    {
+      "slug": "coo",
+      "title": "Chief Operating Officer",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/state/operations.md",
+      "path": ".ai-company/org/roles/executive/coo.md"
+    },
+    {
+      "slug": "cpo",
+      "title": "Chief Product Officer",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/product/strategy.md",
+      "path": ".ai-company/org/roles/executive/cpo.md"
+    },
+    {
+      "slug": "creative-director",
+      "title": "Creative Director",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/design/creative-direction.md",
+      "path": ".ai-company/org/roles/executive/creative-director.md"
+    },
+    {
+      "slug": "cro-research",
+      "title": "Chief Research Officer",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/research/synthesis.md",
+      "path": ".ai-company/org/roles/executive/cro-research.md"
+    },
+    {
+      "slug": "cro-risk",
+      "title": "Chief Risk Officer",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/risks/register.md",
+      "path": ".ai-company/org/roles/executive/cro-risk.md"
+    },
+    {
+      "slug": "cso",
+      "title": "Chief Strategy Officer",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/decisions/strategy.md",
+      "path": ".ai-company/org/roles/executive/cso.md"
+    },
+    {
+      "slug": "cto",
+      "title": "Chief Technology Officer",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/architecture/cto-position.md",
+      "path": ".ai-company/org/roles/executive/cto.md"
+    },
+    {
+      "slug": "acquisition-specialist",
+      "title": "Acquisition Specialist",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/acquisition.md",
+      "path": ".ai-company/org/roles/growth/acquisition-specialist.md"
+    },
+    {
+      "slug": "analytics-specialist",
+      "title": "Analytics Specialist",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/analytics.md",
+      "path": ".ai-company/org/roles/growth/analytics-specialist.md"
+    },
+    {
+      "slug": "content-strategist",
+      "title": "Content Strategist",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/content-strategy.md",
+      "path": ".ai-company/org/roles/growth/content-strategist.md"
+    },
+    {
+      "slug": "copywriter",
+      "title": "Copywriter",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/copy/",
+      "path": ".ai-company/org/roles/growth/copywriter.md"
+    },
+    {
+      "slug": "cro-specialist",
+      "title": "Conversion Optimization Specialist",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/conversion.md",
+      "path": ".ai-company/org/roles/growth/cro-specialist.md"
+    },
+    {
+      "slug": "customer-success-strategist",
+      "title": "Customer Success Strategist",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/customer-success.md",
+      "path": ".ai-company/org/roles/growth/customer-success-strategist.md"
+    },
+    {
+      "slug": "growth-strategist",
+      "title": "Growth Strategist",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/growth.md",
+      "path": ".ai-company/org/roles/growth/growth-strategist.md"
+    },
+    {
+      "slug": "marketing-strategist",
+      "title": "Marketing Strategist",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/strategy.md",
+      "path": ".ai-company/org/roles/growth/marketing-strategist.md"
+    },
+    {
+      "slug": "seo-specialist",
+      "title": "SEO Specialist",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/seo.md",
+      "path": ".ai-company/org/roles/growth/seo-specialist.md"
+    },
+    {
+      "slug": "social-strategist",
+      "title": "Social Strategy Specialist",
+      "department": "growth",
+      "reports_to": "cmo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/marketing/social.md",
+      "path": ".ai-company/org/roles/growth/social-strategist.md"
+    },
+    {
+      "slug": "agent-performance-auditor",
+      "title": "Agent Performance Auditor",
+      "department": "operations",
+      "reports_to": "coo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/audits/organization.md",
+      "path": ".ai-company/org/roles/operations/agent-performance-auditor.md"
+    },
+    {
+      "slug": "cost-optimizer",
+      "title": "Cost Optimizer",
+      "department": "operations",
+      "reports_to": "cfo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/state/cost-report.md",
+      "path": ".ai-company/org/roles/operations/cost-optimizer.md"
+    },
+    {
+      "slug": "delivery-manager",
+      "title": "Delivery Manager",
+      "department": "operations",
+      "reports_to": "coo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/engineering/integration.md",
+      "path": ".ai-company/org/roles/operations/delivery-manager.md"
+    },
+    {
+      "slug": "documentation-specialist",
+      "title": "Documentation Specialist",
+      "department": "operations",
+      "reports_to": "coo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/docs/INDEX.md",
+      "path": ".ai-company/org/roles/operations/documentation-specialist.md"
+    },
+    {
+      "slug": "knowledge-manager",
+      "title": "Knowledge Manager",
+      "department": "operations",
+      "reports_to": "coo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/knowledge/",
+      "path": ".ai-company/org/roles/operations/knowledge-manager.md"
+    },
+    {
+      "slug": "project-manager",
+      "title": "Project Manager",
+      "department": "operations",
+      "reports_to": "coo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/state/project-plan.md",
+      "path": ".ai-company/org/roles/operations/project-manager.md"
+    },
+    {
+      "slug": "technical-writer",
+      "title": "Technical Writer",
+      "department": "operations",
+      "reports_to": "coo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/docs/",
+      "path": ".ai-company/org/roles/operations/technical-writer.md"
+    },
+    {
+      "slug": "chief-people-officer",
+      "title": "Chief People Officer",
+      "department": "people",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/org/hiring/decisions.md",
+      "path": ".ai-company/org/roles/people/chief-people-officer.md"
+    },
+    {
+      "slug": "onboarding-specialist",
+      "title": "Onboarding Specialist",
+      "department": "people",
+      "reports_to": "chief-people-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/org/hiring/onboarding.md",
+      "path": ".ai-company/org/roles/people/onboarding-specialist.md"
+    },
+    {
+      "slug": "org-designer",
+      "title": "Organization Designer",
+      "department": "people",
+      "reports_to": "chief-people-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/org/org-design.md",
+      "path": ".ai-company/org/roles/people/org-designer.md"
+    },
+    {
+      "slug": "role-author",
+      "title": "Role Author",
+      "department": "people",
+      "reports_to": "chief-people-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/org/roles/<department>/<slug>.md",
+      "path": ".ai-company/org/roles/people/role-author.md"
+    },
+    {
+      "slug": "role-researcher",
+      "title": "Role Researcher",
+      "department": "people",
+      "reports_to": "chief-people-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/org/hiring/research/",
+      "path": ".ai-company/org/roles/people/role-researcher.md"
+    },
+    {
+      "slug": "acceptance-criteria-specialist",
+      "title": "Acceptance Criteria Specialist",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/product/acceptance-criteria.md",
+      "path": ".ai-company/org/roles/product/acceptance-criteria-specialist.md"
+    },
+    {
+      "slug": "business-analyst",
+      "title": "Business Analyst",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/product/analysis.md",
+      "path": ".ai-company/org/roles/product/business-analyst.md"
+    },
+    {
+      "slug": "feature-specialist",
+      "title": "Feature Specialist",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/product/features/",
+      "path": ".ai-company/org/roles/product/feature-specialist.md"
+    },
+    {
+      "slug": "product-auditor",
+      "title": "Product Auditor",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/audits/product.md",
+      "path": ".ai-company/org/roles/product/product-auditor.md"
+    },
+    {
+      "slug": "product-discovery-specialist",
+      "title": "Product Discovery Specialist",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/product/discovery.md",
+      "path": ".ai-company/org/roles/product/product-discovery-specialist.md"
+    },
+    {
+      "slug": "product-manager",
+      "title": "Product Manager",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/product/requirements.md",
+      "path": ".ai-company/org/roles/product/product-manager.md"
+    },
+    {
+      "slug": "product-owner",
+      "title": "Product Owner",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/product/acceptance.md",
+      "path": ".ai-company/org/roles/product/product-owner.md"
+    },
+    {
+      "slug": "product-strategist",
+      "title": "Product Strategist",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/product/product-strategy.md",
+      "path": ".ai-company/org/roles/product/product-strategist.md"
+    },
+    {
+      "slug": "requirements-engineer",
+      "title": "Requirements Engineer",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/product/functional-requirements.md",
+      "path": ".ai-company/org/roles/product/requirements-engineer.md"
+    },
+    {
+      "slug": "roadmap-strategist",
+      "title": "Roadmap Strategist",
+      "department": "product",
+      "reports_to": "cpo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/roadmap/roadmap.md",
+      "path": ".ai-company/org/roles/product/roadmap-strategist.md"
+    },
+    {
+      "slug": "accessibility-tester",
+      "title": "Accessibility Tester",
+      "department": "quality",
+      "reports_to": "qa-lead",
+      "seniority": "specialist",
+      "artifact": ".ai-company/qa/accessibility.md",
+      "path": ".ai-company/org/roles/quality/accessibility-tester.md"
+    },
+    {
+      "slug": "code-reviewer",
+      "title": "Code Reviewer",
+      "department": "quality",
+      "reports_to": "qa-lead",
+      "seniority": "specialist",
+      "artifact": ".ai-company/qa/reviews/",
+      "path": ".ai-company/org/roles/quality/code-reviewer.md"
+    },
+    {
+      "slug": "e2e-tester",
+      "title": "End-to-End Tester",
+      "department": "quality",
+      "reports_to": "qa-lead",
+      "seniority": "specialist",
+      "artifact": ".ai-company/qa/e2e.md",
+      "path": ".ai-company/org/roles/quality/e2e-tester.md"
+    },
+    {
+      "slug": "performance-tester",
+      "title": "Performance Tester",
+      "department": "quality",
+      "reports_to": "qa-lead",
+      "seniority": "specialist",
+      "artifact": ".ai-company/qa/performance-tests.md",
+      "path": ".ai-company/org/roles/quality/performance-tester.md"
+    },
+    {
+      "slug": "qa-engineer",
+      "title": "QA Engineer",
+      "department": "quality",
+      "reports_to": "qa-lead",
+      "seniority": "specialist",
+      "artifact": ".ai-company/qa/results/",
+      "path": ".ai-company/org/roles/quality/qa-engineer.md"
+    },
+    {
+      "slug": "qa-lead",
+      "title": "QA Lead",
+      "department": "quality",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/qa/strategy.md",
+      "path": ".ai-company/org/roles/quality/qa-lead.md"
+    },
+    {
+      "slug": "regression-tester",
+      "title": "Regression Tester",
+      "department": "quality",
+      "reports_to": "qa-lead",
+      "seniority": "specialist",
+      "artifact": ".ai-company/qa/regression.md",
+      "path": ".ai-company/org/roles/quality/regression-tester.md"
+    },
+    {
+      "slug": "release-manager",
+      "title": "Release Manager",
+      "department": "quality",
+      "reports_to": "coo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/qa/release-checklist.md",
+      "path": ".ai-company/org/roles/quality/release-manager.md"
+    },
+    {
+      "slug": "test-automation-engineer",
+      "title": "Test Automation Engineer",
+      "department": "quality",
+      "reports_to": "qa-lead",
+      "seniority": "specialist",
+      "artifact": "(test files)",
+      "path": ".ai-company/org/roles/quality/test-automation-engineer.md"
+    },
+    {
+      "slug": "appsec-engineer",
+      "title": "Application Security Engineer",
+      "department": "security",
+      "reports_to": "ciso",
+      "seniority": "specialist",
+      "artifact": ".ai-company/security/appsec.md",
+      "path": ".ai-company/org/roles/security/appsec-engineer.md"
+    },
+    {
+      "slug": "compliance-specialist",
+      "title": "Compliance Specialist",
+      "department": "security",
+      "reports_to": "ciso",
+      "seniority": "specialist",
+      "artifact": ".ai-company/security/compliance.md",
+      "path": ".ai-company/org/roles/security/compliance-specialist.md"
+    },
+    {
+      "slug": "dependency-auditor",
+      "title": "Dependency Auditor",
+      "department": "security",
+      "reports_to": "ciso",
+      "seniority": "specialist",
+      "artifact": ".ai-company/security/dependencies.md",
+      "path": ".ai-company/org/roles/security/dependency-auditor.md"
+    },
+    {
+      "slug": "privacy-specialist",
+      "title": "Privacy Specialist",
+      "department": "security",
+      "reports_to": "ciso",
+      "seniority": "specialist",
+      "artifact": ".ai-company/security/privacy.md",
+      "path": ".ai-company/org/roles/security/privacy-specialist.md"
+    },
+    {
+      "slug": "red-team",
+      "title": "Defensive Red Team",
+      "department": "security",
+      "reports_to": "ciso",
+      "seniority": "specialist",
+      "artifact": ".ai-company/security/red-team.md",
+      "path": ".ai-company/org/roles/security/red-team.md"
+    },
+    {
+      "slug": "security-architect",
+      "title": "Security Architect",
+      "department": "security",
+      "reports_to": "ciso",
+      "seniority": "specialist",
+      "artifact": ".ai-company/security/architecture.md",
+      "path": ".ai-company/org/roles/security/security-architect.md"
+    },
+    {
+      "slug": "security-reviewer",
+      "title": "Security Reviewer",
+      "department": "security",
+      "reports_to": "ciso",
+      "seniority": "specialist",
+      "artifact": ".ai-company/security/review.md",
+      "path": ".ai-company/org/roles/security/security-reviewer.md"
+    },
+    {
+      "slug": "threat-modeler",
+      "title": "Threat Modeler",
+      "department": "security",
+      "reports_to": "ciso",
+      "seniority": "specialist",
+      "artifact": ".ai-company/security/threat-model.md",
+      "path": ".ai-company/org/roles/security/threat-modeler.md"
+    },
+    {
+      "slug": "brand-strategist-research",
+      "title": "Brand Strategist (Strategy)",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/design/brand-strategy.md",
+      "path": ".ai-company/org/roles/strategy-research/brand-strategist-research.md"
+    },
+    {
+      "slug": "business-model-strategist",
+      "title": "Business Model Strategist",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/decisions/business-model.md",
+      "path": ".ai-company/org/roles/strategy-research/business-model-strategist.md"
+    },
+    {
+      "slug": "competitor-intelligence",
+      "title": "Competitive Intelligence Analyst",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/competitors.md",
+      "path": ".ai-company/org/roles/strategy-research/competitor-intelligence.md"
+    },
+    {
+      "slug": "customer-researcher",
+      "title": "Customer Researcher",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/customers.md",
+      "path": ".ai-company/org/roles/strategy-research/customer-researcher.md"
+    },
+    {
+      "slug": "feasibility-analyst",
+      "title": "Feasibility Analyst",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/feasibility.md",
+      "path": ".ai-company/org/roles/strategy-research/feasibility-analyst.md"
+    },
+    {
+      "slug": "features-strategist",
+      "title": "Features Strategist",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/product/features.md",
+      "path": ".ai-company/org/roles/strategy-research/features-strategist.md"
+    },
+    {
+      "slug": "financial-strategist",
+      "title": "Financial Strategist",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/finance/projections.md",
+      "path": ".ai-company/org/roles/strategy-research/financial-strategist.md"
+    },
+    {
+      "slug": "industry-researcher",
+      "title": "Industry Researcher",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/industry.md",
+      "path": ".ai-company/org/roles/strategy-research/industry-researcher.md"
+    },
+    {
+      "slug": "innovation-strategist",
+      "title": "Innovation Strategist",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/innovation.md",
+      "path": ".ai-company/org/roles/strategy-research/innovation-strategist.md"
+    },
+    {
+      "slug": "market-researcher",
+      "title": "Market Researcher",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/market.md",
+      "path": ".ai-company/org/roles/strategy-research/market-researcher.md"
+    },
+    {
+      "slug": "opportunity-analyst",
+      "title": "Opportunity Analyst",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/opportunities.md",
+      "path": ".ai-company/org/roles/strategy-research/opportunity-analyst.md"
+    },
+    {
+      "slug": "pricing-strategist",
+      "title": "Pricing Strategist",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/finance/pricing.md",
+      "path": ".ai-company/org/roles/strategy-research/pricing-strategist.md"
+    },
+    {
+      "slug": "problem-solver",
+      "title": "Problem Solver",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/incidents/",
+      "path": ".ai-company/org/roles/strategy-research/problem-solver.md"
+    },
+    {
+      "slug": "rnd-specialist",
+      "title": "R&D Specialist",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/rnd/",
+      "path": ".ai-company/org/roles/strategy-research/rnd-specialist.md"
+    },
+    {
+      "slug": "trend-analyst",
+      "title": "Trend Analyst",
+      "department": "strategy-research",
+      "reports_to": "chief-research-officer",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/trends.md",
+      "path": ".ai-company/org/roles/strategy-research/trend-analyst.md"
+    }
+  ]
+}

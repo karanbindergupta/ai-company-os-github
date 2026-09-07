@@ -1,0 +1,400 @@
+{
+  "version": 1,
+  "phases": [
+    {
+      "id": "intake",
+      "name": "Founder Intake",
+      "owner": "ceo",
+      "exit_criteria": [
+        "founder input captured"
+      ],
+      "artifacts": [
+        ".ai-company/mission/intake.md"
+      ],
+      "depends_on": [],
+      "gate": "gate_none"
+    },
+    {
+      "id": "mission",
+      "name": "Mission Charter",
+      "owner": "ceo",
+      "exit_criteria": [
+        "objective explicit",
+        "success criteria defined",
+        "departments selected"
+      ],
+      "artifacts": [
+        ".ai-company/mission/charter.md"
+      ],
+      "depends_on": [
+        "intake"
+      ],
+      "gate": "gate_none"
+    },
+    {
+      "id": "discovery",
+      "name": "Product Discovery",
+      "owner": "product-discovery-specialist",
+      "exit_criteria": [
+        "riskiest assumption named",
+        "problem validated or invalidated"
+      ],
+      "artifacts": [
+        ".ai-company/product/discovery.md",
+        ".ai-company/product/assumptions.md"
+      ],
+      "depends_on": [
+        "mission"
+      ],
+      "gate": "gate_none"
+    },
+    {
+      "id": "research",
+      "name": "Parallel Research",
+      "owner": "cro-research",
+      "exit_criteria": [
+        "industry, market, customer, competitor, trend, feasibility complete",
+        "every material claim sourced"
+      ],
+      "artifacts": [
+        ".ai-company/research/industry.md",
+        ".ai-company/research/market.md",
+        ".ai-company/research/customers.md",
+        ".ai-company/research/competitors.md",
+        ".ai-company/research/trends.md",
+        ".ai-company/research/feasibility.md"
+      ],
+      "depends_on": [
+        "mission"
+      ],
+      "gate": "gate_research"
+    },
+    {
+      "id": "business",
+      "name": "Business Model and Economics",
+      "owner": "cfo",
+      "exit_criteria": [
+        "model closes or is declared non-viable",
+        "pricing grounded in evidence"
+      ],
+      "artifacts": [
+        ".ai-company/decisions/business-model.md",
+        ".ai-company/finance/unit-economics.md",
+        ".ai-company/finance/pricing.md"
+      ],
+      "depends_on": [
+        "research"
+      ],
+      "gate": "gate_none"
+    },
+    {
+      "id": "strategy",
+      "name": "Strategy and Positioning",
+      "owner": "cso",
+      "exit_criteria": [
+        "differentiation stated",
+        "moat named or absent honestly"
+      ],
+      "artifacts": [
+        ".ai-company/decisions/strategy.md",
+        ".ai-company/marketing/positioning.md"
+      ],
+      "depends_on": [
+        "research"
+      ],
+      "gate": "gate_none"
+    },
+    {
+      "id": "brand",
+      "name": "Brand and UX Strategy",
+      "owner": "creative-director",
+      "exit_criteria": [
+        "brand strategy set",
+        "UX research complete"
+      ],
+      "artifacts": [
+        ".ai-company/design/brand-strategy.md",
+        ".ai-company/design/ux-research.md"
+      ],
+      "depends_on": [
+        "strategy"
+      ],
+      "gate": "gate_none"
+    },
+    {
+      "id": "debate",
+      "name": "Executive Debate",
+      "owner": "ceo",
+      "exit_criteria": [
+        "every executive filed a position",
+        "dissent recorded",
+        "CEO ruling written"
+      ],
+      "artifacts": [
+        ".ai-company/decisions/executive-debate.md"
+      ],
+      "depends_on": [
+        "business",
+        "strategy",
+        "brand",
+        "discovery"
+      ],
+      "gate": "gate_debate"
+    },
+    {
+      "id": "brief",
+      "name": "Master Brief",
+      "owner": "ceo",
+      "exit_criteria": [
+        "all 40 sections present",
+        "reviewed by CTO, CPO, CISO, CFO, Creative Director"
+      ],
+      "artifacts": [
+        ".ai-company/briefs/MASTER-BRIEF.md"
+      ],
+      "depends_on": [
+        "debate"
+      ],
+      "gate": "gate_brief"
+    },
+    {
+      "id": "product_spec",
+      "name": "Product Specification",
+      "owner": "cpo",
+      "exit_criteria": [
+        "MVP boundary set",
+        "reject list non-empty",
+        "acceptance criteria testable"
+      ],
+      "artifacts": [
+        ".ai-company/product/requirements.md",
+        ".ai-company/product/mvp.md",
+        ".ai-company/product/nfr.md"
+      ],
+      "depends_on": [
+        "brief"
+      ],
+      "gate": "gate_product_spec"
+    },
+    {
+      "id": "architecture",
+      "name": "Architecture",
+      "owner": "principal-architect",
+      "exit_criteria": [
+        "stack justified against requirements",
+        "ADRs written",
+        "security architecture reviewed"
+      ],
+      "artifacts": [
+        ".ai-company/architecture/architecture.md",
+        ".ai-company/architecture/decisions/",
+        ".ai-company/security/architecture.md"
+      ],
+      "depends_on": [
+        "product_spec"
+      ],
+      "gate": "gate_architecture"
+    },
+    {
+      "id": "design",
+      "name": "Design",
+      "owner": "creative-director",
+      "exit_criteria": [
+        "design system defined",
+        "flows cover error and empty states",
+        "accessibility specified"
+      ],
+      "artifacts": [
+        ".ai-company/design/design-system.md",
+        ".ai-company/design/ux/",
+        ".ai-company/design/accessibility.md"
+      ],
+      "depends_on": [
+        "product_spec"
+      ],
+      "gate": "gate_design"
+    },
+    {
+      "id": "plan",
+      "name": "Implementation Plan",
+      "owner": "coo",
+      "exit_criteria": [
+        "task graph acyclic",
+        "every task has owner, criteria, dependencies"
+      ],
+      "artifacts": [
+        ".ai-company/state/tasks.json",
+        ".ai-company/state/project-plan.md"
+      ],
+      "depends_on": [
+        "architecture",
+        "design"
+      ],
+      "gate": "gate_plan"
+    },
+    {
+      "id": "build",
+      "name": "Parallel Engineering",
+      "owner": "cto",
+      "exit_criteria": [
+        "all tasks done with tests passing",
+        "independent review on every change"
+      ],
+      "artifacts": [
+        ".ai-company/engineering/"
+      ],
+      "depends_on": [
+        "plan"
+      ],
+      "gate": "gate_none"
+    },
+    {
+      "id": "integrate",
+      "name": "Integration",
+      "owner": "delivery-manager",
+      "exit_criteria": [
+        "all streams merged",
+        "integration tests pass"
+      ],
+      "artifacts": [
+        ".ai-company/engineering/integration.md"
+      ],
+      "depends_on": [
+        "build"
+      ],
+      "gate": "gate_none"
+    },
+    {
+      "id": "qa",
+      "name": "Quality Assurance",
+      "owner": "qa-lead",
+      "exit_criteria": [
+        "functional, e2e, regression, accessibility, performance complete",
+        "no open critical defects"
+      ],
+      "artifacts": [
+        ".ai-company/qa/report.md"
+      ],
+      "depends_on": [
+        "integrate"
+      ],
+      "gate": "gate_qa"
+    },
+    {
+      "id": "security",
+      "name": "Security Review",
+      "owner": "ciso",
+      "exit_criteria": [
+        "threat model current",
+        "appsec review done",
+        "dependencies audited",
+        "red team run"
+      ],
+      "artifacts": [
+        ".ai-company/security/posture.md"
+      ],
+      "depends_on": [
+        "integrate"
+      ],
+      "gate": "gate_security"
+    },
+    {
+      "id": "audit",
+      "name": "Independent Audits",
+      "owner": "cro-risk",
+      "exit_criteria": [
+        "product, creative, architecture and organization audits complete"
+      ],
+      "artifacts": [
+        ".ai-company/audits/product.md",
+        ".ai-company/audits/creative.md",
+        ".ai-company/audits/architecture.md",
+        ".ai-company/audits/organization.md"
+      ],
+      "depends_on": [
+        "qa",
+        "security"
+      ],
+      "gate": "gate_audit"
+    },
+    {
+      "id": "adversarial",
+      "name": "Adversarial Review",
+      "owner": "red-team",
+      "exit_criteria": [
+        "break-it questions answered",
+        "findings converted to remediation tasks"
+      ],
+      "artifacts": [
+        ".ai-company/audits/adversarial.md"
+      ],
+      "depends_on": [
+        "audit"
+      ],
+      "gate": "gate_none"
+    },
+    {
+      "id": "remediate",
+      "name": "Remediation",
+      "owner": "coo",
+      "exit_criteria": [
+        "every finding fixed or accepted as recorded risk"
+      ],
+      "artifacts": [
+        ".ai-company/state/remediation.md"
+      ],
+      "depends_on": [
+        "adversarial"
+      ],
+      "gate": "gate_none"
+    },
+    {
+      "id": "retest",
+      "name": "Retest",
+      "owner": "qa-lead",
+      "exit_criteria": [
+        "all remediated items retested",
+        "no new regressions"
+      ],
+      "artifacts": [
+        ".ai-company/qa/retest.md"
+      ],
+      "depends_on": [
+        "remediate"
+      ],
+      "gate": "gate_qa"
+    },
+    {
+      "id": "exec_review",
+      "name": "Executive Review",
+      "owner": "ceo",
+      "exit_criteria": [
+        "executives signed off",
+        "founder decision package prepared"
+      ],
+      "artifacts": [
+        ".ai-company/decisions/founder/release-package.md"
+      ],
+      "depends_on": [
+        "retest"
+      ],
+      "gate": "gate_exec"
+    },
+    {
+      "id": "deliver",
+      "name": "Delivery",
+      "owner": "release-manager",
+      "exit_criteria": [
+        "every gate green with evidence",
+        "founder authorized"
+      ],
+      "artifacts": [
+        ".ai-company/qa/release-checklist.md"
+      ],
+      "depends_on": [
+        "exec_review"
+      ],
+      "gate": "gate_release"
+    }
+  ]
+}
