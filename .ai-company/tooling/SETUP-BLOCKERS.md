@@ -42,18 +42,13 @@ non-interactive and cannot run an OAuth flow. Then confirm with `/mcp`.
 Do not add a second GitHub integration; this one covers repos, branches, commits, PRs, issues,
 code review and Actions.
 
-### 2. Git has no identity — commits will fail
+### 2. ~~Git has no identity~~ — RESOLVED 2026-09-07
 
-There is no `~/.gitconfig` at all. **Verified during this preflight:** `git commit` in the new
-`~/code/ai-company` repo failed with `Author identity unknown`. The preflight documentation is
-staged but **cannot be committed** until this is set.
+Was: no `~/.gitconfig` existed, and `git commit` failed with `Author identity unknown`.
 
-You asked me to verify the GitHub connection rather than set this, so **I did not set it.**
-When you're ready, substituting the name you want on commits:
-
-```bash
-git config --global user.name "Karan" && git config --global user.email "kewalsingh99990@gmail.com"
-```
+The founder ran the fix during the preflight session. `~/.gitconfig` now sets
+`user.name = Karan` / `user.email = kewalsingh99990@gmail.com`, and the preflight
+documentation was committed as `69cf0fd`.
 
 ### 3. No SSH keys
 
