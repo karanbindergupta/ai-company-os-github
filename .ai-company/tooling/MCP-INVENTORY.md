@@ -48,12 +48,17 @@ From the `product-management` plugin — **14 servers, all unauthenticated:**
 2026-08-31. **This session is non-interactive and cannot run the OAuth flow.** See
 `SETUP-BLOCKERS.md`.
 
-## Absent, and deliberately so
+## GitHub — enabled 2026-09-07, awaiting a token
 
 **No GitHub MCP server is present.** Verified three ways: tool search for `+github` returns no
 GitHub tool; `mcp-registry search_mcp_registry(["github","repository","pull request","git"])`
 returns `{"results": []}`; no GitHub tool appears in the session's deferred-tool manifest.
-See `SETUP-BLOCKERS.md` §1.
+The `github@claude-plugins-official` plugin was subsequently **enabled** during this preflight,
+which registers GitHub's remote MCP server (`https://api.githubcopilot.com/mcp/`, bearer-token
+auth via `GITHUB_PERSONAL_ACCESS_TOKEN`). The token is not set, so the server is registered but
+unauthenticated. Once it connects it will be the **highest-write-authority server in the
+environment** — it can create branches, commits, PRs and issues on the founder's account.
+Scope the PAT to only the repositories the AI Company should touch. See `SETUP-BLOCKERS.md` §1.
 
 ## Security review of the MCP surface
 

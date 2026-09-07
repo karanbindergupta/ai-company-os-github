@@ -87,8 +87,27 @@ a real repository once one exists.
 
 | Plugin | Why not |
 |---|---|
-| `github` (official) | **Wanted, but blocked** — it is a GitHub MCP server needing OAuth, which a non-interactive session cannot complete. See `SETUP-BLOCKERS.md` §1. |
 | `playwright` (official, Microsoft) | **Duplicate.** Three browser stacks are already active. Adding a fourth violates the anti-duplication rule. |
 | `semgrep` (third-party) | Overlaps `claude-security` for this stage, and is a third-party git-subdir MCP. Revisit only if `claude-security` proves insufficient on a real codebase. |
 | `supabase`, `vercel`, `sentry`, `stripe`, `cloudinary` (official) | Supabase and Cloudinary MCPs are **already present** as connectors. Vercel/Sentry/Stripe are speculative — there is no product and no deployment target yet. |
 | `aikido`, `42crunch`, `endor-labs`, `stackhawk` | All require paid accounts and external credentials. Not justified pre-product. |
+
+### `github@claude-plugins-official` — **ENABLED BY THIS PREFLIGHT (awaiting token)**
+
+Author: GitHub. Enabled at the founder's explicit instruction. Because the `claude` CLI is not on
+PATH in the desktop app, it was enabled by editing `~/.claude/settings.json` directly
+(backup: `settings.json.pre-github-*.bak`).
+
+It is **not an OAuth plugin**. It registers GitHub's remote MCP server:
+
+| | |
+|---|---|
+| Transport | `http` |
+| Endpoint | `https://api.githubcopilot.com/mcp/` |
+| Auth | `Authorization: Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}` |
+| Token present? | **No** — verified unset in the environment |
+
+**Verification status: enabled but NOT functional.** The server will fail to authenticate until
+`GITHUB_PERSONAL_ACCESS_TOKEN` is exported. Token handling is a founder action — see
+`SETUP-BLOCKERS.md` §1. Scope the PAT narrowly: it grants an autonomous system write access to
+repositories.

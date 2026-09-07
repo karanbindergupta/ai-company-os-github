@@ -30,17 +30,39 @@ different integration from a desktop MCP connector. It genuinely exists — it j
 to this local session's tools. (`RemoteTrigger` reached `/v1/code/triggers` with HTTP 200, so your
 account auth is healthy; there are simply no routines and no local GitHub tool.)
 
-**Fix — enable the official GitHub plugin.** The marketplace is already registered locally:
+**Status 2026-09-07: plugin ENABLED, authentication still outstanding.**
 
-```bash
-claude plugin install github@claude-plugins-official
+`github@claude-plugins-official` is now enabled in `~/.claude/settings.json` (backup:
+`settings.json.pre-github-*.bak`). The `claude` CLI is not on PATH in the desktop app, so it was
+enabled by editing settings directly — equivalent to `claude plugin install`.
+
+**Correction to the earlier note in this file: this plugin does not use OAuth.** Its `.mcp.json` is:
+
+```json
+{"github": {"type": "http", "url": "https://api.githubcopilot.com/mcp/",
+            "headers": {"Authorization": "Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}"}}}
 ```
 
-Run it in an **interactive** terminal (`claude`) and complete the OAuth prompt — this session is
-non-interactive and cannot run an OAuth flow. Then confirm with `/mcp`.
+It is GitHub's **remote MCP server**, authenticated by a **personal access token** read from the
+`GITHUB_PERSONAL_ACCESS_TOKEN` environment variable. Verified absent from the environment, so the
+server will fail to authenticate until the founder supplies it.
 
-Do not add a second GitHub integration; this one covers repos, branches, commits, PRs, issues,
-code review and Actions.
+**Remaining founder action** — handling tokens is out of scope for the agent, so this must be done
+by hand:
+
+1. Create a **fine-grained** PAT at <https://github.com/settings/personal-access-tokens/new>.
+   Grant the minimum that the work needs — typically Contents, Issues, Pull requests and Metadata
+   (read/write) on **only the repositories the AI Company will touch**. Set a short expiry.
+2. Export it where Claude Code will see it, e.g. in `~/.zshrc`:
+   `export GITHUB_PERSONAL_ACCESS_TOKEN="…"`
+3. Restart Claude Code and confirm with `/mcp` that `github` connects.
+
+**Do not paste the token into a chat session, and do not commit it.** A token in `settings.json`
+or a shell profile is plaintext on disk — prefer a short expiry and narrow repository scope over
+convenience. Rotate it if it is ever echoed anywhere.
+
+Note also: `~/code/ai-company` currently has **no git remote**. Decide whether it should be pushed
+to GitHub or stay local before the OS starts relying on remote state.
 
 ### 2. ~~Git has no identity~~ — RESOLVED 2026-09-07
 
