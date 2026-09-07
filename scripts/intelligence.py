@@ -295,14 +295,36 @@ def probe():
         fb="none needed",rem="")
     wf=list((R/".github/workflows").glob("*")) if (R/".github/workflows").exists() else []
     gh=shutil.which("gh")
-    out["ci"]=dict(cat="ci_cd",cfg=1 if wf else 0,cred=0,reach=0,exe=0,obs=0,insp=0,mr=0,gate=0,
-        status="NOT_CONFIGURED" if not wf else "UNOBSERVABLE",
-        rag="GRAY" if not wf else "RED",
-        ev=f"{len(wf)} workflow files; gh CLI {'present' if gh else 'absent'}; "
-           "no workflow/run tool among the 46 GitHub MCP tools",
-        budget="",fb="local test execution only",
-        rem="No CI exists. To make CI inspectable later: add workflows AND install gh (needs Homebrew), "
-            "since the GitHub MCP surface exposes no Actions tooling.")
+    # CI truth has three parts: does a workflow exist, does it EXECUTE, and has a REMOTE run
+    # been observed? Earlier this collapsed to a single guess and contradicted ci_report.py.
+    remote = "[remote" in (R/".git/config").read_text() if (R/".git/config").exists() else False
+    try:
+        con=sqlite3.connect(DB); con.row_factory=sqlite3.Row
+        local_runs=con.execute("SELECT COUNT(*) FROM ci_runs WHERE observed=1").fetchone()[0]
+        last=con.execute("SELECT status FROM ci_runs ORDER BY started DESC").fetchone()
+        last=last[0] if last else None
+    except Exception: local_runs, last = 0, None
+    if not wf:
+        ci=dict(status="NOT_CONFIGURED",rag="GRAY",exe=0,obs=0,insp=0,mr=0,
+                ev="no workflow files")
+    elif local_runs and remote:
+        ci=dict(status="OPERATIONAL",rag="GREEN",exe=1,obs=1,insp=1,mr=1,
+                ev=f"workflow present; {local_runs} observed runs; remote configured; last={last}")
+    elif local_runs:
+        ci=dict(status="WORKFLOW_WRITTEN_EXECUTES_LOCALLY_NO_REMOTE",rag="YELLOW",exe=1,obs=1,insp=1,mr=1,
+                ev=f"ci.yml present; {local_runs} runs executed and persisted to ci_runs "
+                   f"(last={last}); NO GIT REMOTE so Actions has never run it")
+    else:
+        ci=dict(status="CONFIGURED_NEVER_EXECUTED",rag="RED",exe=0,obs=0,insp=0,mr=0,
+                ev="ci.yml present but never executed")
+    out["ci"]=dict(cat="ci_cd",cfg=1 if wf else 0,cred=0,reach=1 if wf else 0,
+        exe=ci["exe"],obs=ci["obs"],insp=ci["insp"],mr=ci["mr"],
+        gate=0,  # trusted_as_gate stays 0 until a REMOTE run is observed
+        status=ci["status"],rag=ci["rag"],ev=ci["ev"],budget="",
+        fb="local execution via scripts/ci_report.py",
+        rem="" if ci["rag"]=="GREEN" else
+            "Founder action: create the GitHub repo and push. Actions then runs ci.yml on every "
+            "push. trusted_as_gate remains 0 until a remote run is observed - UNKNOWN is never PASS.")
     out["git"]=dict(cat="development",cfg=1,cred=1,reach=1,exe=1,obs=1,insp=1,mr=1,gate=0,
         status="OPERATIONAL",rag="GREEN",ev="git 2.50.1; identity configured; 18 commits",budget="",fb="",rem="")
     ghtok=bool(os.environ.get("GITHUB_PERSONAL_ACCESS_TOKEN"))
