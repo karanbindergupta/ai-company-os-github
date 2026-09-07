@@ -40,3 +40,12 @@ Format: `[ID] Title — Publisher — URL — published — retrieved — TIER`
      NOTE: 45-60% discount claim is UNVERIFIED and the publication serves agents.
 [S3] What Is a Flight Consolidator - tripgic.com - retrieved 2026-09-07 - TIER 3
 ```
+
+## Competitive scan, 2026-09-08 (via Exa; Brave unavailable - token invalid)
+```
+[S4] BharatFare WhatsApp-first UK-India launch - dailynewsindia.co.in + bharatfare.com
+     - published 2025-12-03 - retrieved 2026-09-08 - TIER 2
+[S5] SastiFlight - https://www.sastiflight.com/ - retrieved 2026-09-08 - TIER 2 (own site)
+[S6] Prime Travels - https://primetravels.co.uk/ - retrieved 2026-09-08 - TIER 2 (own site)
+[S7] Diaspora AI - https://www.diasporaai.dev/ - retrieved 2026-09-08 - TIER 2 (own site)
+```

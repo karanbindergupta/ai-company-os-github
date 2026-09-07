@@ -1,50 +1,68 @@
 ---
 artifact: competitive-analysis
 role: competitor-intelligence
-phase: research
+name: Silvia Marchetti
+phase: discovery
 status: partial
-confidence: medium
-blocked_on: "Geography not yet specified by strategy; local competitor set cannot be enumerated"
-updated: 2026-09-07
+confidence: MEDIUM-HIGH
+volatility: HIGH
+retrieved: 2026-09-08
+refresh_after: 2026-10-08
 ---
-# Competitive Analysis — home-chef marketplaces
+# Competitive landscape — diaspora flight booking
 
 ## Summary
-The founder's premise that this space is open is **wrong**. Well-funded direct competitors exist
-and have been operating for years. The binding constraint is not product but **food-safety
-regulation**: cottage food law does not cover the hot prepared meals this idea implies. This is a
-regulatory business wearing a marketplace costume.
+**The space is not empty, and the founder's idea as stated already exists and is shipping.**
+Four categories of incumbent, all with something we would have to build. The uncontested ground
+is not "easier booking" — it is a **search axis nobody currently uses**.
 
 ## Direct competitors
-| Competitor | Position | Evidence |
-|---|---|---|
-| **Shef** | Chef-to-consumer marketplace, US-wide applications, venture-backed, raised a seed round and later a Series B | [S1][S2] |
-| **WoodSpoon** | On-demand home-food marketplace, mix of professional and home cooks, expanding city by city | [S3] |
-| **Hotplate** and adjacent tools | Direct-sales tooling for home food businesses rather than a marketplace | [S6] |
 
-## The regulatory constraint — the finding that matters
-All 50 US states permit sale of *some* homemade food under cottage food law, but these laws
-generally cover **shelf-stable baked and dried goods only** [S4]. They do **not** cover TCS foods
-— those requiring time and temperature control for safety, which is what "a meal from a local
-home chef" almost always means. In states without a broader home-kitchen exemption, selling
-prepared meals from a home kitchen remains unlawful [S4].
+### BharatFare — the founder's idea, already launched
+[S4, TIER 2 launch announcement + own site, Dec 2025]
+WhatsApp-first UK–India flight booking for NRIs, students and families. Dual entities
+(UK Ltd + India Pvt Ltd). Amadeus APIs for inventory, Stripe for payments. Planning a
+**QR-code campaign in Southall, Hounslow, Wembley, Ilford and Slough** — precisely the
+distribution the founder would target.
 
-Incumbents have drawn criticism for their handling of this boundary [S5] — a weak advocacy source,
-so treat it as a signal that the area is contested, not as an established finding.
+**This is the same idea, roughly nine months ahead.** FACT, from their own launch material.
 
-**Implication:** launch geography is not a marketing decision, it is a legality decision. The
-market is the set of jurisdictions with a home-kitchen exemption, not "local".
+### SastiFlight — UK–Pakistan, fully accredited
+[S5, own site, TIER 2]
+**ATOL bonded and IATA accredited.** Searches Amadeus, Sabre and Travelport. Phone-first —
+*"call us and a real person answers. No chatbots, no hold queues."* Explicitly states:
+*"Calling is often better for complex itineraries, family bookings, or if you need specific
+baggage or seat arrangements."*
 
-## The competitor the founder did not name
-**Doing nothing.** The incumbent alternative is takeaway, meal kits and cooking at home. Any
-differentiation claim must beat that, not just Shef.
+### Prime Travels — multi-corridor, enquiry model
+[S6, TIER 2] ATOL protected. Nigeria, Pakistan, India, Bangladesh **plus Umrah packages**.
+Publishes indicative fares, converts by enquiry form rather than instant booking.
 
-## What I could not establish
-- Market size — no reliable sizing found; **not estimated rather than guessed**
-- Unit economics of incumbents — not disclosed publicly
-- The local competitor set — blocked on geography (see `blocked_on`)
+### Diaspora AI — African corridor, adjacent wedge
+[S7, TIER 2] AI agent for African diaspora combining **flight search with visa guidance and
+application tracking**. Early stage. Notably solving a problem the flight-only players ignore.
 
-## Recommendation to the CSO
-Do not proceed to differentiation until the Compliance Specialist has determined which
-jurisdictions permit the intended activity. Differentiation strategy built on an illegal
-operating model is wasted work.
+## The finding that matters most
+SastiFlight's own copy reveals what these customers actually optimise for — and it is **not the
+headline fare**:
+
+> *"PIA's generous 46kg baggage allowance in economy can make direct flights more economical for
+> families travelling with heavy luggage."*
+> *"Manchester fares are sometimes cheaper than Heathrow — always worth comparing both"* (for the
+> Bradford/Leeds/Sheffield population).
+
+**INFERENCE, confidence MEDIUM:** the decision variable is **total landed cost for a family with
+luggage**, not price-per-seat. A £120-cheaper fare that costs £300 in excess baggage is worse, and
+no mainstream OTA computes that. Agents do it in their heads — which is exactly why people still call them.
+
+**This is unverified with actual customers.** It is a strong hypothesis drawn from how agents
+market themselves, not from talking to travellers.
+
+## What every incumbent has that we would not
+ATOL bonding · IATA accreditation · GDS access (Amadeus/Sabre/Travelport) · a phone number a real
+person answers. The last one is not a technology problem.
+
+## Provider provenance
+Discovery via **Exa**. **Brave was NOT used** — its token returned HTTP 422
+SUBSCRIPTION_TOKEN_INVALID on a live query, so the independent second index was unavailable.
+These findings are therefore **single-index** and not independently cross-verified.
