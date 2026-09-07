@@ -7,62 +7,48 @@ autonomously. No secrets, tokens or credentials were requested, printed, stored 
 
 ## P0 — blocks the AI Company OS from functioning
 
-### 1. GitHub is not connected to this Claude Code session
+### 1. ~~GitHub is not connected~~ — RESOLVED 2026-09-07
 
-**You told me GitHub was already connected via connectors. I verified that carefully, and in this
-local desktop session it is not reachable.** Three independent checks:
+**Verified working.** `get_me` returns `karanbindergupta` (id 322836099, company `@chikmark`),
+and 46 GitHub tools are live in-session.
 
-| Check | Result |
-|---|---|
-| Tool search for `+github` across all deferred tools | No GitHub tool in the manifest |
-| `mcp-registry search_mcp_registry(["github","repository","pull request","git"])` | `{"results": []}` |
-| `mcp-registry list_connectors()` | `{"connectors": []}` |
-| `command -v gh` | not found |
-| `~/.ssh` | does not exist |
-| `~/.gitconfig` | does not exist |
+Getting there took three fixes, recorded because the same failure will recur on any future
+plugin install in this environment:
 
-For comparison, your other connectors **do** surface here as MCP servers (Miro, Cloudinary,
-Supabase, Adobe Express, v0). A GitHub connector would appear the same way. It does not.
+1. **The plugin is not OAuth.** It registers GitHub's remote MCP server
+   (`https://api.githubcopilot.com/mcp/`) with `Authorization: Bearer
+   ${GITHUB_PERSONAL_ACCESS_TOKEN}`. A fine-grained PAT is required.
+2. **Enabling in `settings.json` does not install a plugin.** `installed_plugins.json` recorded
+   `github` and `claude-security` as installed, but the app never copied their files into
+   `~/.claude/plugins/cache/claude-plugins-official/<plugin>/<version>/`. The `.mcp.json` that
+   defines the server was simply absent from disk. Fixed by copying from the marketplace clone
+   (`plugins/` and `external_plugins/`) into the exact `installPath` each entry names.
+   **The `claude` CLI is not on PATH in the desktop app**, so `claude plugin install` is
+   unavailable here — this manual path is the working procedure.
+3. **`~/.zshrc` is the wrong file.** zsh reads it only for interactive shells; the desktop app,
+   launched from the Dock, never sources it. The token must go in the `env` block of
+   `~/.claude/settings.json`.
 
-**The most likely explanation:** the GitHub connection you made is at the **claude.ai account
-level for Claude Code on the web / cloud sessions** (the repo picker and routines), which is a
-different integration from a desktop MCP connector. It genuinely exists — it just is not exposed
-to this local session's tools. (`RemoteTrigger` reached `/v1/code/triggers` with HTTP 200, so your
-account auth is healthy; there are simply no routines and no local GitHub tool.)
+### 1a. OUTSTANDING — rotate the access token
 
-**Status 2026-09-07: plugin ENABLED, authentication still outstanding.**
+The active token was pasted into a chat session on 2026-09-07 and must be treated as compromised.
+It is still in use, in **two** places, both plaintext on disk:
 
-`github@claude-plugins-official` is now enabled in `~/.claude/settings.json` (backup:
-`settings.json.pre-github-*.bak`). The `claude` CLI is not on PATH in the desktop app, so it was
-enabled by editing settings directly — equivalent to `claude plugin install`.
+- `~/.claude/settings.json` → `env.GITHUB_PERSONAL_ACCESS_TOKEN` (the one actually used)
+- `~/.zshrc` line 2 (redundant, never read by the app — delete it)
 
-**Correction to the earlier note in this file: this plugin does not use OAuth.** Its `.mcp.json` is:
+**Rotation procedure (founder-only; the agent never handles the token):**
 
-```json
-{"github": {"type": "http", "url": "https://api.githubcopilot.com/mcp/",
-            "headers": {"Authorization": "Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}"}}}
-```
+1. Delete the current token at <https://github.com/settings/personal-access-tokens>
+2. Generate a replacement at <https://github.com/settings/personal-access-tokens/new> —
+   fine-grained, 90-day expiry, **only select repositories**, permissions limited to Metadata
+   (read), Contents / Issues / Pull requests (read+write), Commit statuses / Actions (read)
+3. `open -e ~/.claude/settings.json`, replace the value inside the quotes, save
+4. `open -e ~/.zshrc`, delete line 2 entirely, save
+5. Quit Claude Code with ⌘Q and reopen
 
-It is GitHub's **remote MCP server**, authenticated by a **personal access token** read from the
-`GITHUB_PERSONAL_ACCESS_TOKEN` environment variable. Verified absent from the environment, so the
-server will fail to authenticate until the founder supplies it.
-
-**Remaining founder action** — handling tokens is out of scope for the agent, so this must be done
-by hand:
-
-1. Create a **fine-grained** PAT at <https://github.com/settings/personal-access-tokens/new>.
-   Grant the minimum that the work needs — typically Contents, Issues, Pull requests and Metadata
-   (read/write) on **only the repositories the AI Company will touch**. Set a short expiry.
-2. Export it where Claude Code will see it, e.g. in `~/.zshrc`:
-   `export GITHUB_PERSONAL_ACCESS_TOKEN="…"`
-3. Restart Claude Code and confirm with `/mcp` that `github` connects.
-
-**Do not paste the token into a chat session, and do not commit it.** A token in `settings.json`
-or a shell profile is plaintext on disk — prefer a short expiry and narrow repository scope over
-convenience. Rotate it if it is ever echoed anywhere.
-
-Note also: `~/code/ai-company` currently has **no git remote**. Decide whether it should be pushed
-to GitHub or stay local before the OS starts relying on remote state.
+**Standing rule for the AI Company OS: no credential is ever pasted into a chat session, and no
+agent ever asks for one.** A secret's only route is browser → clipboard → editor → file.
 
 ### 2. ~~Git has no identity~~ — RESOLVED 2026-09-07
 
