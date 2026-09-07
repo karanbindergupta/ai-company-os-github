@@ -7,3 +7,4 @@ node_modules/
 # company database WAL sidecars (the .db itself is versioned)
 .ai-company/state/*.db-wal
 .ai-company/state/*.db-shm
+ci-results.json
