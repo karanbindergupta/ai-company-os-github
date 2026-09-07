@@ -47,7 +47,7 @@ contains a token, and the credential now lives in exactly one place —
   with `Authorization header is badly formatted`. The reliable procedure is to have the agent
   clear the field to `""` first, then click between the quotes and paste with ⌘V.
 - **Prefix matching is not identity.** All of an account's fine-grained PATs share a leading
-  segment (here `github_pat_11CM7B`), so a matching prefix does not mean a token was reused.
+  segment (here an account-specific prefix), so a matching prefix does not mean a token was reused.
   Verify by authenticating, not by comparing prefixes.
 - **Token still lives in plaintext on disk**, as `settings.json` requires. Mitigate with a short
   expiry and repository-scoped permissions rather than by hiding the file.
