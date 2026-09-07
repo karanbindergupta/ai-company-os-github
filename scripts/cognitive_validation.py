@@ -63,10 +63,18 @@ t("maturity levels assigned, not self-claimed",
 t("no personality theatre",
   not any(w in (R/"scripts/cognition.py").read_text().lower()
           for w in ["biography","backstory","roleplay as","pretend to be"]))
+# A duplicate store would hold CURRENT profile values keyed by agent, competing with `agents`.
+# An audit trail of proposed CHANGES (old_value/proposed_value/reviewer/approved) is required by
+# the spec, not a duplicate. Test substance, not the table name. Found by regression after the
+# empirical layer added profile_changes.
+CANON={"cognitive_style","blind_spots","instincts","decision_philosophy","risk_profile"}
+dup=[]
+for tb in [r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name<>'agents'")]:
+    cols={r[1] for r in c.execute(f"PRAGMA table_info({tb})")}
+    if len(CANON & cols)>=2: dup.append(tb)
 t("NO DUPLICATE cognitive systems",
-  not (R/".ai-company/cognition/profiles").exists()
-  and one("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name LIKE '%profile%'")==0,
-  "profiles live in the agents table only")
+  not (R/".ai-company/cognition/profiles").exists() and not dup,
+  "canonical profile fields exist only in `agents`" + (f"; DUPLICATED IN {dup}" if dup else ""))
 fails=sum(1 for _,ok,_ in res if not ok)
 for n,ok,d in res: print(f"  [{'PASS' if ok else 'FAIL'}] {n}" + (f"  ({d})" if d else ""))
 print(f"\n{'='*62}\nCOGNITIVE VALIDATION: {len(res)-fails}/{len(res)} passed" + ("" if not fails else f"  {fails} FAILED"))
