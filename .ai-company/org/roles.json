@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "count": 107,
+  "count": 111,
   "roles": [
     {
       "slug": "accessibility-designer",
@@ -867,6 +867,15 @@
       "path": ".ai-company/org/roles/strategy-research/customer-researcher.md"
     },
     {
+      "slug": "evidence-verifier",
+      "title": "Evidence Verifier",
+      "department": "strategy-research",
+      "reports_to": "cro-research",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/evidence/",
+      "path": ".ai-company/org/roles/strategy-research/evidence-verifier.md"
+    },
+    {
       "slug": "feasibility-analyst",
       "title": "Feasibility Analyst",
       "department": "strategy-research",
@@ -946,6 +955,33 @@
       "seniority": "specialist",
       "artifact": ".ai-company/incidents/",
       "path": ".ai-company/org/roles/strategy-research/problem-solver.md"
+    },
+    {
+      "slug": "research-auditor",
+      "title": "Research Auditor",
+      "department": "strategy-research",
+      "reports_to": "cro-risk",
+      "seniority": "specialist",
+      "artifact": ".ai-company/audits/",
+      "path": ".ai-company/org/roles/strategy-research/research-auditor.md"
+    },
+    {
+      "slug": "research-director",
+      "title": "Research Director",
+      "department": "strategy-research",
+      "reports_to": "cro-research",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/reports/",
+      "path": ".ai-company/org/roles/strategy-research/research-director.md"
+    },
+    {
+      "slug": "research-synthesizer",
+      "title": "Research Synthesizer",
+      "department": "strategy-research",
+      "reports_to": "cro-research",
+      "seniority": "specialist",
+      "artifact": ".ai-company/research/reports/",
+      "path": ".ai-company/org/roles/strategy-research/research-synthesizer.md"
     },
     {
       "slug": "rnd-specialist",
