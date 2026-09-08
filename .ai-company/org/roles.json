@@ -1,7 +1,16 @@
 {
   "version": 1,
-  "count": 111,
+  "count": 115,
   "roles": [
+    {
+      "slug": "sales-specialist",
+      "title": "Sales Specialist",
+      "department": "commercial",
+      "reports_to": "managing-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/sales/pipeline.md",
+      "path": ".ai-company/org/roles/commercial/sales-specialist.md"
+    },
     {
       "slug": "accessibility-designer",
       "title": "Accessibility Designer",
@@ -233,6 +242,15 @@
       "name": "Mateo Escobar"
     },
     {
+      "slug": "fullstack-engineer",
+      "title": "Full-Stack Engineer",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": "(source files)",
+      "path": ".ai-company/org/roles/engineering/fullstack-engineer.md"
+    },
+    {
       "slug": "infrastructure-engineer",
       "title": "Infrastructure Engineer",
       "department": "engineering",
@@ -301,6 +319,15 @@
       "artifact": ".ai-company/engineering/reliability.md",
       "path": ".ai-company/org/roles/engineering/sre.md",
       "name": "Julian Ostrowski"
+    },
+    {
+      "slug": "supabase-engineer",
+      "title": "Supabase / Data Platform Engineer",
+      "department": "engineering",
+      "reports_to": "database-architect",
+      "seniority": "specialist",
+      "artifact": "(migration files)",
+      "path": ".ai-company/org/roles/engineering/supabase-engineer.md"
     },
     {
       "slug": "systems-architect",
@@ -421,6 +448,15 @@
       "artifact": ".ai-company/architecture/cto-position.md",
       "path": ".ai-company/org/roles/executive/cto.md",
       "name": "Priya Raghunathan"
+    },
+    {
+      "slug": "managing-director",
+      "title": "Managing Director",
+      "department": "executive",
+      "reports_to": "ceo",
+      "seniority": "executive",
+      "artifact": ".ai-company/state/execution-review.md",
+      "path": ".ai-company/org/roles/executive/managing-director.md"
     },
     {
       "slug": "acquisition-specialist",

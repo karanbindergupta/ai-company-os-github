@@ -87,10 +87,20 @@ def cmd_init(argv):
         lvl = AUTH_LEVEL.get(r["seniority"], 3)
         if r["slug"] in ("backend-lead","frontend-lead","qa-lead","principal-architect",
                          "database-architect","product-manager","release-manager"): lvl = 2
-        c.execute("""INSERT OR REPLACE INTO agents(id,department,title,reports_to,seniority,
-                     authority_level,artifact,pack_path,status) VALUES(?,?,?,?,?,?,?,?,'active')""",
-                  (r["slug"], r["department"], r["title"], r["reports_to"], r["seniority"],
-                   lvl, r["artifact"], r["path"]))
+        # INSERT OR REPLACE destroyed columns added by later layers (names, cognitive
+        # profiles, backups). Insert only when absent; otherwise update the base fields
+        # and leave everything else untouched. Found when --force wiped 111 profiles.
+        exists = c.execute("SELECT 1 FROM agents WHERE id=?", (r["slug"],)).fetchone()
+        if exists:
+            c.execute("""UPDATE agents SET department=?,title=?,reports_to=?,seniority=?,
+                         authority_level=?,artifact=?,pack_path=? WHERE id=?""",
+                      (r["department"], r["title"], r["reports_to"], r["seniority"],
+                       lvl, r["artifact"], r["path"], r["slug"]))
+        else:
+            c.execute("""INSERT INTO agents(id,department,title,reports_to,seniority,
+                         authority_level,artifact,pack_path,status) VALUES(?,?,?,?,?,?,?,?,'active')""",
+                      (r["slug"], r["department"], r["title"], r["reports_to"], r["seniority"],
+                       lvl, r["artifact"], r["path"]))
     known = {r["slug"] for r in reg}
     for dom, own, rev, veto, fr, esc in DECISION_RIGHTS:
         if own not in known: continue

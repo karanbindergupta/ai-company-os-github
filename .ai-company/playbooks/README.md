@@ -7,7 +7,7 @@ version: 2.0.0
 Playbooks are **operating systems for their department**, not descriptions of responsibility.
 Every specialist loads its department's playbook alongside its role pack.
 
-## The 18 departments
+## The 20 departments
 
 | # | Department | Playbook | Covers |
 |---|---|---|---|
@@ -17,7 +17,7 @@ Every specialist loads its department's playbook alongside its role pack.
 | 4 | **Product** | [`product.md`](product.md) | Discovery, requirements, prioritization, validation |
 | 5 | **Design** | [`design.md`](design.md) | UX, UI, design systems, accessibility |
 | 6 | **Creative** | [`design.md`](design.md) + [`../design/creative-standards/`](../design/creative-standards/) | Brand, visual identity, direction, campaigns |
-| 7 | **Engineering** | [`engineering.md`](engineering.md) | Architecture, coding, implementation, testing |
+| 7 | **Engineering** | [`engineering.md`](engineering.md) + [`engineering/`](engineering/) | Craft + the CTO organization, rights matrix and routing |
 | 8 | **Security** | [`security.md`](security.md) | Threat modelling, secure development, security testing |
 | 9 | **QA** | [`engineering.md`](engineering.md) + [`../docs/QUALITY-GATES.md`](../docs/QUALITY-GATES.md) | Testing, validation, regression, gates |
 | 10 | **Finance** | [`finance.md`](finance.md) | Economics, budgeting, forecasting, pricing |
@@ -28,6 +28,8 @@ Every specialist loads its department's playbook alongside its role pack.
 | 15 | **Analytics** | [`growth/EXPERIMENTS.md`](growth/EXPERIMENTS.md) | Measurement, instrumentation, metrics |
 | 16 | **Risk** | [`executive/CONFLICT-RESOLUTION.md`](executive/CONFLICT-RESOLUTION.md) + [`../templates/risk-assessment.md`](../templates/risk-assessment.md) | Identification, assessment, mitigation |
 | 17 | **Release** | [`operations/LAUNCH-OPERATIONS.md`](operations/LAUNCH-OPERATIONS.md) + [`../docs/RELEASE-POLICY.md`](../docs/RELEASE-POLICY.md) | Launch readiness, deployment, verification |
+| 19 | **Managing Director** | [`executive/md/`](executive/md/) | Execution integration, commercial coordination |
+| 20 | **Sales** | [`sales/`](sales/) | Prospecting, discovery, qualification, honest conversion |
 | 18 | **Incident** | [`executive/CRISIS-LEADERSHIP.md`](executive/CRISIS-LEADERSHIP.md) + [`operations/RESILIENCE.md`](operations/RESILIENCE.md) | Detection, response, recovery, postmortems |
 
 **Where a cell names two documents**, the discipline is genuinely shared — Marketing draws
