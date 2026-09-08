@@ -1,11 +1,11 @@
 {
-  "run_id": "run_63de3f6ebc",
-  "created": "2026-09-07T21:32:49+00:00",
-  "updated": "2026-09-07T21:32:49+00:00",
-  "status": "revoked",
-  "industry": "Airline / travel booking",
-  "idea": "Platform making airline tickets easy for diaspora travellers - Indian, Pakistani, Bangladeshi, African - who still rely on human travel agents. Ambition: expand across Europe.",
-  "constraints": "solo founder; pre-revenue; wants genuine innovation, not a thinner Skyscanner",
+  "run_id": "run_73df81997a",
+  "created": "2026-09-08T11:08:53+00:00",
+  "updated": "2026-09-08T11:08:54+00:00",
+  "status": "active",
+  "industry": "Medical tourism",
+  "idea": "NONE YET - founder has no idea, only a belief that the industry is attractive. The company's first job is to find whether that belief is true and where the opportunity actually is.",
+  "constraints": "solo founder; pre-revenue; explicitly open on direction",
   "current_phase": "intake",
   "completed_phases": [],
   "gates": {
@@ -50,7 +50,5 @@
     }
   },
   "escalations": [],
-  "notes": [],
-  "revoked_at": "2026-09-08T09:01:35+00:00",
-  "revoked_reason": "Founder revoked. Competitive scan found BharatFare shipping the same concept (RISK-002 critical)."
+  "notes": []
 }

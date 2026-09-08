@@ -5,58 +5,54 @@ name: Nadia Okonkwo
 phase: mission
 status: complete
 confidence: MEDIUM
-updated: 2026-09-07
+updated: 2026-09-08
 ---
-# Mission Charter — run_63de3f6ebc
+# Mission Charter — run_73df81997a
 
 ## Founder's input
-**Industry:** airline / travel booking.
-**Idea:** make buying airline tickets easy for diaspora travellers — Indian, Pakistani,
-Bangladeshi, African communities — who still rely on human travel agents. Ambition: Europe-wide.
-**Constraints:** solo founder, pre-revenue, wants genuine innovation rather than a thinner Skyscanner.
+**Industry:** medical tourism. **Idea:** none — *"I just think the industry is good, let's see."*
 
-## The objective as I read it
-The founder named a **customer** and a **behaviour**, not a product. That is the right way round,
-and it is why I am not letting anyone design a booking flow yet.
+## How I am reading that
+This is not a vague brief. It is a **discovery mandate**, and it is the honest version of what
+most founders pretend they already have. The founder has given us a domain and asked us to find
+whether the belief holds and where the opportunity actually sits.
 
-The stated objective is "make it easy." The real objective is: **capture the value currently
-intermediated by diaspora travel agents, for the traveller and for us.**
+So the objective is not "build something in medical tourism." It is:
+**find a position in this industry that is defensible, and say plainly if there isn't one.**
 
-## The assumption everything rests on
-> *Diaspora travellers use agents because booking is hard.*
+## What the first research pass established
+The instinct is **supported** — but the attractive part is not where entrants usually go.
 
-First-pass evidence contradicts this. Agents appear to hold **structurally hidden inventory** —
-consolidator net fares that are restricted from online display [S1]. If that holds, "easier
-booking" is not a competitive product. It is a worse agent.
+Medical tourism is a market for lemons whose correction mechanism is structurally broken: the
+buyer cannot evaluate the product, failure surfaces 18–36 months later, and **the price signal
+never reaches the next buyer because they are in a different country searching a different review
+pool** [S8]. The market does not self-correct.
 
-**This is the single most important thing to establish, and it is not yet established.**
-Kwame's artifact is `status: partial`. I will not fund scope on it.
+And the standard entry point — a facilitator or marketplace — is **paid by the clinic per
+booking**, is unlicensed in most jurisdictions, and is therefore *part of the misalignment* [S8].
+Building one means adopting the defect.
+
+Meanwhile the supply side leaks money in a way that has a named buyer: mid-tier hospitals already
+receive international inquiries and fail to convert them, losing to Tier-1 chains on orchestration
+rather than clinical quality [S9].
 
 ## Departments activated
 | Activated | Why |
 |---|---|
-| Strategy & Research | The premise is unproven. Everything waits on this |
-| Product (discovery only) | To hold the boundary between problem and solution |
-| Finance | Net-fare economics decide whether any of this works |
-| Risk | RISK-001 is open and material |
-| Security / Compliance | Selling flights is regulated — IATA, bonding, consumer protection |
+| Strategy (Ivo) + Research (Amara) | The position is undecided. Everything waits on this |
+| Product discovery (Aoife) | To stop us solutioning before the problem is chosen |
+| Finance (Helena, Emeric) | Both candidate models have very different economics |
+| Risk (Gideon, Ludvig) | RISK-003 and RISK-004 are both high and open |
+| Compliance (Alistair) | Facilitator regulation is unresearched and material |
 
-**Not yet activated:** Engineering, Creative, Growth, Operations. There is nothing to build,
-brand or sell until the inventory question is answered. Activating them now would produce
-confident work on a premise that may be wrong.
+**Not activated:** Engineering, Creative, Growth, Sales, Operations. There is no product to build,
+brand, sell or run. Activating them now would produce confident work on an undecided premise —
+the exact failure the previous mission avoided.
 
-## Success criteria for this phase
-1. Establish whether net-fare access is the real reason for agent reliance — evidenced.
-2. Establish what access actually requires (accreditation, bonding, capital).
-3. Establish the real motivations of diaspora customers — primary research, not inference.
-4. Only then: decide whether the product is a consumer platform, an agent-enablement platform,
-   or something else entirely.
+## What I will not do
+- Recommend a marketplace because it is the obvious shape.
+- Put an unverified market size in front of the founder. The "$100B" figure is vendor marketing [S10].
+- Let anyone scope features before the payer is chosen.
 
-## What I am explicitly NOT doing
-- Not scoping features.
-- Not choosing a stack.
-- Not accepting "we'll be easier to use" as a differentiator.
-
-## Escalation to the founder
-See `.ai-company/decisions/founder/premise-reframe.md`. The evidence suggests the idea should
-change shape. That is the founder's call, not mine.
+## The decision I am putting to the founder
+Which side of the trust gap we stand on. See `decisions/founder/medical-tourism-position.md`.

@@ -49,3 +49,18 @@ Format: `[ID] Title — Publisher — URL — published — retrieved — TIER`
 [S6] Prime Travels - https://primetravels.co.uk/ - retrieved 2026-09-08 - TIER 2 (own site)
 [S7] Diaspora AI - https://www.diasporaai.dev/ - retrieved 2026-09-08 - TIER 2 (own site)
 ```
+
+## Mission run_73df81997a - medical tourism, 2026-09-08 (Exa; Brave unavailable)
+```
+[S8]  The dental tourism trust gap - The Maloney Review - ritamaloney.com
+      - published 2026-05-04 - retrieved 2026-09-08 - TIER 2 (long-form analysis, disclosed byline)
+[S9]  Operational Playbook: Mid-tier Indian hospitals - HFS Research
+      - published 2026-05-05 - retrieved 2026-09-08 - TIER 2 (analyst house)
+[S10] Patient Decision Intelligence - Global Health Opulence blog
+      - retrieved 2026-09-08 - TIER 3 (VENDOR describing the problem its product solves;
+        the 50-70% cost-opacity claim and $100B figure are UNVERIFIED)
+[S11] Health tourism: barriers and facilitators - Discover Public Health (Springer)
+      - published 2025-04-13 - retrieved 2026-09-08 - TIER 1 (peer-reviewed)
+[S12] Benchmarking Patient Journey in SE Asian Medical Check-Up Tourism
+      - published 2026-01-13 - retrieved 2026-09-08 - TIER 1 (peer-reviewed)
+```
