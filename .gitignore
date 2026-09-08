@@ -1,0 +1,47 @@
+# ---- credentials and personal identity: never commit ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+*.crt
+*_credentials*
+*credentials.json
+.netrc
+secrets/
+.secrets/
+.ai-company/org/FOUNDER.md
+
+# ---- local runtime state (regenerated; not portable) ----
+.ai-company/state/*.db-wal
+.ai-company/state/*.db-shm
+.ai-company/state/run.json
+.ai-company/state/tasks.json
+.ai-company/logs/*.jsonl
+ci-results.json
+
+# ---- Claude Code local state ----
+.claude/worktrees/
+.claude/settings.local.json
+
+# ---- caches, builds, editors, OS ----
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

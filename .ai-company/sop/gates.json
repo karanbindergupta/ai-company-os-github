@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "gates": {
+    "gate_research": {
+      "owner": "cro-research",
+      "blocks": "business,strategy",
+      "criteria": [
+        "Every material claim has a source URL and retrieval date",
+        "No fabricated statistics",
+        "Confidence stated per finding"
+      ]
+    },
+    "gate_debate": {
+      "owner": "ceo",
+      "blocks": "brief",
+      "criteria": [
+        "Every activated executive filed a position paper",
+        "Dissent recorded verbatim",
+        "CEO ruling names which argument lost and why"
+      ]
+    },
+    "gate_brief": {
+      "owner": "ceo",
+      "blocks": "product_spec",
+      "criteria": [
+        "All required sections present",
+        "Reviewed by CTO, CPO, CISO, CFO and Creative Director",
+        "No section marked TODO"
+      ]
+    },
+    "gate_product_spec": {
+      "owner": "cpo",
+      "blocks": "architecture,design",
+      "criteria": [
+        "MVP boundary explicit",
+        "Rejected-features list non-empty",
+        "Every requirement traceable and testable",
+        "NFRs quantified"
+      ]
+    },
+    "gate_architecture": {
+      "owner": "cto",
+      "blocks": "plan",
+      "criteria": [
+        "Stack choice justified against a requirement",
+        "ADRs written for every significant decision",
+        "Security architecture reviewed by CISO",
+        "Simplest sufficient design"
+      ]
+    },
+    "gate_design": {
+      "owner": "creative-director",
+      "blocks": "plan",
+      "criteria": [
+        "Design system defined with tokens",
+        "Error, empty and loading states designed",
+        "Accessibility spec meets WCAG 2.2 AA",
+        "Creative coherence verified"
+      ]
+    },
+    "gate_plan": {
+      "owner": "coo",
+      "blocks": "build",
+      "criteria": [
+        "Task graph is acyclic",
+        "Every task has owner, acceptance criteria and dependencies",
+        "Parallel groups share no unresolved dependency"
+      ]
+    },
+    "gate_qa": {
+      "owner": "qa-lead",
+      "blocks": "audit",
+      "criteria": [
+        "Functional, e2e, regression, accessibility and performance testing complete",
+        "No open critical or high defects",
+        "Coverage reported as a measured number",
+        "Evidence on disk"
+      ]
+    },
+    "gate_security": {
+      "owner": "ciso",
+      "blocks": "audit",
+      "criteria": [
+        "Threat model current",
+        "Appsec review complete",
+        "Dependencies audited with recorded output",
+        "No unresolved critical or high findings",
+        "Accepted risks recorded with founder approval"
+      ],
+      "veto": true
+    },
+    "gate_audit": {
+      "owner": "cro-risk",
+      "blocks": "exec_review",
+      "criteria": [
+        "Product, creative, architecture and organization audits complete",
+        "Every finding is a remediation task or an accepted risk"
+      ]
+    },
+    "gate_exec": {
+      "owner": "ceo",
+      "blocks": "deliver",
+      "criteria": [
+        "Executives signed off",
+        "Risks presented to the founder",
+        "Founder decision package prepared"
+      ]
+    },
+    "gate_release": {
+      "owner": "release-manager",
+      "blocks": "none",
+      "criteria": [
+        "Every prior gate green with evidence",
+        "Rollback plan exists",
+        "FOUNDER AUTHORIZATION OBTAINED"
+      ],
+      "founder_required": true
+    },
+    "gate_retest": {
+      "owner": "qa-lead",
+      "blocks": "exec_review",
+      "criteria": [
+        "Every remediated finding retested and verified closed",
+        "Regression pass run against the whole product, not only the fixed areas",
+        "No NEW defects introduced by the remediation",
+        "Evidence recorded for each retested item"
+      ]
+    }
+  }
+}

@@ -1,0 +1,62 @@
+name: AI Company OS CI
+on:
+  push: {branches: [main]}
+  pull_request: {branches: [main]}
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: Verify company integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+
+      # No third-party dependencies: this repository is stdlib Python + markdown.
+      # Adding a dependency install step the project does not need would be theatre.
+      - name: Show environment
+        run: python3 -VV && sqlite3 --version || true
+
+      - name: Format / syntax check (compile every module)
+        run: python3 -m compileall -q scripts/
+
+      - name: Secret scan
+        run: sh scripts/secret_scan.sh
+
+      - name: Build company database from the role registry
+        run: python3 scripts/companydb.py init --force
+
+      - name: Company state integrity
+        run: python3 scripts/companydb.py verify
+
+      - name: SOP phase/gate validation
+        run: python3 scripts/company.py validate
+
+      - name: Organization audit
+        run: python3 scripts/audit_org.py
+
+      - name: Capability validation
+        run: python3 scripts/capability_validation.py
+
+      - name: Cognitive validation
+        run: python3 scripts/cognitive_validation.py
+
+      - name: Readiness audit
+        run: python3 scripts/readiness_audit.py
+
+      - name: Behavioural test suite
+        run: python3 scripts/behavior_tests.py
+
+      - name: Emit machine-readable results
+        if: always()
+        run: python3 scripts/ci_report.py > ci-results.json && cat ci-results.json
+
+      - name: Upload results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-results
+          path: ci-results.json
