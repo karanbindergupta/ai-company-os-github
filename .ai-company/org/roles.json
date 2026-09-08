@@ -1,7 +1,17 @@
 {
   "version": 1,
-  "count": 115,
+  "count": 119,
   "roles": [
+    {
+      "slug": "business-operations-specialist",
+      "title": "Business Operations Specialist",
+      "department": "commercial",
+      "reports_to": "managing-director",
+      "seniority": "specialist",
+      "artifact": ".ai-company/state/execution-review.md",
+      "path": ".ai-company/org/roles/commercial/business-operations-specialist.md",
+      "name": "Sena Adjei"
+    },
     {
       "slug": "sales-specialist",
       "title": "Sales Specialist",
@@ -9,7 +19,8 @@
       "reports_to": "managing-director",
       "seniority": "specialist",
       "artifact": ".ai-company/sales/pipeline.md",
-      "path": ".ai-company/org/roles/commercial/sales-specialist.md"
+      "path": ".ai-company/org/roles/commercial/sales-specialist.md",
+      "name": "Dev Raichand"
     },
     {
       "slug": "accessibility-designer",
@@ -192,6 +203,16 @@
       "name": "Salvador Reyes"
     },
     {
+      "slug": "data-analyst",
+      "title": "Data Analyst",
+      "department": "engineering",
+      "reports_to": "cto",
+      "seniority": "specialist",
+      "artifact": ".ai-company/analytics/",
+      "path": ".ai-company/org/roles/engineering/data-analyst.md",
+      "name": "Ottavia Lindgren"
+    },
+    {
       "slug": "data-engineer",
       "title": "Data Engineer",
       "department": "engineering",
@@ -248,7 +269,8 @@
       "reports_to": "cto",
       "seniority": "specialist",
       "artifact": "(source files)",
-      "path": ".ai-company/org/roles/engineering/fullstack-engineer.md"
+      "path": ".ai-company/org/roles/engineering/fullstack-engineer.md",
+      "name": "Rafferty Osei-Bonsu"
     },
     {
       "slug": "infrastructure-engineer",
@@ -327,7 +349,8 @@
       "reports_to": "database-architect",
       "seniority": "specialist",
       "artifact": "(migration files)",
-      "path": ".ai-company/org/roles/engineering/supabase-engineer.md"
+      "path": ".ai-company/org/roles/engineering/supabase-engineer.md",
+      "name": "Annika Thorvaldsen"
     },
     {
       "slug": "systems-architect",
@@ -450,13 +473,34 @@
       "name": "Priya Raghunathan"
     },
     {
+      "slug": "financial-analyst",
+      "title": "Financial Analyst",
+      "department": "executive",
+      "reports_to": "cfo",
+      "seniority": "specialist",
+      "artifact": ".ai-company/finance/models/",
+      "path": ".ai-company/org/roles/executive/financial-analyst.md",
+      "name": "Emeric Vandenberg"
+    },
+    {
       "slug": "managing-director",
       "title": "Managing Director",
       "department": "executive",
       "reports_to": "ceo",
       "seniority": "executive",
       "artifact": ".ai-company/state/execution-review.md",
-      "path": ".ai-company/org/roles/executive/managing-director.md"
+      "path": ".ai-company/org/roles/executive/managing-director.md",
+      "name": "Cosima Beaumont"
+    },
+    {
+      "slug": "risk-analyst",
+      "title": "Risk Analyst",
+      "department": "executive",
+      "reports_to": "cro-risk",
+      "seniority": "specialist",
+      "artifact": ".ai-company/risks/analyses/",
+      "path": ".ai-company/org/roles/executive/risk-analyst.md",
+      "name": "Ludvig S\u00f8rensen"
     },
     {
       "slug": "acquisition-specialist",
@@ -962,7 +1006,7 @@
       "slug": "brand-strategist-research",
       "title": "Brand Strategy Lead",
       "department": "strategy-research",
-      "reports_to": "cro-research",
+      "reports_to": "cso",
       "seniority": "specialist",
       "artifact": ".ai-company/design/brand-strategy.md",
       "path": ".ai-company/org/roles/strategy-research/brand-strategist-research.md",
@@ -972,7 +1016,7 @@
       "slug": "business-model-strategist",
       "title": "Business Model Strategist",
       "department": "strategy-research",
-      "reports_to": "cro-research",
+      "reports_to": "cso",
       "seniority": "specialist",
       "artifact": ".ai-company/decisions/business-model.md",
       "path": ".ai-company/org/roles/strategy-research/business-model-strategist.md",
@@ -1022,7 +1066,7 @@
       "slug": "features-strategist",
       "title": "Features Strategist",
       "department": "strategy-research",
-      "reports_to": "cro-research",
+      "reports_to": "cso",
       "seniority": "specialist",
       "artifact": ".ai-company/product/features.md",
       "path": ".ai-company/org/roles/strategy-research/features-strategist.md",
@@ -1052,7 +1096,7 @@
       "slug": "innovation-strategist",
       "title": "Innovation Strategist",
       "department": "strategy-research",
-      "reports_to": "cro-research",
+      "reports_to": "cso",
       "seniority": "specialist",
       "artifact": ".ai-company/research/innovation.md",
       "path": ".ai-company/org/roles/strategy-research/innovation-strategist.md",
@@ -1072,7 +1116,7 @@
       "slug": "opportunity-analyst",
       "title": "Opportunity Analyst",
       "department": "strategy-research",
-      "reports_to": "cro-research",
+      "reports_to": "cso",
       "seniority": "specialist",
       "artifact": ".ai-company/research/opportunities.md",
       "path": ".ai-company/org/roles/strategy-research/opportunity-analyst.md",
@@ -1142,7 +1186,7 @@
       "slug": "trend-analyst",
       "title": "Trend Analyst",
       "department": "strategy-research",
-      "reports_to": "cro-research",
+      "reports_to": "cso",
       "seniority": "specialist",
       "artifact": ".ai-company/research/trends.md",
       "path": ".ai-company/org/roles/strategy-research/trend-analyst.md",

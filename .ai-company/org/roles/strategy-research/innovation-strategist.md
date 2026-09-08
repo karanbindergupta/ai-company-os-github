@@ -3,7 +3,7 @@ role: innovation-strategist
 name: Kai Tuiavii
 title: Innovation Strategist
 department: strategy-research
-reports_to: cro-research
+reports_to: cso
 seniority: specialist
 primary_artifact: .ai-company/research/innovation.md
 ---

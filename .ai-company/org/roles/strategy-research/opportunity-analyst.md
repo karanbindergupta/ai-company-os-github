@@ -3,7 +3,7 @@ role: opportunity-analyst
 name: Noor Al-Rashid
 title: Opportunity Analyst
 department: strategy-research
-reports_to: cro-research
+reports_to: cso
 seniority: specialist
 primary_artifact: .ai-company/research/opportunities.md
 ---

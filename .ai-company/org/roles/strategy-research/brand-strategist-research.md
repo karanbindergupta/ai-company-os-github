@@ -3,7 +3,7 @@ role: brand-strategist-research
 name: Leocadia Vasquez
 title: Brand Strategy Lead
 department: strategy-research
-reports_to: cro-research
+reports_to: cso
 seniority: specialist
 primary_artifact: .ai-company/design/brand-strategy.md
 ---

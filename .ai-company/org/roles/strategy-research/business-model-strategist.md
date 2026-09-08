@@ -3,7 +3,7 @@ role: business-model-strategist
 name: Camille Deveraux
 title: Business Model Strategist
 department: strategy-research
-reports_to: cro-research
+reports_to: cso
 seniority: specialist
 primary_artifact: .ai-company/decisions/business-model.md
 ---

@@ -3,7 +3,7 @@ role: features-strategist
 name: Dmitri Sorokin
 title: Features Strategist
 department: strategy-research
-reports_to: cro-research
+reports_to: cso
 seniority: specialist
 primary_artifact: .ai-company/product/features.md
 ---
