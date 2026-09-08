@@ -7,17 +7,18 @@ c = sqlite3.connect(R/".ai-company/state/company.db"); c.row_factory = sqlite3.R
 
 PLAYBOOK = {"strategy-research":"research","product":"product","engineering":"engineering",
             "creative":"design","quality":"engineering","security":"security",
-            "growth":"product","operations":"engineering","executive":"research","people":"research"}
+            "growth":"product","operations":"engineering","executive":"research","people":"research","commercial":"sales"}
 FAMILY = {"strategy-research":"researcher_family","product":"finance_family","engineering":"engineer_family",
           "creative":"design_family","quality":"qa_family","security":"security_family",
           "growth":"researcher_family","operations":"engineer_family","executive":"researcher_family",
-          "people":"researcher_family"}
+          "people":"researcher_family","commercial":"researcher_family"}
 KPI = {"strategy-research":"sourced-claim %, audit pass rate, fabrications (0)",
  "product":"requirement traceability, reject ratio, criteria testability","engineering":"defect escape, rework, coverage",
  "creative":"token adherence, AA failures (0), missing states","quality":"pre-release defect find rate, regression escapes",
  "security":"criticals at release (0), MTTR, fixes verified","growth":"pre-registered thresholds, CAC estimate vs actual",
  "operations":"cycle time, blocked age, status accuracy","executive":"decision quality, dissent surfaced, escalation precision",
- "people":"roles activated vs added, authority overlaps"}
+ "people":"roles activated vs added, authority overlaps",
+ "commercial":"qualified opportunities, win rate, customer fit, forecast accuracy"}
 
 # ---- capability matrix
 rows = list(c.execute("SELECT * FROM agents ORDER BY department, authority_level, id"))

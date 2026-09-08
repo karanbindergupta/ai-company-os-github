@@ -5,12 +5,13 @@ source: generated from the company database by scripts/matrices.py
 ---
 # CAPABILITY MATRIX
 
-All **111 roles**. A role is fully operational only when Playbook, Tools, KPIs,
+All **115 roles**. A role is fully operational only when Playbook, Tools, KPIs,
 Reviewer and Escalation are populated. Verify any authority claim with:
 `python3 scripts/companydb.py can <role> <action> <domain>`
 
 | Agent | Dept | Lvl | Owns (decision domains) | Veto | Tools | Playbook | KPIs | Reviewer | Escalates |
 |---|---|---|---|---|---|---|---|---|---|
+| `sales-specialist` | commercial | L3 | — | — | `researcher_family` | `sales` | qualified opportunities, win rate, customer fit, forecast accuracy | managing-director | L2 |
 | `accessibility-designer` | creative | L3 | — | — | `design_family` | `design` | token adherence, AA failures (0), missing states | creative-director | L2 |
 | `brand-designer` | creative | L3 | — | — | `design_family` | `design` | token adherence, AA failures (0), missing states | creative-director | L2 |
 | `brand-strategist-creative` | creative | L3 | — | — | `design_family` | `design` | token adherence, AA failures (0), missing states | creative-director | L2 |
@@ -26,7 +27,7 @@ Reviewer and Escalation are populated. Verify any authority claim with:
 | `visual-designer` | creative | L3 | — | — | `design_family` | `design` | token adherence, AA failures (0), missing states | creative-director | L2 |
 | `backend-lead` | engineering | L2 | routine_implementation | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L3 |
 | `database-architect` | engineering | L2 | data_migration | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L3 |
-| `frontend-lead` | engineering | L2 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L3 |
+| `frontend-lead` | engineering | L2 | frontend_implementation | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L3 |
 | `principal-architect` | engineering | L2 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L3 |
 | `ai-ml-engineer` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L2 |
 | `api-specialist` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | backend-lead | L2 |
@@ -35,24 +36,27 @@ Reviewer and Escalation are populated. Verify any authority claim with:
 | `data-engineer` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | database-architect | L2 |
 | `devops-engineer` | engineering | L3 | production_deploy | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L2 |
 | `frontend-engineer` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | frontend-lead | L2 |
+| `fullstack-engineer` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L2 |
 | `infrastructure-engineer` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cloud-architect | L2 |
 | `integration-engineer` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | backend-lead | L2 |
 | `mobile-engineer` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | frontend-lead | L2 |
 | `performance-engineer` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L2 |
 | `solution-architect` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | principal-architect | L2 |
 | `sre` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | cto | L2 |
+| `supabase-engineer` | engineering | L3 | supabase_schema_change | — | `engineer_family` | `engineering` | defect escape, rework, coverage | database-architect | L2 |
 | `systems-architect` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | principal-architect | L2 |
 | `ceo` | executive | L1 | — | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | founder | L4 |
-| `cfo` | executive | L1 | pricing, major_financial_commitment, business_model | **pricing, major_financial_commitment, business_model** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
-| `ciso` | executive | L1 | security_architecture | **technical_architecture, security_architecture, release_readiness, data_migration, production_deploy** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `cfo` | executive | L1 | pricing, major_financial_commitment, business_model | **pricing, major_financial_commitment, business_model, commercial_offer, sales_commitment** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `ciso` | executive | L1 | security_architecture | **technical_architecture, security_architecture, release_readiness, data_migration, production_deploy, supabase_schema_change** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `cmo` | executive | L1 | marketing_strategy, public_communication | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `coo` | executive | L1 | — | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `cpo` | executive | L1 | product_roadmap, product_scope | **product_roadmap, product_scope** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `creative-director` | executive | L1 | brand_direction | **brand_direction** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `cro-research` | executive | L1 | research_acceptance | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
-| `cro-risk` | executive | L1 | risk_acceptance | **market_entry, research_acceptance, risk_acceptance** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `cro-risk` | executive | L1 | risk_acceptance | **market_entry, research_acceptance, risk_acceptance, sales_commitment** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `cso` | executive | L1 | market_entry | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
-| `cto` | executive | L1 | technical_architecture, engineering_standards | **technical_architecture, engineering_standards, data_migration** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `cto` | executive | L1 | technical_architecture, engineering_standards, fullstack_feature | **technical_architecture, engineering_standards, data_migration, supabase_schema_change** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `managing-director` | executive | L1 | commercial_offer, sales_commitment, execution_coordination | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `acquisition-specialist` | growth | L3 | — | — | `researcher_family` | `product` | pre-registered thresholds, CAC estimate vs actual | cmo | L2 |
 | `analytics-specialist` | growth | L3 | — | — | `researcher_family` | `product` | pre-registered thresholds, CAC estimate vs actual | cmo | L2 |
 | `content-strategist` | growth | L3 | — | — | `researcher_family` | `product` | pre-registered thresholds, CAC estimate vs actual | cmo | L2 |
@@ -125,9 +129,9 @@ Reviewer and Escalation are populated. Verify any authority claim with:
 
 ## Coverage
 
-- Roles with a decision domain they own: **15**
+- Roles with a decision domain they own: **18**
 - Roles holding a veto: **10**
-- Roles with a review obligation: **19**
+- Roles with a review obligation: **21**
 - Every role has: a playbook, a tool family, KPIs, a reviewer and an escalation level.
 
 Roles without an owned domain are specialists acting inside their pack's authority; they
