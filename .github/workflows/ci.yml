@@ -50,6 +50,20 @@ jobs:
       - name: Behavioural test suite
         run: python3 scripts/behavior_tests.py
 
+      - name: Harness migrations are idempotent (run twice)
+        run: |
+          python3 scripts/harness.py migrate
+          python3 scripts/harness.py migrate | grep -q "nothing to apply"
+
+      - name: Harness ledger integrity
+        run: python3 scripts/harness.py verify
+
+      - name: Task store single-authority coherence
+        run: python3 scripts/harness.py tasks-check
+
+      - name: Harness evaluation and self-red-team
+        run: python3 scripts/harness_eval.py
+
       - name: Emit machine-readable results
         if: always()
         run: python3 scripts/ci_report.py > ci-results.json && cat ci-results.json

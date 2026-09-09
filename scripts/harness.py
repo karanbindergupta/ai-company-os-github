@@ -164,6 +164,14 @@ MIGRATIONS = [
    id INTEGER PRIMARY KEY AUTOINCREMENT, execution TEXT NOT NULL, ts TEXT NOT NULL,
    items TEXT NOT NULL, bytes INTEGER, compressed INTEGER DEFAULT 0, provenance TEXT);
  """),
+
+ (8, "spawn auto-registration", """
+ ALTER TABLE executions ADD COLUMN spawn_source TEXT;
+ ALTER TABLE executions ADD COLUMN auto_registered INTEGER NOT NULL DEFAULT 0;
+ CREATE TABLE IF NOT EXISTS spawn_registry(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT NOT NULL, parent_role TEXT,
+   subagent_type TEXT, description TEXT, execution TEXT, prompt_sha TEXT);
+ """),
 ]
 
 def db():
@@ -1114,6 +1122,59 @@ def cmd_context(argv):
     else: ok(f"context bundle for {ex}: {len(items)} items, {len(body)} bytes, "
              f"provenance={len(set(prov))} sources (use emit=1 to print)")
 
+
+# ------------------------------- CLOSES THE SPAWN GAP: auto-registration at the hook
+def cmd_autoregister(argv):
+    """Called by the PreToolUse hook when it sees a Task spawn.
+
+    The harness cannot spawn (`claude` is not on PATH), so it cannot create the
+    execution row itself at dispatch time. But the hook runs BEFORE the spawn, so
+    registration happens whether or not the calling agent cooperates. An agent can
+    no longer spawn work that the ledger does not know about.
+
+    Prints the execution id so the hook can export it as HARNESS_EXECUTION."""
+    d = kv(argv); need(d, "subagent_type")
+    c = db(); migrate(verbose=False)
+    parent = d.get("parent_role", "orchestrator")
+    desc = (d.get("description") or "")[:200]
+    psha = hashlib.sha256((d.get("prompt") or "").encode()).hexdigest()[:16] if d.get("prompt") else None
+    # Idempotent: an identical spawn within 60s is the same dispatch, not a new one.
+    dup = c.execute("""SELECT execution FROM spawn_registry
+                       WHERE subagent_type=? AND description=? AND ts > datetime('now','-60 seconds')
+                       ORDER BY id DESC LIMIT 1""", (d["subagent_type"], desc)).fetchone()
+    if dup and dup[0]:
+        print(dup[0]); return
+    ex = next_id(c, "execution", "EX-%04d")
+    agent = d["subagent_type"]
+    if not c.execute("SELECT 1 FROM agents WHERE id=?", (agent,)).fetchone():
+        agent = d["subagent_type"]  # subagent types are not always role slugs; record as-is
+    c.execute("""INSERT INTO executions(id,agent,parent,kind,status,objective,profile,
+                 spawn_source,auto_registered,started,created)
+                 VALUES(?,?,?,'subagent','RUNNING',?,?,?,1,?,?)""",
+              (ex, agent, d.get("parent_execution"), desc or f"spawn: {d['subagent_type']}",
+               d.get("profile", "STANDARD"), "PreToolUse:Task", now(), now()))
+    c.execute("""INSERT INTO spawn_registry(ts,parent_role,subagent_type,description,execution,prompt_sha)
+                 VALUES(?,?,?,?,?,?)""", (now(), parent, d["subagent_type"], desc, ex, psha))
+    c.execute("INSERT INTO leases(execution,holder,acquired,renewed,ttl_s) VALUES(?,?,?,?,1800)",
+              (ex, agent, now(), now()))
+    c.commit()
+    emit(ex, "ExecutionCreated", parent,
+         {"subagent_type": d["subagent_type"], "auto": True, "prompt_sha": psha})
+    emit(ex, "ExecutionStarted", agent, {"source": "PreToolUse:Task"})
+    print(ex)
+
+def cmd_unregistered(argv):
+    """Audit: tool calls that happened with no execution attached. The remaining honesty gap."""
+    c = db()
+    n = c.execute("SELECT COUNT(*) FROM tool_calls WHERE execution IS NULL").fetchone()[0]
+    tot = c.execute("SELECT COUNT(*) FROM tool_calls").fetchone()[0]
+    auto = c.execute("SELECT COUNT(*) FROM executions WHERE auto_registered=1").fetchone()[0]
+    ok(f"tool_calls: {tot} total, {n} with NO execution attached "
+       f"({100.0*n/tot:.0f}% unattributed)" if tot else "no tool calls")
+    ok(f"auto-registered executions (spawn caught at the hook): {auto}")
+    if n: print("  Unattributed calls are operator-session calls, not agent work, "
+                "unless HARNESS_EXECUTION was unset during a spawn.")
+
 HELP = """harness.py - execution layer beneath the orchestrator
 
   migrate                                     apply pending schema migrations (idempotent)
@@ -1154,6 +1215,8 @@ HELP = """harness.py - execution layer beneath the orchestrator
   lesson [topic= statement= execution=]        OBSERVATION -> ... -> ORGANIZATIONAL
   workspace [register= path= branch= execution=]   parallel agents cannot share one
   context execution= [emit=1]                  task-scoped assembly, never the whole OS
+  autoregister subagent_type= [description= prompt= parent_role=]  hook-side spawn capture
+  unregistered                                 audit unattributed tool calls
 
 The harness records and enforces. It never decides. Authority stays in companydb.py."""
 
@@ -1167,7 +1230,8 @@ CMDS = {"migrate": lambda a: migrate(), "submit": cmd_submit, "start": cmd_start
         "opkey": cmd_opkey, "opkey-done": cmd_opkey_done, "approve": cmd_approve,
         "revoke": cmd_revoke, "control": cmd_control, "recover": cmd_recover, "resume": cmd_resume, "profile": cmd_profile, "budget": cmd_budget,
         "review": cmd_review, "dash": cmd_dash, "route": cmd_route, "lesson": cmd_lesson,
-        "workspace": cmd_workspace, "context": cmd_context, "help": lambda a: print(HELP)}
+        "workspace": cmd_workspace, "context": cmd_context,
+        "autoregister": cmd_autoregister, "unregistered": cmd_unregistered, "help": lambda a: print(HELP)}
 
 if __name__ == "__main__":
     if not DB.exists(): die(f"company database not found at {DB}")

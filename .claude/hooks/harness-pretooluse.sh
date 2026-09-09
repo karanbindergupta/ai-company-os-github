@@ -49,6 +49,31 @@ except Exception:
 
 ROLE="${HARNESS_ROLE:-orchestrator}"
 
+# SPAWN AUTO-REGISTRATION.
+# The harness cannot spawn (`claude` is not on PATH), so it cannot open the ledger
+# entry at dispatch time. But this hook runs BEFORE the spawn, so registration happens
+# whether or not the calling agent cooperates. This closes the last convention-dependent
+# gap: an agent can no longer spawn work the ledger does not know about.
+if [ "$TOOL" = "Task" ]; then
+    SPAWN=$(printf '%s' "$INPUT" | python3 -c '
+import sys, json
+try:
+    i = json.load(sys.stdin).get("tool_input", {}) or {}
+    print((i.get("subagent_type") or "general-purpose").replace("\n", " "))
+    print((i.get("description") or "").replace("\n", " "))
+except Exception:
+    print("general-purpose"); print("")
+' 2>/dev/null)
+    SUBTYPE=$(printf '%s' "$SPAWN" | sed -n 1p)
+    SUBDESC=$(printf '%s' "$SPAWN" | sed -n 2p)
+    NEWEX=$(python3 scripts/harness.py autoregister \
+              subagent_type="$SUBTYPE" description="$SUBDESC" parent_role="$ROLE" \
+              ${HARNESS_EXECUTION:+parent_execution="$HARNESS_EXECUTION"} 2>/dev/null | tail -1)
+    case "$NEWEX" in
+        EX-*) printf 'harness: spawn registered as %s\n' "$NEWEX" >&2 ;;
+    esac
+fi
+
 if [ -n "$HARNESS_EXECUTION" ]; then
     OUT=$(python3 scripts/harness.py permit role="$ROLE" tool="$TOOL" arg="$ARG" execution="$HARNESS_EXECUTION" 2>&1)
 else
