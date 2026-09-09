@@ -75,9 +75,42 @@ TOOL_PERMS = [  # least privilege: role-pattern, tool, grant
 ]
 
 def cmd_init(argv):
-    if DB.exists() and "--force" not in argv:
-        die("database already exists. Pass --force only if you intend to rebuild it.")
-    c = db(); c.executescript(SCHEMA.read_text())
+    # Initialization must be safe for both fresh and existing databases.
+    # Never destroy accumulated company intelligence/state just to sync the
+    # role registry. The schema uses CREATE TABLE IF NOT EXISTS semantics,
+    # while the registry sync below updates only base agent fields.
+    force = "--force" in argv
+
+    if DB.exists() and not force:
+        # Existing databases are valid stateful company stores. Open them
+        # without replaying destructive schema creation.
+        c = db()
+    else:
+        c = db()
+
+    # Apply only missing schema objects. This keeps existing state intact.
+    schema = SCHEMA.read_text()
+    statements = [stmt.strip() for stmt in schema.split(";") if stmt.strip()]
+    for statement in statements:
+        normalized = statement.upper()
+
+        # sqlite_sequence is an internal SQLite table created automatically
+        # when AUTOINCREMENT tables are used. Never execute/recreate it.
+        if "SQLITE_SEQUENCE" in normalized:
+            continue
+
+        if normalized.startswith("CREATE TABLE ") and "IF NOT EXISTS" not in normalized:
+            statement = statement.replace(
+                "CREATE TABLE ", "CREATE TABLE IF NOT EXISTS ", 1
+            )
+        elif normalized.startswith("CREATE INDEX ") and "IF NOT EXISTS" not in normalized:
+            statement = statement.replace(
+                "CREATE INDEX ", "CREATE INDEX IF NOT EXISTS ", 1
+            )
+
+        c.execute(statement)
+
+    reg = json.loads((ROOT/".ai-company/org/roles.json").read_text())["roles"]
     reg = json.loads((ROOT/".ai-company/org/roles.json").read_text())["roles"]
     depts = sorted({r["department"] for r in reg})
     for d in depts:
