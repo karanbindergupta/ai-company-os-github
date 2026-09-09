@@ -13,7 +13,22 @@ GATES=[("compile","python3 -m compileall -q scripts/"),
  ("readiness_audit","python3 scripts/readiness_audit.py"),
  ("behavior_tests","python3 scripts/behavior_tests.py")]
 jobs=[]; start=datetime.datetime.now(datetime.timezone.utc)
-for name,cmd in GATES:
+
+# --pre-behavior: run every gate EXCEPT behavior_tests, then persist the run.
+#
+# behavior_tests 19-30 assert that CI evidence exists in `ci_runs`. On a fresh
+# GitHub runner the table is empty, so those checks fail for want of evidence
+# that only a real CI run can create - a genuine chicken-and-egg, not a defect
+# in the tests. Running this first produces that evidence by ACTUALLY EXECUTING
+# the gates (observed=1 is written only on real execution), after which
+# behavior_tests can run against a truthful record.
+#
+# Reconciled from the public snapshot karanbindergupta/ai-company-os-github
+# (PR #1, commit cf23802), which found this by running CI remotely - something
+# this repository had never done.
+pre_behavior = "--pre-behavior" in sys.argv
+
+for name,cmd in (GATES[:-1] if pre_behavior else GATES):
     t0=datetime.datetime.now()
     try:
         p=subprocess.run(cmd,shell=True,cwd=R,capture_output=True,text=True,timeout=180)

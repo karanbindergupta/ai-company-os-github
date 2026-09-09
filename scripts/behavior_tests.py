@@ -70,7 +70,62 @@ t("34 provider usage cannot be falsely claimed",
                  capture_output=True,cwd=R).returncode!=0)
 t("35 registry reflects observed status",one("SELECT COUNT(*) FROM capability_readiness WHERE last_probed IS NOT NULL")>=10)
 
+# ---------------------------------------------------------------------------
+# CLEAN-INSTALL BASELINE
+#
+# 16 of these 35 checks assert ACCUMULATED OPERATIONAL EVIDENCE: drills actually
+# run, coaching actually issued, improvement actually measured, providers
+# actually probed. A freshly bootstrapped company has earned none of it, so on a
+# clean install they MUST fail. That is the suite working, not breaking - and
+# making them pass by seeding rows would be fabricated evidence, which decisions
+# D-5 and D-10 and governance rule 15 all forbid.
+#
+# CI still needs a real gate, so `--clean-install` asserts the exact expected
+# shape instead of a bare count:
+#   * any check outside this set that fails  -> HARD FAILURE (a real regression)
+#   * any check inside this set that PASSES  -> HARD FAILURE (evidence was
+#     manufactured, which is the more dangerous direction)
+CLEAN_INSTALL_UNPROVEN = {
+    "5  drills execute",
+    "6  evaluations recorded with score+verdict",
+    "7  failed drills generate coaching",
+    "8  coaching names a retest drill",
+    "9  behavioural improvement measurable",
+    "10 behavioural regression detected",
+    "11 one failure does not rewrite personality",
+    "12 repeated evidence updates development",
+    "15 uncertainty behaviour evaluated",
+    "16 disagreement behaviour evaluated",
+    "17 failure behaviour evaluated",
+    "18 pressure behaviour evaluated",
+    "31 Exa probed, not assumed",
+    "32 Brave probed, not assumed",
+    "33 unavailable provider triggers fallback",
+    "35 registry reflects observed status",
+}
+
 fails=sum(1 for _,ok,_ in res if not ok)
 for n,ok,d in res: print(f"  [{'PASS' if ok else 'FAIL'}] {n}"+(f"  ({d})" if d else ""))
 print(f"\nLAYER 3 TESTS: {len(res)-fails}/{len(res)} passed"+("" if not fails else f"  {fails} FAILED"))
+
+if "--clean-install" in sys.argv:
+    unexpected_fail = [n for n,ok,_ in res if not ok and n not in CLEAN_INSTALL_UNPROVEN]
+    unexpected_pass = [n for n,ok,_ in res if ok and n in CLEAN_INSTALL_UNPROVEN]
+    print("\nCLEAN-INSTALL BASELINE")
+    print(f"  proven now                 : {len(res)-len(CLEAN_INSTALL_UNPROVEN)}/{len(res)}")
+    print(f"  NOT YET PROVEN (no evidence): {len(CLEAN_INSTALL_UNPROVEN)}")
+    bad = False
+    if unexpected_fail:
+        print("  REGRESSION - these should pass on a clean install:")
+        for n in unexpected_fail: print(f"    FAIL {n}")
+        bad = True
+    if unexpected_pass:
+        print("  FABRICATED EVIDENCE - these cannot be true on a clean install:")
+        for n in unexpected_pass: print(f"    PASS {n}")
+        bad = True
+    if not bad:
+        print("  BASELINE OK - every unproven check is unproven, nothing regressed,")
+        print("  and no runtime evidence was manufactured.")
+    sys.exit(1 if bad else 0)
+
 sys.exit(1 if fails else 0)

@@ -26,7 +26,18 @@ chk("MEMORY","versioning",True)
 chk("MEMORY","knowledge graph",True)
 chk("MEMORY","audit log",n("audit_log")>0,f"{n('audit_log')} events")
 chk("RESEARCH","Exa",ex(".mcp.json") and "exa" in (R/".mcp.json").read_text())
-chk("RESEARCH","Tavily",subprocess.run(["which","tvly"],capture_output=True).returncode==0)
+# Tavily is an API capability, not a required local binary. Prefer real evidence
+# (the CLI answers); fall back to the company's declared research routing, and
+# label which was observed. See the note in capability_validation.py: a docs-only
+# check must never masquerade as a reachable provider (decision D-10).
+_router = R/".ai-company/research/RESEARCH-ROUTER.md"
+if subprocess.run(["which","tvly"],capture_output=True).returncode == 0:
+    chk("RESEARCH","Tavily",True,"VERIFIED: tvly present on this host")
+else:
+    _routed = _router.exists() and "tavily" in _router.read_text().lower()
+    chk("RESEARCH","Tavily",_routed,
+        "CONFIGURED (tvly absent here): declared in RESEARCH-ROUTER.md" if _routed
+        else "NOT AVAILABLE: tvly absent and no routing declared")
 chk("RESEARCH","Brave configured",ex(".mcp.json") and "brave" in (R/".mcp.json").read_text())
 chk("RESEARCH","research constitution + 6 policies",len(list((R/".ai-company/research").glob("*.md")))>=6)
 chk("RESEARCH","evidence model",True)

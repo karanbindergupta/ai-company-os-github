@@ -26,6 +26,41 @@ jobs:
       - name: Secret scan
         run: sh scripts/secret_scan.sh
 
+      - name: Clean-install bootstrap from empty state (canonical path)
+        run: |
+          rm -f .ai-company/state/company.db .ai-company/state/run.json .ai-company/state/tasks.json
+          test ! -f .ai-company/state/company.db
+          python3 scripts/bootstrap.py
+          python3 - <<'CHECK'
+          import sqlite3, sys
+          c = sqlite3.connect('.ai-company/state/company.db')
+          a = c.execute("SELECT COUNT(*) FROM agents").fetchone()[0]
+          d = c.execute("SELECT COUNT(*) FROM decision_rights").fetchone()[0]
+          g = c.execute("SELECT COUNT(*) FROM agents WHERE cognitive_style IS NOT NULL AND cognitive_style<>''").fetchone()[0]
+          b = c.execute("SELECT COUNT(*) FROM behavioral_contracts").fetchone()[0]
+          r = c.execute("SELECT COUNT(*) FROM permission_rules").fetchone()[0]
+          k = c.execute("SELECT COUNT(*) FROM benchmarks").fetchone()[0]
+          t = c.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table'").fetchone()[0]
+          print(f"agents={a} domains={d} cognitive={g} contracts={b} rules={r} benchmarks={k} tables={t}")
+          bad = []
+          if a != 121: bad.append(f"agents {a} != 121")
+          if d != 29:  bad.append(f"domains {d} != 29")
+          if g != 121: bad.append(f"cognitive profiles {g} != 121")
+          if b != 121: bad.append(f"behavioural contracts {b} != 121")
+          if r != 22:  bad.append(f"permission rules {r} != 22")
+          if k != 7:   bad.append(f"benchmark scenarios {k} != 7")
+          if t != 81:  bad.append(f"tables {t} != 81")
+          # Runtime evidence must be ZERO on a clean install. A non-zero count here
+          # means fabricated history was committed to source.
+          for tbl, lbl in (("executions","executions"),("drill_runs","drill runs"),
+                           ("ci_runs","ci runs"),("agent_performance","performance rows")):
+              n = c.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0]
+              if n: bad.append(f"FABRICATED: {n} {lbl} present on a clean install")
+          if bad: print("CLEAN INSTALL FAILED: " + "; ".join(bad)); sys.exit(1)
+          CHECK
+          python3 scripts/companydb.py verify
+          python3 scripts/harness.py verify
+
       - name: Build company database from the role registry
         run: python3 scripts/companydb.py init --force
 
@@ -47,8 +82,19 @@ jobs:
       - name: Readiness audit
         run: python3 scripts/readiness_audit.py
 
-      - name: Behavioural test suite
-        run: python3 scripts/behavior_tests.py
+      # behavior_tests 19-30 assert that CI evidence exists. On a fresh runner it
+      # does not, so generate it by ACTUALLY RUNNING the gates first (ci_report
+      # writes observed=1 only on real execution). Reconciled from PR #1 of the
+      # public snapshot, which discovered this by running CI remotely.
+      - name: Generate real CI evidence (runs every gate except behaviour)
+        run: python3 scripts/ci_report.py --pre-behavior > /dev/null
+
+      # A clean runner has no drills, coaching or provider probes, so 16 of the 35
+      # checks are legitimately NOT YET PROVEN. --clean-install asserts the exact
+      # expected shape: any other failure is a regression, and any of those 16
+      # PASSING means runtime evidence was fabricated. Both are hard failures.
+      - name: Behavioural test suite (clean-install baseline)
+        run: python3 scripts/behavior_tests.py --clean-install
 
       - name: Harness migrations are idempotent (run twice)
         run: |
