@@ -147,6 +147,17 @@ def cmd_phase_complete(argv):
 
 # ---------------------------------------------------------------- tasks
 def cmd_task_add(argv):
+    # DELEGATES to harness.py. company.db is the single authoritative task store;
+    # tasks.json is a derived read-only projection. Writing JSON here directly would
+    # recreate the two-source-of-truth defect and bypass the separation-of-duties,
+    # evidence and independent-review checks enforced on the database write path.
+    import subprocess as _sp
+    _r = _sp.run([sys.executable, str(ROOT / "scripts/harness.py"), "task-add"] + list(argv),
+                 cwd=str(ROOT), capture_output=True, text=True)
+    print((_r.stdout + _r.stderr).rstrip())
+    sys.exit(_r.returncode)
+
+def _legacy_cmd_task_add(argv):
     kw = dict(a.split("=", 1) for a in argv if "=" in a)
     for req in ("title", "owner"):
         if req not in kw: die(f"usage: task-add title=... owner=... [phase=] [deps=a,b] [criteria=...] [parallel_group=]")
@@ -172,6 +183,17 @@ def cmd_task_add(argv):
     print(f"added {tid}: {t['title']} -> {t['owner']}")
 
 def cmd_task_update(argv):
+    # DELEGATES to harness.py. company.db is the single authoritative task store;
+    # tasks.json is a derived read-only projection. Writing JSON here directly would
+    # recreate the two-source-of-truth defect and bypass the separation-of-duties,
+    # evidence and independent-review checks enforced on the database write path.
+    import subprocess as _sp
+    _r = _sp.run([sys.executable, str(ROOT / "scripts/harness.py"), "task-update"] + list(argv),
+                 cwd=str(ROOT), capture_output=True, text=True)
+    print((_r.stdout + _r.stderr).rstrip())
+    sys.exit(_r.returncode)
+
+def _legacy_cmd_task_update(argv):
     if not argv: die("usage: task-update <id> status=... [evidence=path] [blocked_on=...] [note=...]")
     tid = argv[0]; kw = dict(a.split("=",1) for a in argv[1:] if "=" in a)
     d = jload(TASKS, {"tasks":[]}); t = next((x for x in d["tasks"] if x["id"]==tid), None)

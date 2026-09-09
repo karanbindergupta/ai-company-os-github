@@ -285,7 +285,27 @@ def cmd_decision(argv):
 def cmd_task(argv):
     if not argv: die("usage: task add|update|list|ready|graph ...")
     sub = argv[0]; d = kv(argv[1:]); c = db()
-    if sub == "add":
+
+    # SINGLE WRITE PATH (decision D-2).
+    #
+    # `add` and `update` DELEGATE to harness.py. company.db is the single
+    # authoritative task store and tasks.json is a derived read-only projection
+    # that harness.py re-emits on every write. This function used to write the
+    # tasks table directly, leaving the projection stale - proven by test, one
+    # `companydb.py task add` produced:
+    #     TASK STORE DIVERGENCE DETECTED - in DB but not projection: ['T0002']
+    # An earlier remediation closed exactly this hole in company.py but missed
+    # this one, so two write paths survived. Reads (list/ready/graph) stay local:
+    # they cannot diverge anything.
+    if sub in ("add", "update"):
+        import subprocess as _sp
+        _verb = "task-add" if sub == "add" else "task-update"
+        _r = _sp.run([sys.executable, str(ROOT / "scripts/harness.py"), _verb] + list(argv[1:]),
+                     cwd=str(ROOT), capture_output=True, text=True)
+        print((_r.stdout + _r.stderr).rstrip())
+        sys.exit(_r.returncode)
+
+    if sub == "_legacy_add":
         need(d, "title", "owner")
         for r in (d["owner"], d.get("reviewer")):
             if r and not c.execute("SELECT 1 FROM agents WHERE id=?", (r,)).fetchone():
@@ -310,7 +330,7 @@ def cmd_task(argv):
         log(c, "task_add", d["owner"], "task", tid, d["title"]); c.commit()
         ok(f"{tid}  {d['title']}  -> {d['owner']}" + (f"  (reviewer: {d['reviewer']})" if d.get("reviewer") else ""))
         return
-    if sub == "update":
+    if sub == "_legacy_update":
         need(d, "id", "status")
         t = c.execute("SELECT * FROM tasks WHERE id=?", (d["id"],)).fetchone()
         if not t: die(f"no task '{d['id']}'")
