@@ -199,6 +199,13 @@ MIGRATIONS = [
    observed TEXT, score REAL NOT NULL, verdict TEXT NOT NULL, notes TEXT,
    CHECK(verdict IN ('PASS','FAIL','INCONCLUSIVE')));
  """),
+
+ (11, "sandbox profiles and competitor-derived drills", """
+ CREATE TABLE IF NOT EXISTS sandbox_runs(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, execution TEXT, ts TEXT NOT NULL,
+   command TEXT NOT NULL, profile TEXT NOT NULL, allowed_paths TEXT,
+   exit_code INTEGER, violated INTEGER NOT NULL DEFAULT 0, detail TEXT);
+ """),
 ]
 
 def db():
@@ -1429,6 +1436,73 @@ def cmd_learn(argv):
                                         WHEN 'REPEATED' THEN 2 WHEN 'CANDIDATE' THEN 3 ELSE 4 END, evidence_count DESC LIMIT 12"""):
         print(f"    [{st:<13} n={n_}] {tp}: {stm[:64]}")
 
+
+# ------------------------------------------- SANDBOXED EXECUTION (macOS seatbelt)
+# Docker is absent on this machine and cannot be installed (no Homebrew). macOS
+# provides `sandbox-exec`, which is a better fit anyway: no daemon, no images, no
+# root, and it confines the actual process rather than a whole VM.
+_SBX_PROFILE = """(version 1)
+(import "/System/Library/Sandbox/Profiles/bsd.sb")
+(allow process-exec*)
+(allow file-map-executable)
+(allow file-read*)
+(deny file-write*)
+(allow file-write* (subpath "%WORKSPACE%") (literal "/dev/null")
+                   (literal "/dev/stdout") (literal "/dev/stderr") (subpath "/dev/fd"))
+%NET%
+"""
+
+def cmd_sandbox(argv):
+    """Run a command confined to one workspace. Denies filesystem access outside it,
+    and denies network unless explicitly granted. This is containment, not policy -
+    it holds even if the permission engine is wrong."""
+    d = kv(argv); need(d, "cmd")
+    if not shutil_which("sandbox-exec"):
+        die("sandbox-exec not available on this platform; containment cannot be guaranteed. "
+            "Refusing to run unconfined under a sandbox command.")
+    ws = os.path.realpath(os.path.abspath(d.get("workspace", str(R))))
+    if not os.path.isdir(ws): die(f"workspace does not exist: {ws}")
+    # macOS resolves symlinks before the sandbox check (/tmp -> /private/tmp), so the
+    # profile must name the REAL path or every rule silently fails to match.
+    net = "(allow network*)" if d.get("network") == "1" else "(deny network*)"
+    prof = _SBX_PROFILE.replace("%WORKSPACE%", ws).replace("%NET%", net)
+    import tempfile
+    c = db(); migrate(verbose=False)
+    ex = d.get("execution")
+    with tempfile.NamedTemporaryFile("w", suffix=".sb", delete=False) as f:
+        f.write(prof); sbf = f.name
+    try:
+        r = subprocess.run(["sandbox-exec", "-f", sbf, "/bin/sh", "-c", d["cmd"]],
+                           cwd=ws, capture_output=True, text=True,
+                           timeout=int(d.get("timeout_s", 120)))
+        rc, out, err = r.returncode, r.stdout, r.stderr
+    except subprocess.TimeoutExpired:
+        rc, out, err = 124, "", "timeout"
+    finally:
+        try: os.unlink(sbf)
+        except OSError: pass
+    violated = 1 if ("not permitted" in err or "Operation not permitted" in err or "sandbox" in err.lower()) else 0
+    c.execute("""INSERT INTO sandbox_runs(execution,ts,command,profile,allowed_paths,exit_code,violated,detail)
+                 VALUES(?,?,?,?,?,?,?,?)""",
+              (ex, now(), d["cmd"][:300], "workspace-confined", ws, rc, violated, err[:300]))
+    c.commit()
+    if ex: emit(ex, "ToolAllowed" if not violated else "ToolDenied", "sandbox",
+                {"cmd": d["cmd"][:80], "rc": rc, "violated": bool(violated)})
+    if out: print(out, end="")
+    if err: print(err, end="", file=sys.stderr)
+    if violated:
+        print(f"\nSANDBOX VIOLATION: the command attempted access outside {ws}", file=sys.stderr)
+        sys.exit(2)
+    sys.exit(rc)
+
+def shutil_which(x):
+    for d_ in os.environ.get("PATH", "").split(os.pathsep):
+        pth = os.path.join(d_, x)
+        if os.path.isfile(pth) and os.access(pth, os.X_OK): return pth
+    for pth in ("/usr/bin/" + x, "/bin/" + x):
+        if os.path.isfile(pth) and os.access(pth, os.X_OK): return pth
+    return None
+
 HELP = """harness.py - execution layer beneath the orchestrator
 
   migrate                                     apply pending schema migrations (idempotent)
@@ -1481,6 +1555,7 @@ HELP = """harness.py - execution layer beneath the orchestrator
   step execution= step= [ok=1]                 record progress for recovery
   drill [id= verdict= score= observed=]        harness self-drills, scored by observation
   learn                                        derive lessons from the ledger, not from opinion
+  sandbox cmd= [workspace= network=1 execution= timeout_s=]  confined execution (seatbelt)
 
 The harness records and enforces. It never decides. Authority stays in companydb.py."""
 
@@ -1498,7 +1573,7 @@ CMDS = {"migrate": lambda a: migrate(), "submit": cmd_submit, "start": cmd_start
         "autoregister": cmd_autoregister, "unregistered": cmd_unregistered,
         "pause": cmd_pause, "cancel": cmd_cancel, "stuck": cmd_stuck,
         "schedule": cmd_schedule, "due": cmd_due, "fire": cmd_fire,
-        "heartbeat": cmd_heartbeat, "step": cmd_step, "drill": cmd_drill, "learn": cmd_learn, "help": lambda a: print(HELP)}
+        "heartbeat": cmd_heartbeat, "step": cmd_step, "drill": cmd_drill, "learn": cmd_learn, "sandbox": cmd_sandbox, "help": lambda a: print(HELP)}
 
 if __name__ == "__main__":
     if not DB.exists(): die(f"company database not found at {DB}")

@@ -10,9 +10,27 @@ decorative. Verified blocked here: `cat .env`, `echo x && cat .env`, `(cat .env)
 attempting either exits 2.
 
 ## KNOWN BYPASSES — stated, not hidden
-1. **The hook fails OPEN on harness malfunction.** If `python3` is missing, the DB is unreadable, or
-   the hook errors, the tool call proceeds. Deliberate: a broken ledger must not brick the founder's
-   session. Availability of human tooling outranks enforcement completeness. **Accepted risk.**
+
+### CLOSED 2026-09-09 — the fail-open hole
+The hook previously exited 0 on **four separate guards** — unreachable project dir, missing
+`harness.py`, missing `python3`, unparseable payload. Each was an independent fail-open path.
+**A test proved the impact: with `CLAUDE_PROJECT_DIR` pointed at a nonexistent path, an arbitrary
+destructive shell command was permitted.**
+
+**Now a degraded harness falls back to READ-ONLY.** Read-only tools still pass so the session stays
+usable; `Bash`, `Write`, `Edit` and `Task` are **refused**. Verified against all four guards.
+
+**Residual:** a read-only tool still passes when the harness is down. Deliberate floor — the
+alternative is a corrupt ledger bricking the machine.
+
+### CONTAINMENT — seatbelt, not Docker
+Docker is absent and cannot be installed (no Homebrew). macOS **seatbelt** is present and fits
+better: no daemon, no images, no root, and it confines the process rather than a VM.
+`harness.py sandbox` confines a command to one workspace on Apple's `bsd.sb` base, writes
+restricted to the workspace, **network denied unless granted**. Every run recorded in `sandbox_runs`.
+
+**Limit:** seatbelt confines filesystem and network. It is not a VM boundary and does not defend
+against a kernel exploit. That needs a container, and that needs Docker.
 2. **The harness cannot spawn.** `claude` is not on PATH, so an execution row is created by the
    caller. An agent cannot bypass *permissions*, but it can fail to *register an execution at all*.
    Tool calls are still recorded; execution attribution is not guaranteed. **Open.**
