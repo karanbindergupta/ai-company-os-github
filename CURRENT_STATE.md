@@ -1,214 +1,197 @@
 # CURRENT STATE — read this second
 
-**Snapshot date: 2026-09-08** · Generated at the end of the knowledge-preservation session.
-Read [`CLAUDE.md`](CLAUDE.md) first. This file tells you *where we are* and *what to do next*.
+**Snapshot: 2026-09-09** · end of the repository-canonicalization session.
+Read [`CLAUDE.md`](CLAUDE.md) first. This file says *where we are* and *what to do next*.
 
 ---
 
-## 30-SECOND SUMMARY
+## 1. WHERE WE ARE
 
-The **company is built and validated. The product is not started.** 119 employees exist with
-enforced authority, cognitive profiles and behavioural contracts. One mission is live —
-**medical tourism** — and it is **stopped at a founder decision**. Two things block progress:
-the founder must pick a market position (ESC-002), and the GitHub repo must be created before
-anything can be pushed.
+Repository canonicalization is **complete locally**. Nothing has been pushed.
 
----
+This working tree is the **single canonical source** for both the Company OS and the Execution
+Harness. Five AI-Company copies existed on this machine; four are superseded (§5). The repository
+now reconstructs itself from source, and runtime state is no longer canonical.
 
-## 1. WHAT IS BUILT AND WORKING
-
-| | Status |
-|---|---|
-| 119 employees, 11 departments | ✅ COMPLETE |
-| Every employee named, hierarchy verified | ✅ 0 orphans, 0 shadows, 0 SPOFs, 0 circular reporting |
-| Authority enforced in code (`companydb.py can`) | ✅ WORKING |
-| Separation of duties (owner ≠ reviewer, DB CHECK) | ✅ ENFORCED |
-| 23-phase SOP, 13 gates, refuses to skip | ✅ WORKING |
-| 119 cognitive profiles + behavioural contracts | ✅ COMPLETE |
-| Drill engine + automated rubrics | ✅ WORKING (11 drills, 22 runs) |
-| Capability probing, provider provenance | ✅ WORKING |
-| CI pipeline (9 gates) | ⚠️ Executes **locally** only. Never run remotely |
-| Full employee/hierarchy/drill documentation | ✅ Generated from DB by `scripts/gen_memory.py` |
-
-**Validation suites — last run all passing:**
-`readiness_audit.py` (43) · `behavior_tests.py` (35) · `cognitive_validation.py` (23) ·
-`capability_validation.py` (14) · `staffing_audit.py` · `audit_org.py`
+**The one thing left is a founder decision about publication (§7).**
 
 ---
 
-## 2. WHAT IS NOT BUILT
+## 2. ARCHITECTURE
 
-- **No product. No application code. No frontend, backend, database schema or deployment.**
-- The medical tourism mission has not chosen a direction.
-- 110 of 119 agents have **never been drilled** — their behaviour is UNTESTED.
-- No agent has completed real, outcome-validated work. **Zero agents at maturity L5.**
-- CI has never run on GitHub Actions. `trusted_as_gate = 0`.
-- **Three staffing gaps remain open** and are reported every run by `staffing_audit.py`:
-  `security-analyst` (CISO has no analyst for monitoring / vulnerability management) ·
-  `sales-lead` (Sales is a single specialist with no lead) ·
-  `executive-operations` (CEO has no ops support). These were judged **not yet worth hiring** —
-  no mission has generated the work. Revisit when one does, per rule D-11 (reuse before hire).
-
----
-
-## 3. ACTIVE MISSION — `run_73df81997a` — MEDICAL TOURISM
+```
+FOUNDER (L0) -> EXECUTIVE COUNCIL (13) -> COMPANY OS -> MASTER ORCHESTRATOR
+                                       -> EXECUTION HARNESS -> Claude Code / Task / tools
+```
 
 | | |
 |---|---|
-| Industry | Medical tourism |
-| Idea | **NONE.** Founder supplied an industry and explicitly no idea |
-| Constraints | Solo founder · pre-revenue · open on direction |
-| SOP phase | `intake` — **0/23 phases formally completed** |
-| Status | **BLOCKED on founder decision ESC-002** |
+| Agents | **121** across 11 departments (was 119; Atlas added 2 strategy-research roles) |
+| Cognitive profiles | 121/121 · behavioural contracts 121/121 |
+| Decision domains | 29 · 11 founder-required |
+| SOP | 23 phases · 13 gates |
+| Harness schema | **v16** · one orchestrator · one authority engine · one task truth |
+| Database | 81 tables at runtime; 53 declared in `schema.sql`; the rest from migrations |
+| Language | Python 3.9, **stdlib only** |
 
-**Note on phase state:** discovery-level research was performed and written to disk, but the SOP
-phase counter was never advanced past `intake` because the mission hit a founder decision first.
-That is correct behaviour, not a bug. Do not mark phases complete retroactively.
+---
 
-### What the company found
+## 3. TEST STATE
 
-1. **Medical tourism is a market for lemons.** Quality is unobservable at purchase; the failure
-   surface (complication, revision, poor outcome) appears **18–36 months later**, so the price
-   signal never propagates back. Bad providers are not punished by the market.
-2. **The obvious entry — a facilitator or marketplace — is structurally misaligned.** Facilitators
-   are paid per booking, so their incentive is volume, not outcome. Building the obvious thing
-   means building the broken thing.
-3. **The uncontested position is supply-side orchestration for mid-tier hospitals** — the
-   hospitals with real capability and no international patient funnel.
+**Established runtime** (this working tree):
 
-### ESC-002 — OPEN, awaiting the founder
+| Suite | Result |
+|---|---|
+| `readiness_audit` | **43/43** |
+| `cognitive_validation` | **23/23** |
+| `capability_validation` | **14/14** |
+| `behavior_tests` | **35/35** |
+| `audit_org` | **0 findings** |
+| `harness_eval` (incl. self-red-team) | **45/45** |
+| `harness_bench` | **15/15** |
+| `companydb verify` · `harness verify` · `tasks-check` · `secret_scan` | PASS |
 
-> **Company recommendation:** *Supply-side orchestration for mid-tier hospitals as the first move;
-> it is validatable by a solo founder and is a route into the buy-side model.*
+**Clean install from source** (verified in an isolated tree, four times):
 
-Options put to the founder:
+```
+agents=121  domains=29  cognitive=121  contracts=121
+permission_rules=22  benchmarks=7  tables=81
+executions=0  drill_runs=0  ci_runs=0
+readiness 43/43 · cognitive 23/23 · capability 14/14 · audit 0 · eval 45/45 · bench 15/15
+behavior_tests --clean-install: 19/35  BASELINE OK
+```
 
-| | Position | Company's view |
+**19/35 is correct, not a defect.** Sixteen checks require accumulated operational evidence
+(drills, coaching, measured improvement, live provider probes). A fresh company has earned none.
+`--clean-install` asserts that exact shape and fails **both** if something else breaks *and* if any
+of the sixteen passes — the latter meaning evidence was fabricated. Proven in both directions by
+injecting fake drill rows: the gate caught it.
+
+---
+
+## 4. WHAT CHANGED THIS SESSION
+
+**Four permission defects, all found by test and closed:**
+
+1. **Token-append bypass (critical).** `cat ~/.ssh/id_rsa; echo company.db` resolved to **ALLOW** —
+   a later ALLOW matching any appended token lifted the private-key deny. Closed with *hard denies*
+   (migration v14). Reproduced before the fix and guarded by `HD-PERM-003/004`.
+2. **Shell-operator blindness.** `shlex` does not split on `;`/`&&`/`|`, so the filename token kept
+   its trailing punctuation and an anchored pattern missed it. The resolver now splits on operators
+   first (`HD-PERM-005`).
+3. **Over-broad credential pattern.** It matched any string containing the substring, including
+   `os.environ` in ordinary Python — it blocked the very migration that repairs it. Narrowed to
+   filename patterns (v15), false positives guarded by `HD-PERM-006`.
+4. **Ungoverned MCP surface.** Every `mcp__*` tool fell to the deny-biased default, so the whole
+   surface was blocked wholesale — the weakest posture, since a blanket deny drives work outside
+   the harness. Now governed (v16): read-only GitHub allowed, writes require founder approval,
+   repository deletion is a hard deny, Supabase still denied by default.
+
+**Reconciled from the public snapshot** (its PR #1 — work we did not have, found by it actually
+running CI remotely):
+
+- Provider checks no longer require `which tvly`, which would fail on any CI runner. Rather than
+  swap a real check for a docs check (which weakens evidence, D-10), the check now prefers the real
+  binary and **labels** which grade it saw: `VERIFIED` vs `CONFIGURED`.
+- `ci_report.py --pre-behavior` generates genuine CI evidence before behavioural tests run.
+- `LICENSE` (MIT), `FOUNDER.example.md`, and 6 `.gitkeep` files — without those the SOP writes
+  `charter.md`, `pricing.md`, `positioning.md` and `discovery.md` into directories that do not
+  exist on a clean clone.
+- **Rejected:** the snapshot tracks `company.db`. That is the anti-pattern we removed.
+
+**Schema correction.** Six tables previously excluded as "dead" are restored. That call was wrong:
+`benchmarks` held **7 rows of authored configuration** a clean install was silently losing (now in
+`seed.sql`), and omitting the rest left fresh installs at 47 tables against 54 for existing ones —
+the exact drift `schema.sql` exists to prevent. `environment_changes` is declared but **never
+seeded**: it holds a runtime observation, and seeding it would fabricate measurement.
+
+**Second task write path closed.** `companydb.py task add` still wrote the tasks table directly,
+leaving the projection stale — proven by test (`DIVERGENCE DETECTED`). An earlier remediation fixed
+this in `company.py` and missed this one. Both now delegate to `harness.py`.
+
+**Runtime/source separation.** `company.db`, `run.json`, `tasks.json`, `backup/`, WAL sidecars and
+`logs/events.jsonl` untracked (index-only; **every file preserved on disk**), with ignore rules and
+rationale. `schema.sql`, `seed.sql` and `archive/` are deliberately *not* ignored.
+
+---
+
+## 5. THE FIVE LOCAL COPIES
+
+| Path | Verdict |
+|---|---|
+| **this worktree** (`~/code/ai-company`, branch `claude/review-project-architecture-87dcc7`) | **CANONICAL** — only copy with the harness, seed, bootstrap and fixes |
+| `~/Desktop/airline` | Working copy of the public repo @ `3a4c1bf`, incl. merged PR #1. **Reconciled from, not deleted** |
+| `~/code/ai-company-os-github` | Older clone of the same remote (1 commit). Superseded by the above |
+| `~/code/ai-company-os` | Non-git duplicate of `main`. No unique content |
+| `~/AI-Company` | **A different project** — an NDC/airline application (`src/ndc_adapter.py`, `pool_service.py`). Not an AI Company OS copy; left untouched |
+
+**Nothing was deleted.** No candidate repository was modified.
+
+---
+
+## 6. GIT STATE
+
+| | |
+|---|---|
+| Branch | `claude/review-project-architecture-87dcc7` |
+| Base | `main` @ `2e1ff24` |
+| Commits | 42 total; 12 ahead of `main` |
+| Configured `origin` | `karanbindergupta/ai-company.git` — **404, does not exist** |
+| Public repo | `karanbindergupta/ai-company-os-github` — public, MIT, 25 stars, 6 forks, `main` @ `3a4c1bf` |
+| Shared history | **None.** No common ancestor |
+| Pushed | **No. Nothing has ever been pushed from this repository.** |
+
+---
+
+## 7. NEXT STEP — FOUNDER DECISION REQUIRED
+
+Local work is finished. Publication is blocked on a decision only the founder can make, because
+**the canonical public destination is public and already has 25 stars and 6 forks**, and this tree
+contains material the public snapshot deliberately excluded:
+
+`.ai-company/knowledge/lessons-learned/atlas-compacted.md` names a real company
+(**MyFlighty / S.C.A. Corporate Group SRL, Civitanova Marche**), records **founder testimony**
+("the founder, who knows one of their founders, confirmed it"), states unverified allegations about
+that company's commercial practices, and lays out the founder's own competitive wedge.
+
+Publishing it would be **effectively irreversible** — public, forked, indexed.
+
+**Options:**
+
+| | Option | Effect |
 |---|---|---|
-| A | Patient marketplace / facilitator | Structurally misaligned — RISK-003 |
-| **B** | **Supply-side orchestration for mid-tier hospitals** | **RECOMMENDED** |
-| C | Buy-side patient agent (paid by the patient) | Blocked on UNKNOWN: will patients pay? |
-| D | Outcome registry / quality data layer | Slow, but attacks the actual root cause |
+| **A** | Publish the OS only — a curated export like the existing snapshot, mission material excluded | Safe, matches the snapshot's own stated policy and D-12 |
+| **B** | Push this tree to a **new branch** on `ai-company-os-github` | Non-destructive to `main` and to forks, **but still public** — the content question stands |
+| **C** | Create a **private** repository and push everything there | Preserves D-12; nothing sensitive becomes public |
+| **D** | Replace `main` on the public repo | **Destructive.** Unrelated history, breaks 6 forks. Requires explicit founder authorization |
 
-**Also needed from the founder:** target geography (corridor), and whether they have any personal
-healthcare or hospital contacts — that changes which option is realistic for a solo founder.
+**Recommended: C for the full canonical tree, plus A for the public artefact.**
 
-### Open risks on this mission
-| ID | Sev | Description |
-|---|---|---|
-| RISK-003 | HIGH | Facilitator/marketplace entry is structurally misaligned |
-| RISK-004 | HIGH | Patient-safety and regulatory exposure as a facilitator — **NOT RESEARCHED** |
-
-**Artifacts:** `.ai-company/mission/charter.md` · `.ai-company/mission/intake.md` ·
-`.ai-company/research/industry.md` · `.ai-company/research/sources/index.md` ·
-`.ai-company/decisions/founder/medical-tourism-position.md`
+Also fix, whichever is chosen: the configured `origin` points at a repository that does not exist.
 
 ---
 
-## 4. PREVIOUS MISSION — `run_63de3f6ebc` — REVOKED
+## 8. KNOWN LIMITATIONS
 
-Diaspora airline ticketing platform for Europe. **The founder revoked it** after the company found
-the idea was already shipping: **BharatFare, launched December 2025**, same corridor, WhatsApp-first,
-same neighbourhood expansion plan (RISK-002). The company also found the founder's premise was
-wrong in a more interesting way — agent reliance is **structural (hidden net fares)**, not a UX
-problem (RISK-001, ESC-001). The only genuinely uncontested axis found was **baggage-adjusted total
-landed cost**.
-
-**Lessons:** `.ai-company/knowledge/lessons-learned/diaspora-airline-revoked.md`
-**This produced governance rule D-9: run the competitive scan before scoping anything.**
+- **CI has never run on GitHub.** It passes in a locally simulated clean runner (no provider CLIs
+  on PATH); no observed Actions result exists. Do not claim CI status.
+- **No real mission has run under the harness.** Every test is a self-test. Maturity **L3**.
+- **111 of 121 agents have never been drilled.**
+- Sandboxing is macOS seatbelt, not a container.
+- Brave API key returns 422; Homebrew absent (blocks gitleaks/trivy/semgrep/Docker).
 
 ---
 
-## 5. BLOCKERS — things a new session cannot fix alone
+## 9. TO RESUME
 
-### 🔴 BLOCKER 1 — GitHub repo does not exist
-The remote is configured (`https://github.com/karanbindergupta/ai-company.git`) but **nothing has
-ever been pushed. 29+ local commits exist only on this machine.**
-
-`create_repository` via the GitHub MCP returns **403** — the PAT is scoped to *"only select
-repositories"* and lacks Administration permission.
-
-**Founder must, manually:**
-1. Create an **empty private** repo named `ai-company` at https://github.com/new
-   (no README, no .gitignore, no licence)
-2. Add that repo to the PAT's repository list — GitHub → Settings → Developer settings →
-   Fine-grained tokens → the token → *Repository access*
-3. Then:
 ```bash
-cd ~/code/ai-company && git push -u origin main
+python3 scripts/company.py resume        # active mission, next phase
+python3 scripts/companydb.py verify      # integrity
+python3 scripts/harness.py verify        # ledger
+python3 scripts/harness.py status        # executions
 ```
 
-Once pushed, GitHub Actions runs `ci.yml` and CI can finally be observed remotely.
-**Until an actual remote run is seen, never claim CI passed.**
-
-### 🟡 BLOCKER 2 — ESC-002 unanswered
-The medical tourism mission cannot proceed without a position. See §3.
-
-### 🟡 BLOCKER 3 — Brave API key invalid
-`BRAVE_API_KEY` is set but a live query returns HTTP 422 `SUBSCRIPTION_TOKEN_INVALID`. Tools load;
-the capability does not work. Founder should verify it at brave.com/search/api — likely not
-activated, wrong plan, or copied with whitespace. **Research is unaffected** (Exa + Tavily +
-native are GREEN).
-
-### 🟡 BLOCKER 4 — OAuth-gated MCP servers
-`exa` (plugin variant), Notion, Linear, Slack, Figma, Asana, Atlassian and the rest of the
-product-management pack are **unauthorized**. They need authorization from the founder via
-claude.ai connector settings or `/mcp` in an interactive terminal. The **direct Exa MCP endpoint
-is GREEN and unaffected** — research does not depend on these.
-
----
-
-## 6. WHAT TO DO NEXT
-
-**If the founder answered ESC-002:**
-```bash
-python3 scripts/company.py resume
-```
-Record the decision, then dispatch the `orchestrator` agent. It owns decomposition, department
-selection, parallel dispatch, gates and phase transitions from there.
-
-**If the founder has not answered:** do not guess a position. Do not start building. Present
-ESC-002 as a decision package and wait.
-
-**If the founder wants to push to GitHub:** walk them through BLOCKER 1. Do not attempt
-`create_repository` again — it is a token-scope problem, not a retry problem.
-
-**If the founder wants more confidence in the organization:** the honest gap is that 110 of 119
-agents are untested. Run drills:
-```bash
-python3 scripts/behavior.py drill <drill-id> <agent-slug>
-```
-
----
-
-## 7. HOUSEKEEPING FOR THE NEXT SESSION
-
-**Uncommitted at the time of writing** (commit these):
-`CLAUDE.md` (rewritten) · `CURRENT_STATE.md` (new) · `scripts/gen_memory.py` (new) ·
-`.ai-company/org/AI-EMPLOYEE-DIRECTORY.md` · `.ai-company/org/HIERARCHY.md` ·
-`.ai-company/behavior/DRILL-CATALOGUE.md`
-
-**After changing any agent, role pack or profile, regenerate — do not hand-edit:**
-```bash
-python3 scripts/sync_registry.py && python3 scripts/gen_memory.py && python3 scripts/matrices.py
-```
-
-**Before any commit:**
-```bash
-bash scripts/secret_scan.sh
-```
-
----
-
-## 8. THE HONEST POSITION
-
-State this plainly rather than overselling it:
-
-> The organization is **built, internally consistent, and enforced in code** — authority,
-> separation of duties, gates, provenance and rubrics all execute and all refuse when they should.
-> Its behaviour is **evidenced for 9 agents and unproven for the other 110**. It has never
-> completed real outcome-validated work, and its CI has never run remotely. Everything claimed
-> here is verifiable by running the scripts in §9 of `CLAUDE.md`.
-
-**Configuration completeness is not capability. Do not let this session, or any future one,
-report the company as proven.**
+An Atlas mission run (`run_a2d1d5010d`) is still open in the state engine with `T023` failed. The
+Atlas working set was deleted by founder instruction; what survives is
+`.ai-company/knowledge/lessons-learned/atlas-compacted.md`. Do not reconstruct the deleted
+artifacts — if Atlas restarts, start from that file and re-verify.

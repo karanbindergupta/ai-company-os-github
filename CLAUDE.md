@@ -24,15 +24,16 @@ python3 scripts/companydb.py verify      # integrity
 
 # 1. WHAT THIS PROJECT IS
 
-An **AI Company Operating System**: a 119-employee simulated organization with enforced authority,
+An **AI Company Operating System**: a 121-employee simulated organization with enforced authority,
 quality gates, cognitive profiles and behavioural conditioning. The founder supplies
 `INDUSTRY + ROUGH IDEA`; the organization does the research, strategy, product, design,
 engineering, QA, security and audit work required to turn it into a real product.
 
 **It is not a product itself. It is the company that builds products.**
 
-The repository contains **no application code** — only the organization, its mechanisms, its
-memory, and the Python tooling that enforces its rules.
+The repository contains the organization, its mechanisms, its memory, the Python tooling that
+enforces its rules, and — since 2026-09-09 — the **Execution Harness** that controls how agents
+actually execute. See the EXECUTION HARNESS section below.
 
 ---
 
@@ -70,11 +71,11 @@ Tradeoffs → Risks → Expected outcome → What approval is required. One page
 
 ---
 
-# 3. THE AI ORGANIZATION — 119 EMPLOYEES
+# 3. THE AI ORGANIZATION — 121 EMPLOYEES
 
 **Complete per-employee documentation:
 [`.ai-company/org/AI-EMPLOYEE-DIRECTORY.md`](.ai-company/org/AI-EMPLOYEE-DIRECTORY.md)** — 6,200+
-lines covering every one of the 119: name, title, department, role slug, reports-to, direct
+lines covering every one of the 121: name, title, department, role slug, reports-to, direct
 reports, decisions owned, decisions reviewed, vetoes, backup, artifacts, role pack, playbook,
 tools, maturity, drills, cognitive style, strengths, blind spots, instincts, decision philosophy,
 risk profile, evidence threshold, debate style, pressure behaviour, failure behaviour,
@@ -108,12 +109,12 @@ may accept a security risk.
 > of the 13 above who sit in it (all but the Chief People Officer), plus Emeric Vandenberg (Financial Analyst) and Ludvig Sørensen (Risk Analyst).
 > Ingeborg Sandoval (Chief People Officer) reports to the CEO but sits in the `people` department.
 
-## Departments (11) — 119 total
+## Departments (11) — 121 total
 
 | Department | Headcount |
 |---|---|
 | Engineering | 21 |
-| Strategy & Research | 19 |
+| Strategy & Research | 21 |
 | Executive | 14 |
 | Creative & Brand | 13 |
 | Product | 10 |
@@ -252,10 +253,10 @@ review required · owner ≠ reviewer.
 notices, questions, prioritizes and challenges* — never whether it tells the truth or respects
 authority.
 
-- **119/119 have cognitive profiles** — 23 fields each (style, strengths, **blind spots**,
+- **121/121 have cognitive profiles** — 23 fields each (style, strengths, **blind spots**,
   instincts, decision philosophy, 8-dimension risk profile, evidence threshold, debate style,
   pressure behaviour, failure behaviour, counterbalances, maturity).
-- **119/119 have behavioural contracts** — the profile translated into observable behaviour.
+- **121/121 have behavioural contracts** — the profile translated into observable behaviour.
 - **Blind spots are the load-bearing field.** They are queryable:
   `cognition.py blindspots cto,principal-architect,backend-lead` → *"COUNTERBALANCES NOT IN THIS
   GROUP: cfo, ciso, coo, cpo, qa-lead"*.
@@ -288,7 +289,7 @@ scored **0 with a VIOLATION**, coaching diagnosed *missing instruction* (not per
 scored **100**. Regression detection then flagged that the improvement cost `research_decisiveness`
 85→68.
 
-**Only 9 of 119 agents have ever been drilled. 110 are UNTESTED.**
+**Only 10 of 121 agents have ever been drilled. 111 are UNTESTED.**
 
 ---
 
@@ -298,7 +299,7 @@ scored **100**. Regression detection then flagged that the improvement cost `res
 |---|---|
 | **Language / runtime** | Python 3.9.6 (system), **stdlib only — no third-party dependencies** |
 | Also present | Node v24.18.0, npm 11.16.0, sqlite3 3.51.0, git 2.50.1, uv 0.12.10 |
-| **Database** | SQLite at `.ai-company/state/company.db` — **53 tables, single store, tracked in git** |
+| **Database** | SQLite at `.ai-company/state/company.db` — **81 tables, single store, NOT tracked in git.** 53 declared in `schema.sql`; the rest are added by harness migrations. Rebuild: `scripts/bootstrap.py` |
 | Frontend / backend / auth | **None. There is no application.** |
 | CI | GitHub Actions `.github/workflows/ci.yml`, 9 gates — **executes locally, never run remotely** |
 | Deployment | None |
@@ -310,7 +311,7 @@ CLAUDE.md · CURRENT_STATE.md · README.md · .mcp.json · .github/workflows/ci.
 .claude/          agents/ (19) · commands/ (28) · skills/ (9) · hooks/ · settings.json
 .ai-company/
   org/            AI-EMPLOYEE-DIRECTORY.md · HIERARCHY.md · ORG-CHART.md · ROSTER.md
-                  STAFFING-MATRIX.md · roles.json · roles/<dept>/<slug>.md (119 packs)
+                  STAFFING-MATRIX.md · roles.json · roles/<dept>/<slug>.md (121 packs)
   constitution/   CONSTITUTION.md (v1.1.0)
   governance/     AUTHORITY-MATRIX · capability-matrix · BENCHMARKING · MODEL-ROUTING · company-constitution
   cognition/      schema · executive-personality-matrix · specialist-cognitive-matrix
@@ -354,7 +355,8 @@ scripts/          20 Python/shell mechanisms
 
 | Name | Purpose | Status | Notes |
 |---|---|---|---|
-| **GitHub repo** `https://github.com/karanbindergupta/ai-company.git` | This project | **REMOTE CONFIGURED, NOT PUSHED** | Repo does not exist yet. See §13 |
+| **GitHub repo** `karanbindergupta/ai-company-os-github` | Public portable snapshot | **EXISTS, VERIFIED 2026-09-09** | Public · MIT · 25 stars · 6 forks · default `main` @ `3a4c1bf`. **Unrelated history to this repo.** Mission material deliberately excluded |
+| **GitHub remote** `karanbindergupta/ai-company.git` | configured `origin` here | **DOES NOT EXIST — 404** | Verified by authenticated `ls-remote` and repo search. This remote is dead; do not push to it |
 | **Exa** `https://mcp.exa.ai/mcp` | Deep semantic research | **GREEN — working** | Anonymous tier, **no key needed**, ~3 QPS / ~150 calls/day |
 | **Tavily** `tvly` CLI 0.1.8 | Search, extract, crawl | **GREEN — working** | Keyless. Installed via `uv`; symlinked into `~/.npm-global/bin` |
 | **Brave** `@brave/brave-search-mcp-server@2.1.3` | Independent web index | **YELLOW — TOKEN INVALID** | Tools load, live query returns HTTP 422 `SUBSCRIPTION_TOKEN_INVALID` |
@@ -430,7 +432,9 @@ profile (drift must be investigated first, never auto-rewritten).
 | 9 | Naming — all 111 given names |
 | 10 | Engineering org + MD + Sales (115) |
 | 11 | Complete staffing (119) + data analyst |
-| 12 | **This** — knowledge preservation |
+| 12 | Knowledge preservation — master CLAUDE.md, generated org docs |
+| 13 | Execution Harness V1 + V2 — control plane, permissions, evidence, recovery, sandboxing |
+| 14 | **This** — repository canonicalization: source/runtime separation, deterministic bootstrap, reconciliation against the public snapshot, four permission defects closed |
 
 ## Missions run
 - **`run_63de3f6ebc` — diaspora airline platform. REVOKED by founder.** The company found the
@@ -446,7 +450,7 @@ profile (drift must be investigated first, never auto-rewritten).
 
 | # | Decision | Reason | Affects | Change without approval? |
 |---|---|---|---|---|
-| D-1 | Split executable subagents (19) from role packs (119) | Claude Code loads every agent description into parent context; 119 would collapse the orchestrator | Whole architecture | **NO** |
+| D-1 | Split executable subagents (19) from role packs (121) | Claude Code loads every agent description into parent context; 121 would collapse the orchestrator | Whole architecture | **NO** |
 | D-2 | Single SQLite database, no parallel stores | Two sources of truth silently diverge | All state | **NO** |
 | D-3 | Governance enforced in code, not prose | A model under pressure talks around prose | `companydb.py` | **NO** |
 | D-4 | CISO veto not overridable by CTO or CEO | Security cannot be traded for speed by internal authority | `gate_security` | **NO** |
@@ -460,6 +464,11 @@ profile (drift must be investigated first, never auto-rewritten).
 | D-12 | Repo defaults to **private** | Contains business strategy, competitive analysis, and the company's memory | GitHub | Founder decides |
 | D-13 | Brave deferred | Founder instruction; Exa + Tavily cover research | Research stack | Founder decides |
 | D-14 | Packs are source of truth for role metadata; `roles.json` is an index | They drifted once (`reports_to`), silently breaking a reassignment | `sync_registry.py` | **NO** |
+
+| D-15 | This repository is canonical for **both** Company OS and Harness | Five local copies existed. Only this one has the harness, seed.sql, deterministic bootstrap and the closed permission defects | Everything | **NO** |
+| D-16 | `ai-company-os-github` is the canonical **public** destination; `ai-company` is dead | Verified by authenticated query: the former exists (public, 25 stars, 6 forks); the latter returns 404 | Publication | **NO** |
+| D-17 | The public snapshot is a **curated export**, never a mirror | Unrelated history, and it deliberately excludes mission material. Mirroring this tree would publish founder testimony about a named third party | Publication | Founder decides per-file |
+| D-18 | Security denies are **hard** — not liftable by a later rule | A later ALLOW matching any appended token defeated the credential and private-key rules. Reproduced, then closed in migration v14 | `harness.py` | **NO** |
 
 **Full decision records:** `.ai-company/decisions/`
 
@@ -477,8 +486,9 @@ Everything here is **UNKNOWN — VERIFY BEFORE IMPLEMENTING**.
 
 | Item | Status |
 |---|---|
-| GitHub repo `karanbindergupta/ai-company` | **Does not exist.** Remote configured; push blocked |
-| Whether the PAT will cover a new repo | Token is scoped "only select repositories" — must be added manually |
+| GitHub repo `karanbindergupta/ai-company` | **RESOLVED 2026-09-09: it does not exist.** Authenticated search returns only `ai-company-os-github` (public) and `ai-compay-os` (private, empty, typo name, never pushed) |
+| Whether this tree may be published publicly | **OPEN — FOUNDER DECISION.** The canonical destination is PUBLIC with 25 stars and 6 forks. This tree contains competitive intelligence and founder testimony about a named third party. D-12 says private by default |
+| GitHub authentication | **RESOLVED: works.** osxkeychain credential helper; authenticated read verified against `ai-company-os-github` |
 | Brave API key validity | Set but returns 422. Cause unknown — activation? plan? whitespace? |
 | Market size for medical tourism | The "$100B" figure traces to a **vendor blog**. Unverified |
 | Medical tourism cost-opacity "50–70%" claim | **Vendor source describing its own product's problem.** Unverified |
@@ -486,7 +496,7 @@ Everything here is **UNKNOWN — VERIFY BEFORE IMPLEMENTING**.
 | Whether patients pay directly for medical advice | INSUFFICIENT EVIDENCE — critical for the buy-side model |
 | Whether mid-tier hospitals buy software | INSUFFICIENT EVIDENCE |
 | Facilitator regulation exposure (UK/EU) | **NOT RESEARCHED.** RISK-004 |
-| Behaviour of 110 of 119 agents | **UNTESTED.** No drills run |
+| Behaviour of 111 of 121 agents | **UNTESTED.** No drills run |
 | Whether agents behave this way under live subagent load | **UNPROVEN.** All evidence is synthetic |
 | Real-work maturity evidence | **NONE.** No agent has completed real outcome-validated work |
 | `@vudovn/ag-kit` global npm package | Purpose never established |
@@ -501,3 +511,68 @@ Everything here is **UNKNOWN — VERIFY BEFORE IMPLEMENTING**.
 - **Any deploy, publish, send, or purchase**
 - **ECC GateGuard hook** intercepts the first Bash call of every session and all destructive
   commands, requiring facts to be restated first. This is expected, not a fault.
+
+
+---
+
+# EXECUTION HARNESS
+
+This repository contains **two** systems. The Company OS governs; the Execution Harness executes.
+
+```
+FOUNDER -> EXECUTIVE COUNCIL -> COMPANY OS (governance)
+                             -> MASTER ORCHESTRATOR (decomposition, dispatch)
+  ------------------------------------------------------------------
+  EXECUTION HARNESS   scripts/harness.py + PreToolUse hook
+  ------------------------------------------------------------------
+                             -> CLAUDE CODE / Task / subagents
+                             -> tools, files, git, APIs
+```
+
+**Company OS decides** WHO, WHAT, WHY, authority, priority, dependencies, approvals, vetoes.
+**The harness decides** HOW execution is controlled: permissions, evidence, checkpoints, retries,
+recovery, execution state, verification, refusal, observability. **It never makes a decision the
+Company OS owns.** There is one orchestrator and one task truth.
+
+## Clean installation
+```bash
+python3 scripts/bootstrap.py      # schema -> seed -> harness migrations
+python3 scripts/companydb.py verify && python3 scripts/harness.py verify
+```
+`bootstrap.py` runs `companydb.py init` (base schema + 121 roles from role packs), applies
+`seed.sql` (cognitive profiles, behavioural contracts, permission policy, decision rights, drills,
+integrations), then `harness.py migrate` (harness schema, v2+).
+
+## Source vs runtime
+| Tracked (source) | Ignored (runtime) |
+|---|---|
+| `state/schema.sql` base schema | `state/company.db` |
+| `state/seed.sql` reference data | `state/run.json`, `state/tasks.json` |
+| `state/archive/` mission snapshots | `state/backup/` |
+| migrations inside `scripts/harness.py` | |
+
+**`company.db` is runtime state and is reconstructable from source.** `tasks.json` is a *derived*
+read-only projection; the database is the single authority (`harness.py tasks-check` proves they
+have not diverged).
+
+## Tests
+```bash
+python3 scripts/readiness_audit.py       python3 scripts/harness_eval.py
+python3 scripts/cognitive_validation.py  python3 scripts/harness_bench.py
+python3 scripts/capability_validation.py python3 scripts/behavior_tests.py
+```
+**`behavior_tests` scores 12/35 on a fresh install and that is correct.** It asserts accumulated
+runtime evidence - drill runs, coaching, measurable improvement. A fresh company has earned none.
+The 23 unmet assertions are NOT YET PROVEN, not failures, and must never be made green by seeding
+fabricated history.
+
+## Honest limitations
+- **Hooks ARE installed** in `.claude/settings.json` (`PreToolUse`), composing with ECC GateGuard.
+  A degraded harness falls back to read-only; side-effecting tools are refused.
+- **The harness cannot spawn.** `claude` is not on PATH here, so spawns are captured by the hook at
+  `PreToolUse:Task` rather than initiated by the harness.
+- **Sandboxing is macOS seatbelt**, not a container. It confines filesystem and network; it is not a
+  VM boundary and does not defend against a kernel exploit.
+- **No GitHub integration.** Nothing has been pushed; the remote has never been verified.
+- **No production validation.** Every test is a self-test. Maturity is L3 (adversarially tested),
+  not L4/L5. No real mission has run under the harness.
