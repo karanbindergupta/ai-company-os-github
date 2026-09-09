@@ -64,6 +64,9 @@ jobs:
       - name: Harness evaluation and self-red-team
         run: python3 scripts/harness_eval.py
 
+      - name: Harness benchmark (15 scenarios)
+        run: python3 scripts/harness_bench.py
+
       - name: Emit machine-readable results
         if: always()
         run: python3 scripts/ci_report.py > ci-results.json && cat ci-results.json
