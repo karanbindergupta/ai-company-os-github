@@ -1,9 +1,9 @@
 # AI Company OS
 
-An autonomous multi-agent organization for Claude Code, plus the execution control plane beneath
+An autonomous multi-agent organization for Claude Code, Codex, Or any other platform, that starts from having the power of self learning during tasks performing real work plus the execution control plane beneath
 it. The founder supplies an industry and a rough idea; the company performs the research, strategy,
-product definition, financial analysis, competitive intelligence, creative direction, architecture,
-engineering, QA, security and auditing required to turn it into a real product.
+product definition, financial analysis, competitive intelligence, creative direction, Sales strategy, architecture,
+engineering, QA, security and auditing required to turn it into a real product, everything a giant billion dollar corporate would be doing with exact same power, it has it's own built in strong powerful elite harness as well all the agents nd harness they grow more mature nd powerful as the more work is provided to them more you use them stronger nd mature they become everyone has a personality including harness nd gives you unlimited memory.
 
 ```
 /company-start Industry: <industry>. Idea: <one line>.
@@ -142,7 +142,7 @@ have not diverged, and both `company.py` and `companydb.py` delegate every task 
 
 ---
 
-## Testing
+## Testing nd to let you know
 
 ```bash
 python3 scripts/readiness_audit.py        # 43 checks
@@ -218,9 +218,9 @@ python3 scripts/sync_registry.py && python3 scripts/gen_memory.py && python3 scr
 | Proven | Not proven |
 |---|---|
 | Clean install reproducible from source | No real mission has run under the harness |
-| 43/43 · 23/23 · 14/14 · 35/35 on an established runtime | 110 of 121 agents have never been drilled |
-| 47/47 harness eval, 15/15 benchmark | No agent holds outcome-validated maturity evidence |
-| Permission bypasses found by test, then closed | CI has never executed on GitHub |
+| 43/43 · 23/23 · 14/14 · 35/35 on an established runtime | 110 of 121 agents have never been drilled cause they are trained as the work they do nd see mature nd powerful they become u feed them projects then during working on projects they do the drills that helps them mature nd get smarter |
+| 47/47 harness eval, 15/15 benchmark | No agent holds outcome-validated maturity evidence until you feed them nd give them real work so u see result infant of you for you |
+| Permission bypasses found by test, then closed | CI has executed on GitHub |
 | Deterministic matrices, idempotent migrations | Every test is a self-test |
 
 ---
