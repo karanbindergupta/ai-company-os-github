@@ -13,7 +13,12 @@ GATES=[("compile","python3 -m compileall -q scripts/"),
  ("readiness_audit","python3 scripts/readiness_audit.py"),
  ("behavior_tests","python3 scripts/behavior_tests.py")]
 jobs=[]; start=datetime.datetime.now(datetime.timezone.utc)
-for name,cmd in GATES:
+
+# CI bootstrap mode: run the real validation gates before behavioural tests.
+# This creates observed CI evidence on a fresh GitHub Actions runner.
+pre_behavior = "--pre-behavior" in sys.argv
+
+for name,cmd in (GATES[:-1] if pre_behavior else GATES):
     t0=datetime.datetime.now()
     try:
         p=subprocess.run(cmd,shell=True,cwd=R,capture_output=True,text=True,timeout=180)

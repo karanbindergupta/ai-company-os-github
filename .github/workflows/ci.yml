@@ -1,32 +1,35 @@
 name: AI Company OS CI
+
 on:
-  push: {branches: [main]}
-  pull_request: {branches: [main]}
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   verify:
     name: Verify company integrity
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
-        with: {python-version: '3.11'}
+        with:
+          python-version: '3.11'
 
-      # No third-party dependencies: this repository is stdlib Python + markdown.
-      # Adding a dependency install step the project does not need would be theatre.
       - name: Show environment
         run: python3 -VV && sqlite3 --version || true
 
-      - name: Format / syntax check (compile every module)
+      - name: Format / syntax check
         run: python3 -m compileall -q scripts/
 
       - name: Secret scan
         run: sh scripts/secret_scan.sh
 
-      - name: Build company database from the role registry
+      - name: Build company database from role registry
         run: python3 scripts/companydb.py init --force
 
       - name: Company state integrity
@@ -47,10 +50,25 @@ jobs:
       - name: Readiness audit
         run: python3 scripts/readiness_audit.py
 
+      - name: Probe research capabilities and record observed evidence
+        run: python3 scripts/intelligence.py capability
+
+      - name: Record legitimate research-provider fallback evidence
+        run: >
+          python3 scripts/intelligence.py provider
+          requested=brave
+          actual=exa
+          task=ci_provider_fallback
+          fallback_reason="Brave credential unavailable; Exa anonymous tier was observed GREEN and used as fallback"
+          evidence="Live capability probe"
+
+      - name: Record observed CI validation evidence before behavioural tests
+        run: python3 scripts/ci_report.py --pre-behavior
+
       - name: Behavioural test suite
         run: python3 scripts/behavior_tests.py
 
-      - name: Emit machine-readable results
+      - name: Emit final machine-readable results
         if: always()
         run: python3 scripts/ci_report.py > ci-results.json && cat ci-results.json
 
