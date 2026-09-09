@@ -48,17 +48,17 @@ Reviewer and Escalation are populated. Verify any authority claim with:
 | `supabase-engineer` | engineering | L3 | supabase_schema_change | — | `engineer_family` | `engineering` | defect escape, rework, coverage | database-architect | L2 |
 | `systems-architect` | engineering | L3 | — | — | `engineer_family` | `engineering` | defect escape, rework, coverage | principal-architect | L2 |
 | `ceo` | executive | L1 | — | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | founder | L4 |
-| `cfo` | executive | L1 | financial_modelling, pricing, major_financial_commitment, business_model | **commercial_offer, sales_commitment, financial_modelling, pricing, major_financial_commitment, business_model** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
-| `ciso` | executive | L1 | security_architecture | **supabase_schema_change, technical_architecture, security_architecture, release_readiness, data_migration, production_deploy** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `cfo` | executive | L1 | business_model, financial_modelling, major_financial_commitment, pricing | **business_model, commercial_offer, financial_modelling, major_financial_commitment, pricing, sales_commitment** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `ciso` | executive | L1 | security_architecture | **data_migration, production_deploy, release_readiness, security_architecture, supabase_schema_change, technical_architecture** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `cmo` | executive | L1 | marketing_strategy, public_communication | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `coo` | executive | L1 | — | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `cpo` | executive | L1 | product_roadmap, product_scope | **metric_definition, product_roadmap, product_scope** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `creative-director` | executive | L1 | brand_direction | **brand_direction** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `cro-research` | executive | L1 | research_acceptance | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
-| `cro-risk` | executive | L1 | risk_analysis, risk_acceptance | **sales_commitment, risk_analysis, market_entry, research_acceptance, risk_acceptance** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `cro-risk` | executive | L1 | risk_acceptance, risk_analysis | **market_entry, research_acceptance, risk_acceptance, risk_analysis, sales_commitment** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `cso` | executive | L1 | market_entry | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
-| `cto` | executive | L1 | fullstack_feature, technical_architecture, engineering_standards | **supabase_schema_change, technical_architecture, engineering_standards, data_migration** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
-| `managing-director` | executive | L1 | commercial_offer, sales_commitment, execution_coordination | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `cto` | executive | L1 | engineering_standards, fullstack_feature, technical_architecture | **data_migration, engineering_standards, supabase_schema_change, technical_architecture** | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
+| `managing-director` | executive | L1 | commercial_offer, execution_coordination, sales_commitment | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | ceo | L4 |
 | `financial-analyst` | executive | L3 | — | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | cfo | L2 |
 | `risk-analyst` | executive | L3 | — | — | `researcher_family` | `research` | decision quality, dissent surfaced, escalation precision | cro-risk | L2 |
 | `acquisition-specialist` | growth | L3 | — | — | `researcher_family` | `product` | pre-registered thresholds, CAC estimate vs actual | cmo | L2 |
@@ -94,7 +94,7 @@ Reviewer and Escalation are populated. Verify any authority claim with:
 | `requirements-engineer` | product | L3 | — | — | `finance_family` | `product` | requirement traceability, reject ratio, criteria testability | cpo | L2 |
 | `roadmap-strategist` | product | L3 | — | — | `finance_family` | `product` | requirement traceability, reject ratio, criteria testability | cpo | L2 |
 | `qa-lead` | quality | L2 | routine_bugfix | **release_readiness** | `qa_family` | `engineering` | pre-release defect find rate, regression escapes | cto | L3 |
-| `release-manager` | quality | L2 | release_readiness | **release_readiness, production_deploy** | `qa_family` | `engineering` | pre-release defect find rate, regression escapes | coo | L3 |
+| `release-manager` | quality | L2 | release_readiness | **production_deploy, release_readiness** | `qa_family` | `engineering` | pre-release defect find rate, regression escapes | coo | L3 |
 | `accessibility-tester` | quality | L3 | — | — | `qa_family` | `engineering` | pre-release defect find rate, regression escapes | qa-lead | L2 |
 | `architecture-auditor` | quality | L3 | — | — | `qa_family` | `engineering` | pre-release defect find rate, regression escapes | cro-risk | L2 |
 | `code-reviewer` | quality | L3 | — | — | `qa_family` | `engineering` | pre-release defect find rate, regression escapes | qa-lead | L2 |

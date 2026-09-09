@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Generate the capability, integration and scorecard artifacts from the company database.
 Generated, never hand-written, so they cannot drift from what is enforced."""
+# Domain lists are sorted: row order from SQLite differs between a live database
+# and a freshly seeded one, which caused clean-checkout drift in
+# capability-matrix.md (same domains, different order). Sorting makes
+# regeneration deterministic across any build path.
 import sqlite3, pathlib, json
 R = pathlib.Path(__file__).resolve().parent.parent
 c = sqlite3.connect(R/".ai-company/state/company.db"); c.row_factory = sqlite3.Row
@@ -23,12 +27,12 @@ KPI = {"strategy-research":"sourced-claim %, audit pass rate, fabrications (0)",
 # ---- capability matrix
 rows = list(c.execute("SELECT * FROM agents ORDER BY department, authority_level, id"))
 veto = {}
-for r in c.execute("SELECT * FROM decision_rights"):
+for r in c.execute("SELECT * FROM decision_rights ORDER BY domain"):
     for v in [x for x in r["veto_holders"].split(",") if x]: veto.setdefault(v, []).append(r["domain"])
 owns = {}
-for r in c.execute("SELECT * FROM decision_rights"): owns.setdefault(r["owner"], []).append(r["domain"])
+for r in c.execute("SELECT * FROM decision_rights ORDER BY domain"): owns.setdefault(r["owner"], []).append(r["domain"])
 revs = {}
-for r in c.execute("SELECT * FROM decision_rights"):
+for r in c.execute("SELECT * FROM decision_rights ORDER BY domain"):
     for v in [x for x in r["reviewers"].split(",") if x]: revs.setdefault(v, []).append(r["domain"])
 
 L = ["---","document: capability-matrix","version: 1.0.0",
@@ -42,7 +46,7 @@ L = ["---","document: capability-matrix","version: 1.0.0",
 for r in rows:
     d = r["department"]
     L.append(f"| `{r['id']}` | {d} | L{r['authority_level']} | "
-             f"{', '.join(owns.get(r['id'],[])) or '—'} | "
+             f"{', '.join(sorted(owns.get(r['id'],[]))) or '—'} | "
              f"{'**'+', '.join(veto[r['id']])+'**' if r['id'] in veto else '—'} | "
              f"`{FAMILY[d]}` | `{PLAYBOOK[d]}` | {KPI[d]} | "
              f"{r['reports_to'] or 'founder'} | L{2 if r['authority_level']>=3 else 3 if r['authority_level']==2 else 4} |")
