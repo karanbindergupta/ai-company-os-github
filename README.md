@@ -116,7 +116,7 @@ It is idempotent and safe to re-run. A clean install yields exactly:
 
 ```
 agents=121  domains=29  cognitive=121  contracts=121
-permission_rules=22  benchmarks=7  tables=81
+permission_rules=43  benchmarks=7  tables=81
 executions=0  drill_runs=0  ci_runs=0     <- runtime evidence is ZERO, by design
 ```
 

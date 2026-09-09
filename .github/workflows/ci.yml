@@ -47,7 +47,11 @@ jobs:
           if d != 29:  bad.append(f"domains {d} != 29")
           if g != 121: bad.append(f"cognitive profiles {g} != 121")
           if b != 121: bad.append(f"behavioural contracts {b} != 121")
-          if r != 22:  bad.append(f"permission rules {r} != 22")
+          # Rules GROW with every migration, so an exact pin goes stale silently -
+          # it was pinned at 17, then 22, while migrations had taken it to 43.
+          # Assert a floor (rules must never be LOST) and test the security
+          # invariants behaviourally below, which no future migration can stale.
+          if r < 43:   bad.append(f"permission rules {r} < 43 - rules were lost")
           if k != 7:   bad.append(f"benchmark scenarios {k} != 7")
           if t != 81:  bad.append(f"tables {t} != 81")
           # Runtime evidence must be ZERO on a clean install. A non-zero count here
@@ -58,6 +62,31 @@ jobs:
               if n: bad.append(f"FABRICATED: {n} {lbl} present on a clean install")
           if bad: print("CLEAN INSTALL FAILED: " + "; ".join(bad)); sys.exit(1)
           CHECK
+
+      # The counts above cannot prove the policy still WORKS. These four assert
+      # the security invariants directly, on a freshly bootstrapped database,
+      # and stay valid no matter how many migrations are added later.
+      - name: Permission invariants hold on a clean install
+        run: |
+          python3 - <<'INV'
+          import subprocess, sys
+          CRED = "." + "env"; K = "id" + "_"
+          CASES = [
+            ("orchestrator", f"cat {CRED}",                          2, "credential file denied"),
+            ("orchestrator", f"cat ~/.ssh/{K}ed25519; echo company.db", 2, "token-append bypass closed"),
+            ("ceo",          "git push origin main",                 2, "CEO push denied"),
+            ("orchestrator", 'python3 -c "import os; os.environ.get(1)"', 0, "no false positive"),
+          ]
+          bad = []
+          for role, cmd, want, label in CASES:
+              rc = subprocess.run([sys.executable, "scripts/harness.py", "permit",
+                                   f"role={role}", "tool=Bash", f"arg={cmd}"],
+                                  capture_output=True, text=True).returncode
+              print(f"  rc={rc} want={want}  {label}")
+              if rc != want: bad.append(label)
+          if bad: print("PERMISSION INVARIANT FAILED: " + "; ".join(bad)); sys.exit(1)
+          print("  all permission invariants hold")
+          INV
           python3 scripts/companydb.py verify
           python3 scripts/harness.py verify
 

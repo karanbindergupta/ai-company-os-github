@@ -55,7 +55,7 @@ FOUNDER (L0) -> EXECUTIVE COUNCIL (13) -> COMPANY OS -> MASTER ORCHESTRATOR
 
 ```
 agents=121  domains=29  cognitive=121  contracts=121
-permission_rules=22  benchmarks=7  tables=81
+permission_rules=43  benchmarks=7  tables=81
 executions=0  drill_runs=0  ci_runs=0
 readiness 43/43 · cognitive 23/23 · capability 14/14 · audit 0 · eval 45/45 · bench 15/15
 behavior_tests --clean-install: 19/35  BASELINE OK
