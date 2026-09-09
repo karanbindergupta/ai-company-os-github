@@ -104,6 +104,16 @@ MIGRATIONS = [
    key TEXT PRIMARY KEY, execution TEXT, op TEXT NOT NULL,
    result TEXT, applied INTEGER NOT NULL DEFAULT 0, ts TEXT NOT NULL);
  """),
+
+ (5, "approvals and emergency control", """
+ CREATE TABLE IF NOT EXISTS approvals(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, scope TEXT NOT NULL, granted_by TEXT NOT NULL,
+   reason TEXT, granted TEXT NOT NULL, expires TEXT, uses_left INTEGER,
+   revoked INTEGER NOT NULL DEFAULT 0);
+ CREATE INDEX IF NOT EXISTS ix_appr_scope ON approvals(scope);
+ CREATE TABLE IF NOT EXISTS control_flags(
+   name TEXT PRIMARY KEY, value TEXT NOT NULL, set_by TEXT NOT NULL, ts TEXT NOT NULL, reason TEXT);
+ """),
 ]
 
 def db():
@@ -550,8 +560,21 @@ def cmd_permit(argv):
     """Authorization check. Exit 0 allow, 2 deny, 3 approval required. Deny-biased."""
     d = kv(argv); need(d, "role", "tool")
     c = db(); migrate(verbose=False)
+    pause = c.execute("SELECT value FROM control_flags WHERE name='GLOBAL_PAUSE'").fetchone()
+    if pause and pause[0] == "on":
+        emit(d.get("execution"), "ExecutionBlocked", d["role"], {"tool": d["tool"], "reason": "GLOBAL_PAUSE"})
+        print("DENY  GLOBAL_PAUSE is active. Founder must lift it: harness.py control set=GLOBAL_PAUSE value=off by=founder")
+        sys.exit(2)
     dec, why = _resolve(c, d["role"], d["tool"], d.get("arg"))
     ex = d.get("execution")
+    if dec == "REQUIRE_APPROVAL":
+        scope = f"{d['tool']}:{(d.get('arg') or '')[:80]}"
+        aid = _live_approval(c, scope) or _live_approval(c, d["tool"])
+        if aid:
+            c.execute("UPDATE approvals SET uses_left=CASE WHEN uses_left IS NULL THEN NULL ELSE uses_left-1 END WHERE id=?", (aid,))
+            c.commit()
+            emit(ex, "ApprovalGranted", d["role"], {"tool": d["tool"], "approval": aid})
+            dec, why = "ALLOW_WITH_AUDIT", f"founder approval #{aid} consumed"
     c.execute("""INSERT INTO tool_calls(execution,ts,agent,tool,authorized,decision,target,outcome)
                  VALUES(?,?,?,?,?,?,?,?)""",
               (ex, now(), d["role"], d["tool"], 1 if dec.startswith("ALLOW") else 0, dec,
@@ -625,6 +648,61 @@ def cmd_opkey_done(argv):
     c = db(); c.execute("UPDATE op_keys SET applied=1,result=? WHERE key=?", (d.get("result"), d["key"]))
     c.commit(); ok(f"{d['key']} marked applied")
 
+
+# ------------------------------------- APPROVALS: make REQUIRE_APPROVAL satisfiable
+def _live_approval(c, scope):
+    import datetime as _dt
+    for aid, exp, uses in c.execute(
+        "SELECT id,expires,uses_left FROM approvals WHERE scope=? AND revoked=0 ORDER BY id DESC", (scope,)):
+        if exp:
+            try:
+                if _dt.datetime.now(_dt.timezone.utc) > _dt.datetime.fromisoformat(exp): continue
+            except Exception: pass
+        if uses is not None and uses <= 0: continue
+        return aid
+    return None
+
+def cmd_approve(argv):
+    """Founder grants a scoped, time-boxed, use-limited approval. Only the founder may."""
+    d = kv(argv); need(d, "scope", "by")
+    if d["by"] != "founder": die("only the founder may grant an approval (CLAUDE.md 2). No agent self-authorises.")
+    import datetime as _dt
+    c = db(); migrate(verbose=False)
+    mins = int(d.get("minutes", 30))
+    exp = (_dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(minutes=mins)).replace(microsecond=0).isoformat()
+    c.execute("""INSERT INTO approvals(scope,granted_by,reason,granted,expires,uses_left)
+                 VALUES(?,?,?,?,?,?)""",
+              (d["scope"], d["by"], d.get("reason"), now(), exp,
+               int(d["uses"]) if d.get("uses") else 1)); c.commit()
+    emit(d.get("execution"), "ApprovalGranted", "founder",
+         {"scope": d["scope"], "expires": exp, "uses": d.get("uses", 1)})
+    ok(f"APPROVED scope='{d['scope']}' by founder, expires {exp}, uses={d.get('uses',1)}")
+
+def cmd_revoke(argv):
+    d = kv(argv); need(d, "scope")
+    c = db(); n = c.execute("UPDATE approvals SET revoked=1 WHERE scope=? AND revoked=0", (d["scope"],)).rowcount
+    c.commit(); emit(None, "ApprovalDenied", "founder", {"scope": d["scope"], "revoked": n})
+    ok(f"revoked {n} approval(s) for '{d['scope']}'")
+
+def cmd_control(argv):
+    """Founder emergency control. PAUSE halts every permit decision at DENY."""
+    d = kv(argv)
+    c = db(); migrate(verbose=False)
+    if not d.get("set"):
+        rows = list(c.execute("SELECT name,value,set_by,ts,COALESCE(reason,'') FROM control_flags"))
+        if not rows: ok("no control flags set - system NORMAL"); return
+        for n_, v, b, t_, r in rows: print(f"  {n_:<16} {v:<10} by={b:<10} {t_}  {r}")
+        return
+    need(d, "set", "value", "by")
+    if d["by"] != "founder": die("emergency controls are founder-only")
+    c.execute("""INSERT INTO control_flags(name,value,set_by,ts,reason) VALUES(?,?,?,?,?)
+                 ON CONFLICT(name) DO UPDATE SET value=excluded.value,set_by=excluded.set_by,
+                 ts=excluded.ts,reason=excluded.reason""",
+              (d["set"], d["value"], d["by"], now(), d.get("reason"))); c.commit()
+    emit(None, "ExecutionBlocked" if d["value"] == "on" else "ExecutionResumed", "founder",
+         {"flag": d["set"], "value": d["value"]})
+    ok(f"CONTROL {d['set']}={d['value']} set by founder. {d.get('reason','')}")
+
 HELP = """harness.py - execution layer beneath the orchestrator
 
   migrate                                     apply pending schema migrations (idempotent)
@@ -652,6 +730,9 @@ HELP = """harness.py - execution layer beneath the orchestrator
   reap                                         BLOCK executions whose lease expired
   opkey key= op= [execution=]                  claim before a side effect; exit 4 if already applied
   opkey-done key= [result=]
+  approve scope= by=founder [minutes= uses= reason=]   satisfies a REQUIRE_APPROVAL
+  revoke scope=                                revoke outstanding approvals
+  control [set= value= by=founder reason=]     GLOBAL_PAUSE etc. Founder-only
 
 The harness records and enforces. It never decides. Authority stays in companydb.py."""
 
@@ -662,7 +743,8 @@ CMDS = {"migrate": lambda a: migrate(), "submit": cmd_submit, "start": cmd_start
         "task-update": cmd_task_update, "tasks-check": cmd_tasks_check,
         "tasks-project": cmd_tasks_project, "event": cmd_event, "events": cmd_events,
         "permit": cmd_permit, "rule": cmd_rule, "lease": cmd_lease, "reap": cmd_reap,
-        "opkey": cmd_opkey, "opkey-done": cmd_opkey_done, "help": lambda a: print(HELP)}
+        "opkey": cmd_opkey, "opkey-done": cmd_opkey_done, "approve": cmd_approve,
+        "revoke": cmd_revoke, "control": cmd_control, "help": lambda a: print(HELP)}
 
 if __name__ == "__main__":
     if not DB.exists(): die(f"company database not found at {DB}")
