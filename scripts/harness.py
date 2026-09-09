@@ -69,6 +69,41 @@ MIGRATIONS = [
  CREATE TABLE IF NOT EXISTS quarantined_tasks(
    id TEXT PRIMARY KEY, payload TEXT NOT NULL, reason TEXT NOT NULL, ts TEXT NOT NULL);
  """),
+
+ (4, "event log, permissions, leases, idempotency", """
+ CREATE TABLE IF NOT EXISTS events(
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   execution TEXT, seq INTEGER NOT NULL, ts TEXT NOT NULL,
+   type TEXT NOT NULL, actor TEXT, payload TEXT, correlation TEXT,
+   in_context INTEGER NOT NULL DEFAULT 1, evicted_by_seq INTEGER,
+   CHECK(type IN (
+     'ExecutionCreated','ExecutionStarted','ExecutionResumed','ExecutionBlocked',
+     'ExecutionCompleted','ExecutionTerminated','ExecutionStale',
+     'ToolRequested','ToolAllowed','ToolDenied','ToolApprovalRequired',
+     'CheckpointCreated','AgentMessage','ArtifactCreated',
+     'TestStarted','TestPassed','TestFailed',
+     'FailureDetected','RecoveryStarted','RecoveryCompleted',
+     'ReviewRequested','ReviewCompleted',
+     'ApprovalRequested','ApprovalGranted','ApprovalDenied',
+     'Heartbeat','BudgetExceeded','DoomLoopDetected')));
+ CREATE UNIQUE INDEX IF NOT EXISTS ux_events_exec_seq ON events(execution,seq);
+ CREATE INDEX IF NOT EXISTS ix_events_type ON events(type);
+
+ CREATE TABLE IF NOT EXISTS permission_rules(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, ordinal INTEGER NOT NULL,
+   role TEXT NOT NULL DEFAULT '*', tool TEXT NOT NULL DEFAULT '*',
+   arg_match TEXT, effect TEXT NOT NULL, reason TEXT, created TEXT NOT NULL,
+   CHECK(effect IN ('ALLOW','DENY','REQUIRE_APPROVAL','ALLOW_WITH_AUDIT','ALLOW_READ_ONLY')));
+ CREATE INDEX IF NOT EXISTS ix_rules_ord ON permission_rules(ordinal);
+
+ CREATE TABLE IF NOT EXISTS leases(
+   execution TEXT PRIMARY KEY, holder TEXT NOT NULL, acquired TEXT NOT NULL,
+   renewed TEXT NOT NULL, ttl_s INTEGER NOT NULL DEFAULT 900);
+
+ CREATE TABLE IF NOT EXISTS op_keys(
+   key TEXT PRIMARY KEY, execution TEXT, op TEXT NOT NULL,
+   result TEXT, applied INTEGER NOT NULL DEFAULT 0, ts TEXT NOT NULL);
+ """),
 ]
 
 def db():
@@ -442,6 +477,154 @@ def cmd_tasks_check(argv):
 def cmd_tasks_project(argv):
     c = db(); n = _project_json(c); c.commit(); ok(f"tasks.json re-projected from DB: {n} tasks")
 
+
+# ---------------------------------------- MECHANISM 1: step-flush write barrier
+def _flush_db():
+    """WAL + one COMMITTED transaction per event. Durability is a property of the loop,
+    not of an agent remembering to call checkpoint. (SWE-agent/OpenHands pattern.)"""
+    c = sqlite3.connect(str(DB), isolation_level=None, timeout=30)
+    c.execute("PRAGMA journal_mode=WAL"); c.execute("PRAGMA synchronous=FULL")
+    return c
+
+def emit(execution, etype, actor=None, payload=None, correlation=None):
+    """Append one event and COMMIT immediately. Also renews the lease - liveness is
+    proven by work done, not by elapsed wall-clock. Never overwrites history."""
+    c = _flush_db()
+    try:
+        c.execute("BEGIN IMMEDIATE")
+        seq = c.execute("SELECT COALESCE(MAX(seq),0)+1 FROM events WHERE execution IS ?",
+                        (execution,)).fetchone()[0]
+        c.execute("""INSERT INTO events(execution,seq,ts,type,actor,payload,correlation)
+                     VALUES(?,?,?,?,?,?,?)""",
+                  (execution, seq, now(), etype, actor,
+                   json.dumps(payload) if payload is not None else None, correlation))
+        if execution:
+            c.execute("UPDATE leases SET renewed=? WHERE execution=?", (now(), execution))
+        c.execute("COMMIT")
+        return seq
+    except Exception:
+        try: c.execute("ROLLBACK")
+        except Exception: pass
+        raise
+    finally: c.close()
+
+def cmd_event(argv):
+    d = kv(argv); need(d, "type")
+    seq = emit(d.get("execution"), d["type"], d.get("actor"),
+               json.loads(d["payload"]) if d.get("payload") else None, d.get("correlation"))
+    ok(f"event #{seq} {d['type']}" + (f" on {d['execution']}" if d.get("execution") else ""))
+
+def cmd_events(argv):
+    d = kv(argv); c = db()
+    q = "SELECT seq,ts,type,actor,payload FROM events WHERE 1=1"; p = []
+    if d.get("execution"): q += " AND execution=?"; p.append(d["execution"])
+    if d.get("type"): q += " AND type=?"; p.append(d["type"])
+    q += " ORDER BY id DESC LIMIT ?"; p.append(int(d.get("limit", 30)))
+    rows = list(c.execute(q, p))
+    for seq, ts, t, a, pay in reversed(rows):
+        print(f"  #{seq:<4} {ts[11:19]}  {t:22} {a or '':22} {(pay or '')[:44]}")
+    if not rows: print("  (no events)")
+
+# ------------------------- MECHANISM 3: deny-biased, last-match-wins permissions
+def _resolve(c, role, tool, arg):
+    """Last matching rule wins; default DENY for anything not explicitly allowed.
+    bash is matched on the PARSED command, because Roo #4732 proves a regex that
+    ignores the shell is decorative."""
+    import fnmatch, shlex
+    tokens = []
+    if arg and tool.lower() in ("bash", "shell", "run"):
+        try: tokens = shlex.split(arg)
+        except ValueError: tokens = arg.split()
+    decision, reason = "DENY", "no rule matched (deny-biased default)"
+    for r in c.execute("SELECT ordinal,role,tool,arg_match,effect,reason FROM permission_rules ORDER BY ordinal"):
+        _, rrole, rtool, rarg, eff, rsn = r
+        if rrole != "*" and rrole != role: continue
+        if rtool != "*" and rtool.lower() != tool.lower(): continue
+        if rarg:
+            hay = [arg or ""] + tokens
+            if not any(fnmatch.fnmatch(h, rarg) for h in hay): continue
+        decision, reason = eff, rsn or f"rule #{r[0]}"
+    return decision, reason
+
+def cmd_permit(argv):
+    """Authorization check. Exit 0 allow, 2 deny, 3 approval required. Deny-biased."""
+    d = kv(argv); need(d, "role", "tool")
+    c = db(); migrate(verbose=False)
+    dec, why = _resolve(c, d["role"], d["tool"], d.get("arg"))
+    ex = d.get("execution")
+    c.execute("""INSERT INTO tool_calls(execution,ts,agent,tool,authorized,decision,target,outcome)
+                 VALUES(?,?,?,?,?,?,?,?)""",
+              (ex, now(), d["role"], d["tool"], 1 if dec.startswith("ALLOW") else 0, dec,
+               (d.get("arg") or "")[:200], why)); c.commit()
+    emit(ex, "ToolRequested", d["role"], {"tool": d["tool"], "arg": (d.get("arg") or "")[:200]})
+    if dec.startswith("ALLOW"):
+        emit(ex, "ToolAllowed", d["role"], {"tool": d["tool"], "effect": dec}); ok(f"ALLOW ({dec})  {why}"); sys.exit(0)
+    if dec == "REQUIRE_APPROVAL":
+        emit(ex, "ToolApprovalRequired", d["role"], {"tool": d["tool"]}); print(f"APPROVAL REQUIRED  {why}"); sys.exit(3)
+    emit(ex, "ToolDenied", d["role"], {"tool": d["tool"], "reason": why})
+    print(f"DENY  role={d['role']} tool={d['tool']}\n  {why}"); sys.exit(2)
+
+def cmd_rule(argv):
+    d = kv(argv)
+    if d.get("list") or not d.get("effect"):
+        c = db()
+        print(f"  {'ORD':<5}{'ROLE':<22}{'TOOL':<14}{'ARG':<26}{'EFFECT':<18}REASON")
+        for r in c.execute("SELECT ordinal,role,tool,COALESCE(arg_match,''),effect,COALESCE(reason,'') FROM permission_rules ORDER BY ordinal"):
+            print(f"  {r[0]:<5}{r[1]:<22}{r[2]:<14}{r[3][:24]:<26}{r[4]:<18}{r[5][:30]}")
+        return
+    need(d, "effect")
+    c = db(); migrate(verbose=False)
+    o = int(d["ordinal"]) if d.get("ordinal") else (c.execute("SELECT COALESCE(MAX(ordinal),0)+10 FROM permission_rules").fetchone()[0])
+    c.execute("""INSERT INTO permission_rules(ordinal,role,tool,arg_match,effect,reason,created)
+                 VALUES(?,?,?,?,?,?,?)""",
+              (o, d.get("role", "*"), d.get("tool", "*"), d.get("arg_match"), d["effect"], d.get("reason"), now()))
+    c.commit(); ok(f"rule #{o}: {d.get('role','*')} / {d.get('tool','*')} -> {d['effect']}")
+
+# ------------------------------- MECHANISM 4: leases renewed by work, reap stale
+def cmd_lease(argv):
+    d = kv(argv); need(d, "execution", "holder")
+    c = db(); migrate(verbose=False)
+    c.execute("""INSERT INTO leases(execution,holder,acquired,renewed,ttl_s) VALUES(?,?,?,?,?)
+                 ON CONFLICT(execution) DO UPDATE SET holder=excluded.holder, renewed=excluded.renewed""",
+              (d["execution"], d["holder"], now(), now(), int(d.get("ttl_s", 900))))
+    c.commit(); emit(d["execution"], "Heartbeat", d["holder"], {"ttl_s": int(d.get("ttl_s", 900))})
+    ok(f"lease held on {d['execution']} by {d['holder']} ttl={d.get('ttl_s',900)}s")
+
+def cmd_reap(argv):
+    """Distinguish DEAD from SLOW by last EVENT, not by elapsed wall-clock."""
+    import datetime as _dt
+    c = db(); n = 0
+    for ex, holder, renewed, ttl in c.execute("SELECT execution,holder,renewed,ttl_s FROM leases"):
+        st = c.execute("SELECT status FROM executions WHERE id=?", (ex,)).fetchone()
+        if not st or st[0] not in ("RUNNING", "RECOVERING"): continue
+        try: age = (_dt.datetime.now(_dt.timezone.utc) - _dt.datetime.fromisoformat(renewed)).total_seconds()
+        except Exception: continue
+        if age > ttl:
+            c.execute("UPDATE executions SET status='BLOCKED' WHERE id=?", (ex,)); c.commit()
+            emit(ex, "ExecutionStale", holder, {"idle_s": int(age), "ttl_s": ttl})
+            print(f"  STALE {ex} holder={holder} idle={int(age)}s > ttl={ttl}s -> BLOCKED"); n += 1
+    ok(f"reap complete: {n} stale execution(s) blocked" if n else "reap complete: no stale executions")
+
+# ----------------------------- MECHANISM 5: op-keys, journal-then-apply idempotency
+def cmd_opkey(argv):
+    """Claim an operation key BEFORE a side effect. Second claim returns the memoised
+    result and exits 4, so a resumed execution never double-applies."""
+    d = kv(argv); need(d, "key", "op")
+    c = db(); migrate(verbose=False)
+    row = c.execute("SELECT applied,result FROM op_keys WHERE key=?", (d["key"],)).fetchone()
+    if row:
+        print(f"ALREADY APPLIED  key={d['key']}  result={row[1] or ''}\n"
+              f"  Do NOT re-apply. This is the memoised result of a prior attempt.")
+        sys.exit(4)
+    c.execute("INSERT INTO op_keys(key,execution,op,result,applied,ts) VALUES(?,?,?,?,0,?)",
+              (d["key"], d.get("execution"), d["op"], None, now())); c.commit()
+    ok(f"claimed {d['key']} - proceed, then: harness.py opkey-done key={d['key']} result=...")
+
+def cmd_opkey_done(argv):
+    d = kv(argv); need(d, "key")
+    c = db(); c.execute("UPDATE op_keys SET applied=1,result=? WHERE key=?", (d.get("result"), d["key"]))
+    c.commit(); ok(f"{d['key']} marked applied")
+
 HELP = """harness.py - execution layer beneath the orchestrator
 
   migrate                                     apply pending schema migrations (idempotent)
@@ -461,6 +644,14 @@ HELP = """harness.py - execution layer beneath the orchestrator
   task-update id= status= [evidence= reviewed_by= acceptance_verified=]
   tasks-check                                  prove DB and projection cannot diverge
   tasks-project                                re-emit tasks.json from the DB
+  event type= [execution= actor= payload= correlation=]   append-only, commits immediately
+  events [execution= type= limit=]             read the event stream
+  permit role= tool= [arg= execution=]         exit 0 ALLOW / 2 DENY / 3 APPROVAL. deny-biased
+  rule effect= [role= tool= arg_match= ordinal= reason=] | rule list=1
+  lease execution= holder= [ttl_s=]            heartbeat, renewed by every event
+  reap                                         BLOCK executions whose lease expired
+  opkey key= op= [execution=]                  claim before a side effect; exit 4 if already applied
+  opkey-done key= [result=]
 
 The harness records and enforces. It never decides. Authority stays in companydb.py."""
 
@@ -469,7 +660,9 @@ CMDS = {"migrate": lambda a: migrate(), "submit": cmd_submit, "start": cmd_start
         "fail": cmd_fail, "tool": cmd_tool, "honesty": cmd_honesty, "status": cmd_status,
         "verify": cmd_verify, "tasks-import": cmd_tasks_import, "task-add": cmd_task_add,
         "task-update": cmd_task_update, "tasks-check": cmd_tasks_check,
-        "tasks-project": cmd_tasks_project, "help": lambda a: print(HELP)}
+        "tasks-project": cmd_tasks_project, "event": cmd_event, "events": cmd_events,
+        "permit": cmd_permit, "rule": cmd_rule, "lease": cmd_lease, "reap": cmd_reap,
+        "opkey": cmd_opkey, "opkey-done": cmd_opkey_done, "help": lambda a: print(HELP)}
 
 if __name__ == "__main__":
     if not DB.exists(): die(f"company database not found at {DB}")
