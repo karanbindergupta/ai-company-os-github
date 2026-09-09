@@ -703,6 +703,84 @@ def cmd_control(argv):
          {"flag": d["set"], "value": d["value"]})
     ok(f"CONTROL {d['set']}={d['value']} set by founder. {d.get('reason','')}")
 
+
+# ------------------------------------- PHASE 6: durable crash recovery
+_RETRY_SAFETY = {
+    "SAFE_TO_RETRY":           {"TRANSIENT","DEPENDENCY","TOOL","CONTEXT"},
+    "REQUIRES_RECONCILIATION": {"SYSTEM","AGENT","LOGIC","CODE"},
+    "MUST_NOT_RETRY":          {"SECURITY","PERMISSION","HUMAN_REQUIRED"},
+}
+def _safety(cls):
+    for k, v in _RETRY_SAFETY.items():
+        if cls in v: return k
+    return "REQUIRES_RECONCILIATION"
+
+def cmd_recover(argv):
+    """Reconstruct state after the supervising process died. Never guesses: an
+    operation CLAIMED but not confirmed may or may not have taken effect, so it is
+    quarantined for reconciliation rather than retried."""
+    d = kv(argv); c = db(); migrate(verbose=False)
+    q = ("SELECT id,agent,status,phase,objective,retries,retry_budget FROM executions "
+         "WHERE status IN ('RUNNING','RECOVERING','BLOCKED')")
+    pr = []
+    if d.get("execution"): q += " AND id=?"; pr.append(d["execution"])
+    rows = list(c.execute(q, pr))
+    if not rows: ok("nothing to recover"); return
+    print("=" * 68)
+    for ex, agent, status, phase, obj, retries, budget in rows:
+        print("")
+        print(f"{ex}  [{status}]  agent={agent}  phase={phase or '-'}")
+        print(f"  objective         {(obj or '')[:56]}")
+        cp = c.execute("SELECT seq,ts,state,next_action FROM checkpoints WHERE execution=? "
+                       "ORDER BY seq DESC LIMIT 1", (ex,)).fetchone()
+        if cp:
+            print(f"  last checkpoint   #{cp[0]} at {cp[1]}")
+            if cp[2]: print(f"    state           {cp[2][:52]}")
+            if cp[3]: print(f"    next action     {cp[3][:52]}")
+        else:
+            print("  last checkpoint   NONE - resume restarts from the objective")
+        le = c.execute("SELECT seq,ts,type FROM events WHERE execution=? ORDER BY seq DESC LIMIT 1",(ex,)).fetchone()
+        print(f"  last event        " + (f"#{le[0]} {le[1]} {le[2]}" if le else "NONE"))
+        ev = c.execute("SELECT COUNT(*) FROM execution_evidence WHERE execution=? AND verified=1",(ex,)).fetchone()[0]
+        print(f"  verified evidence {ev}")
+        pend = list(c.execute("SELECT key,op,ts FROM op_keys WHERE execution=? AND applied=0",(ex,)))
+        if pend:
+            print(f"  !! {len(pend)} CLAIMED-BUT-UNCONFIRMED side effect(s) - MUST NOT blind-retry:")
+            for k, o, t_ in pend: print(f"       {k}  op={o}  claimed {t_}")
+        fl = c.execute("SELECT class,detail FROM execution_failures WHERE execution=? ORDER BY id DESC LIMIT 1",(ex,)).fetchone()
+        safety = _safety(fl[0]) if fl else ("REQUIRES_RECONCILIATION" if pend else "SAFE_TO_RETRY")
+        if fl: print(f"  last failure      {fl[0]}: {(fl[1] or '')[:44]}")
+        print(f"  RETRY SAFETY      {safety}")
+        if pend:                        v = "RECONCILE FIRST - a side effect may already have applied"
+        elif safety == "MUST_NOT_RETRY": v = "DO NOT RETRY - escalate to the founder"
+        elif retries >= budget:          v = f"RETRY BUDGET EXHAUSTED ({retries}/{budget}) - rule 11: change approach"
+        else:                            v = f"RESUMABLE - harness.py resume execution={ex}"
+        print(f"  VERDICT           {v}")
+    print("")
+    print("=" * 68)
+
+def cmd_resume(argv):
+    d = kv(argv); need(d, "execution")
+    c = db(); ex = d["execution"]
+    row = c.execute("SELECT status,retries,retry_budget FROM executions WHERE id=?", (ex,)).fetchone()
+    if not row: die(f"unknown execution {ex}")
+    status, retries, budget = row
+    if status in ("SUCCEEDED","CANCELLED","ROLLED_BACK"): die(f"{ex} is {status}; nothing to resume")
+    pend = c.execute("SELECT COUNT(*) FROM op_keys WHERE execution=? AND applied=0",(ex,)).fetchone()[0]
+    if pend and d.get("reconciled") != "1":
+        die(f"{ex} has {pend} claimed-but-unconfirmed side effect(s). Blind resume could double-apply. "
+            f"Reconcile each (opkey-done key=...), then pass reconciled=1.")
+    fl = c.execute("SELECT class FROM execution_failures WHERE execution=? ORDER BY id DESC LIMIT 1",(ex,)).fetchone()
+    if fl and _safety(fl[0]) == "MUST_NOT_RETRY":
+        die(f"last failure class {fl[0]} is MUST_NOT_RETRY. Escalate; do not resume.")
+    if retries >= budget and d.get("force_budget") != "1":
+        die(f"retry budget exhausted ({retries}/{budget}). Rule 11: do not repeat a failed approach unchanged.")
+    c.execute("UPDATE executions SET status='RUNNING' WHERE id=?", (ex,)); c.commit()
+    emit(ex, "ExecutionResumed", d.get("holder","orchestrator"), {"from_status": status})
+    cp = c.execute("SELECT seq,state,next_action FROM checkpoints WHERE execution=? ORDER BY seq DESC LIMIT 1",(ex,)).fetchone()
+    ok(f"{ex} {status} -> RUNNING")
+    ok(f"  resume from checkpoint #{cp[0]}: {cp[2] or cp[1] or '(none)'}" if cp else "  no checkpoint: restart from objective")
+
 HELP = """harness.py - execution layer beneath the orchestrator
 
   migrate                                     apply pending schema migrations (idempotent)
@@ -733,6 +811,8 @@ HELP = """harness.py - execution layer beneath the orchestrator
   approve scope= by=founder [minutes= uses= reason=]   satisfies a REQUIRE_APPROVAL
   revoke scope=                                revoke outstanding approvals
   control [set= value= by=founder reason=]     GLOBAL_PAUSE etc. Founder-only
+  recover [execution=]                         post-crash triage + retry-safety verdict
+  resume execution= [reconciled=1 force_budget=1]   refuses on unconfirmed side effects
 
 The harness records and enforces. It never decides. Authority stays in companydb.py."""
 
@@ -744,7 +824,7 @@ CMDS = {"migrate": lambda a: migrate(), "submit": cmd_submit, "start": cmd_start
         "tasks-project": cmd_tasks_project, "event": cmd_event, "events": cmd_events,
         "permit": cmd_permit, "rule": cmd_rule, "lease": cmd_lease, "reap": cmd_reap,
         "opkey": cmd_opkey, "opkey-done": cmd_opkey_done, "approve": cmd_approve,
-        "revoke": cmd_revoke, "control": cmd_control, "help": lambda a: print(HELP)}
+        "revoke": cmd_revoke, "control": cmd_control, "recover": cmd_recover, "resume": cmd_resume, "help": lambda a: print(HELP)}
 
 if __name__ == "__main__":
     if not DB.exists(): die(f"company database not found at {DB}")
