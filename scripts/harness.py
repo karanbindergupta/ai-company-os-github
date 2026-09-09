@@ -653,6 +653,26 @@ def cmd_permit(argv):
                (d.get("arg") or "")[:200], why)); c.commit()
     emit(ex, "ToolRequested", d["role"], {"tool": d["tool"], "arg": (d.get("arg") or "")[:200]})
     if dec.startswith("ALLOW"):
+        if ex:
+            breached = _budget_charge(c, ex, calls=1,
+                                      tokens=int(d.get("tokens", 0)), cost=float(d.get("cost_usd", 0)))
+            c.execute("UPDATE executions SET tool_calls_used=tool_calls_used+1 WHERE id=?", (ex,))
+            c.commit()
+            if breached:
+                emit(ex, "BudgetExceeded", d["role"], {"scopes": breached, "tool": d["tool"]})
+                c.execute("UPDATE executions SET status='BLOCKED' WHERE id=?", (ex,)); c.commit()
+                print(f"DENY  BUDGET EXCEEDED on {', '.join(breached)}. Execution {ex} BLOCKED.\n"
+                      f"  Budgets do not silently continue. Raise it or escalate:\n"
+                      f"    harness.py budget scope=<s> scope_id=<id> tool_calls=<n>")
+                sys.exit(2)
+            prof = c.execute("SELECT profile,tool_calls_used FROM executions WHERE id=?", (ex,)).fetchone()
+            if prof:
+                mx = c.execute("SELECT max_tool_calls FROM profiles WHERE name=?", (prof[0],)).fetchone()
+                if mx and mx[0] and prof[1] > mx[0]:
+                    emit(ex, "BudgetExceeded", d["role"], {"profile_cap": mx[0], "used": prof[1]})
+                    c.execute("UPDATE executions SET status='BLOCKED' WHERE id=?", (ex,)); c.commit()
+                    print(f"DENY  profile {prof[0]} caps tool calls at {mx[0]}; {ex} used {prof[1]}. BLOCKED.")
+                    sys.exit(2)
         emit(ex, "ToolAllowed", d["role"], {"tool": d["tool"], "effect": dec}); ok(f"ALLOW ({dec})  {why}"); sys.exit(0)
     if dec == "REQUIRE_APPROVAL":
         emit(ex, "ToolApprovalRequired", d["role"], {"tool": d["tool"]}); print(f"APPROVAL REQUIRED  {why}"); sys.exit(3)
@@ -1175,6 +1195,51 @@ def cmd_unregistered(argv):
     if n: print("  Unattributed calls are operator-session calls, not agent work, "
                 "unless HARNESS_EXECUTION was unset during a spawn.")
 
+
+# -------------------------------- per-execution control + stuck/doom-loop detection
+def cmd_pause(argv):
+    """Pause ONE execution. Founder or the orchestrator may; the execution itself may not."""
+    d = kv(argv); need(d, "execution", "by")
+    c = db()
+    row = c.execute("SELECT status,agent FROM executions WHERE id=?", (d["execution"],)).fetchone()
+    if not row: die(f"unknown execution {d['execution']}")
+    if d["by"] == row[1]:
+        die("an execution cannot pause or resume itself; that is self-authorisation")
+    if row[0] not in ("RUNNING", "QUEUED", "RECOVERING"): die(f"{d['execution']} is {row[0]}; nothing to pause")
+    c.execute("UPDATE executions SET status='WAITING' WHERE id=?", (d["execution"],)); c.commit()
+    emit(d["execution"], "ExecutionBlocked", d["by"], {"action": "pause", "reason": d.get("reason")})
+    ok(f"{d['execution']} {row[0]} -> WAITING (paused by {d['by']})")
+
+def cmd_cancel(argv):
+    d = kv(argv); need(d, "execution", "by")
+    c = db()
+    row = c.execute("SELECT status,agent FROM executions WHERE id=?", (d["execution"],)).fetchone()
+    if not row: die(f"unknown execution {d['execution']}")
+    if d["by"] == row[1]: die("an execution cannot cancel itself")
+    c.execute("UPDATE executions SET status='CANCELLED',finished=? WHERE id=?", (now(), d["execution"]))
+    c.execute("DELETE FROM leases WHERE execution=?", (d["execution"],)); c.commit()
+    emit(d["execution"], "ExecutionTerminated", d["by"], {"reason": d.get("reason", "cancelled")})
+    ok(f"{d['execution']} CANCELLED by {d['by']}")
+
+def cmd_stuck(argv):
+    """Detect doom loops: repeated identical failures, or churn with no evidence.
+    This is rule 11 enforced in code rather than as advice."""
+    c = db(); found = 0
+    for ex, agent in c.execute("SELECT id,agent FROM executions WHERE status IN ('RUNNING','RECOVERING')"):
+        fails = [r[0] for r in c.execute(
+            "SELECT detail FROM execution_failures WHERE execution=? ORDER BY id DESC LIMIT 3", (ex,))]
+        if len(fails) >= 3 and len(set(fails)) == 1:
+            emit(ex, "DoomLoopDetected", "harness", {"repeated": fails[0][:80]})
+            c.execute("UPDATE executions SET status='BLOCKED' WHERE id=?", (ex,)); c.commit()
+            print(f"  DOOM LOOP {ex}: same failure 3x -> BLOCKED. Rule 11: change the approach."); found += 1
+            continue
+        calls = c.execute("SELECT COUNT(*) FROM tool_calls WHERE execution=?", (ex,)).fetchone()[0]
+        ev = c.execute("SELECT COUNT(*) FROM execution_evidence WHERE execution=? AND verified=1", (ex,)).fetchone()[0]
+        if calls >= 25 and ev == 0:
+            emit(ex, "DoomLoopDetected", "harness", {"tool_calls": calls, "evidence": 0})
+            print(f"  STUCK {ex}: {calls} tool calls, 0 verified evidence. Activity is not progress."); found += 1
+    ok(f"stuck scan: {found} execution(s) flagged" if found else "stuck scan: none flagged")
+
 HELP = """harness.py - execution layer beneath the orchestrator
 
   migrate                                     apply pending schema migrations (idempotent)
@@ -1217,6 +1282,9 @@ HELP = """harness.py - execution layer beneath the orchestrator
   context execution= [emit=1]                  task-scoped assembly, never the whole OS
   autoregister subagent_type= [description= prompt= parent_role=]  hook-side spawn capture
   unregistered                                 audit unattributed tool calls
+  pause execution= by= [reason=]               pause ONE execution (not self)
+  cancel execution= by= [reason=]              terminate ONE execution (not self)
+  stuck                                        doom-loop / activity-without-progress scan
 
 The harness records and enforces. It never decides. Authority stays in companydb.py."""
 
@@ -1231,7 +1299,8 @@ CMDS = {"migrate": lambda a: migrate(), "submit": cmd_submit, "start": cmd_start
         "revoke": cmd_revoke, "control": cmd_control, "recover": cmd_recover, "resume": cmd_resume, "profile": cmd_profile, "budget": cmd_budget,
         "review": cmd_review, "dash": cmd_dash, "route": cmd_route, "lesson": cmd_lesson,
         "workspace": cmd_workspace, "context": cmd_context,
-        "autoregister": cmd_autoregister, "unregistered": cmd_unregistered, "help": lambda a: print(HELP)}
+        "autoregister": cmd_autoregister, "unregistered": cmd_unregistered,
+        "pause": cmd_pause, "cancel": cmd_cancel, "stuck": cmd_stuck, "help": lambda a: print(HELP)}
 
 if __name__ == "__main__":
     if not DB.exists(): die(f"company database not found at {DB}")
