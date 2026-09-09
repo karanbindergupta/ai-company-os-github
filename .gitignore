@@ -5,6 +5,33 @@ node_modules/
 !.env.example
 *.log
 # company database WAL sidecars (the .db itself is versioned)
-.ai-company/state/*.db-wal
-.ai-company/state/*.db-shm
+# SQLite sidecars, ANY depth. The previous rules were scoped to state/ and so
+# missed state/archive/, leaving WAL files beside the frozen simulation
+# databases showing up as untracked noise. They are transient, never source.
+*.db-wal
+*.db-shm
 ci-results.json
+
+# ---------------------------------------------------------------------------
+# RUNTIME STATE - never tracked. Reconstructed by: python3 scripts/bootstrap.py
+#
+# Audited 2026-09-09. company.db was previously tracked and held BOTH runtime
+# execution state AND irreplaceable configuration. That configuration now lives in
+# .ai-company/state/seed.sql (tracked), so the database is reconstructable from
+# source and is genuinely runtime-only.
+#
+# NOT ignored, deliberately - these are reproducible SOURCE artifacts:
+#   .ai-company/state/schema.sql   base schema
+#   .ai-company/state/seed.sql     cognitive profiles, contracts, policy, domains
+#   .ai-company/state/archive/     historical mission snapshots
+# ---------------------------------------------------------------------------
+.ai-company/state/company.db
+.ai-company/state/run.json
+.ai-company/state/tasks.json
+.ai-company/state/backup/
+
+# Live append-only event log written by scripts/company.py. Runtime, not source:
+# it grows on every command and describes THIS deployment's history. The
+# directory is preserved with .gitkeep so a clean clone can still write here.
+.ai-company/logs/*.jsonl
+!.ai-company/logs/.gitkeep
