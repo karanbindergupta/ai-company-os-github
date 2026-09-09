@@ -114,6 +114,56 @@ MIGRATIONS = [
  CREATE TABLE IF NOT EXISTS control_flags(
    name TEXT PRIMARY KEY, value TEXT NOT NULL, set_by TEXT NOT NULL, ts TEXT NOT NULL, reason TEXT);
  """),
+
+ (6, "risk profiles, budgets, review modes, evidence 2.0", """
+ ALTER TABLE executions ADD COLUMN profile TEXT NOT NULL DEFAULT 'STANDARD';
+ ALTER TABLE executions ADD COLUMN risk_class TEXT NOT NULL DEFAULT 'low';
+ ALTER TABLE executions ADD COLUMN tool_calls_used INTEGER NOT NULL DEFAULT 0;
+ ALTER TABLE execution_evidence ADD COLUMN producer TEXT;
+ CREATE TABLE IF NOT EXISTS profiles(
+   name TEXT PRIMARY KEY, min_evidence INTEGER NOT NULL, review_modes TEXT NOT NULL,
+   require_approval INTEGER NOT NULL DEFAULT 0, max_tool_calls INTEGER, notes TEXT);
+ CREATE TABLE IF NOT EXISTS budgets(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, scope TEXT NOT NULL, scope_id TEXT NOT NULL,
+   tokens INTEGER, cost_usd REAL, tool_calls INTEGER, wall_s INTEGER,
+   spent_tokens INTEGER NOT NULL DEFAULT 0, spent_cost REAL NOT NULL DEFAULT 0,
+   spent_calls INTEGER NOT NULL DEFAULT 0, created TEXT NOT NULL,
+   UNIQUE(scope, scope_id),
+   CHECK(scope IN ('execution','task','project','department','company')));
+ CREATE TABLE IF NOT EXISTS reviews(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, execution TEXT NOT NULL, mode TEXT NOT NULL,
+   reviewer TEXT NOT NULL, verdict TEXT NOT NULL, findings TEXT, ts TEXT NOT NULL,
+   CHECK(mode IN ('SELF_REVIEW','PEER_REVIEW','SPECIALIST_REVIEW','ADVERSARIAL_REVIEW',
+                  'SECURITY_REVIEW','FINAL_REVIEW')),
+   CHECK(verdict IN ('ACCEPT','ACCEPT_WITH_CORRECTIONS','REJECT','INSUFFICIENT_EVIDENCE')));
+ INSERT OR IGNORE INTO profiles(name,min_evidence,review_modes,require_approval,max_tool_calls,notes) VALUES
+   ('LIGHT',1,'',0,50,'minimal ceremony: evidence only'),
+   ('STANDARD',1,'PEER_REVIEW',0,200,'evidence + independent peer review'),
+   ('HIGH_ASSURANCE',2,'PEER_REVIEW,SECURITY_REVIEW',0,500,'independent + security review'),
+   ('CRITICAL',3,'PEER_REVIEW,ADVERSARIAL_REVIEW,SECURITY_REVIEW,FINAL_REVIEW',1,1000,
+    'multi-layer review AND explicit founder approval');
+ """),
+
+ (7, "routing, learning, workspaces, context", """
+ CREATE TABLE IF NOT EXISTS routing_outcomes(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, task_kind TEXT NOT NULL, agent TEXT NOT NULL,
+   model TEXT, difficulty TEXT, outcome TEXT NOT NULL, duration_s INTEGER,
+   cost_usd REAL, retries INTEGER DEFAULT 0, review_verdict TEXT,
+   human_intervention INTEGER DEFAULT 0, ts TEXT NOT NULL);
+ CREATE TABLE IF NOT EXISTS lessons_h(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, topic TEXT NOT NULL, statement TEXT NOT NULL,
+   stage TEXT NOT NULL, evidence_count INTEGER NOT NULL DEFAULT 1,
+   source_execution TEXT, created TEXT NOT NULL, updated TEXT NOT NULL,
+   CHECK(stage IN ('OBSERVATION','CANDIDATE','REPEATED','VALIDATED','ORGANIZATIONAL')));
+ CREATE TABLE IF NOT EXISTS workspaces(
+   id TEXT PRIMARY KEY, execution TEXT, path TEXT NOT NULL, branch TEXT,
+   base_commit TEXT, status TEXT NOT NULL DEFAULT 'active', cleanup TEXT,
+   created TEXT NOT NULL,
+   CHECK(status IN ('active','merged','abandoned','conflicted')));
+ CREATE TABLE IF NOT EXISTS context_bundles(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, execution TEXT NOT NULL, ts TEXT NOT NULL,
+   items TEXT NOT NULL, bytes INTEGER, compressed INTEGER DEFAULT 0, provenance TEXT);
+ """),
 ]
 
 def db():
@@ -242,7 +292,21 @@ def cmd_complete(argv):
     c = db(); ex = d["execution"]
     row = c.execute("SELECT status,agent FROM executions WHERE id=?", (ex,)).fetchone()
     if not row: die(f"unknown execution {ex}")
+    prof = c.execute("SELECT profile FROM executions WHERE id=?", (ex,)).fetchone()[0]
+    pr = c.execute("SELECT min_evidence,review_modes,require_approval FROM profiles WHERE name=?", (prof,)).fetchone()
     ev = c.execute("SELECT COUNT(*) FROM execution_evidence WHERE execution=? AND verified=1", (ex,)).fetchone()[0]
+    if pr:
+        need_ev, modes, need_appr = pr
+        if ev < need_ev:
+            die(f"profile {prof} requires {need_ev} verified evidence item(s); {ex} has {ev}.")
+        for m in [x for x in (modes or "").split(",") if x]:
+            got = c.execute("SELECT COUNT(*) FROM reviews WHERE execution=? AND mode=? AND verdict IN ('ACCEPT','ACCEPT_WITH_CORRECTIONS')", (ex, m)).fetchone()[0]
+            if not got:
+                die(f"profile {prof} requires a passing {m}. None recorded for {ex}. "
+                    f"Record it: harness.py review execution={ex} mode={m} reviewer=<role> verdict=ACCEPT")
+        if need_appr and not _live_approval(c, f"complete:{ex}"):
+            die(f"profile {prof} requires explicit founder approval before completion. "
+                f"Founder: harness.py approve scope=complete:{ex} by=founder")
     if ev == 0:
         die(f"{ex} has NO VERIFIED EVIDENCE. Completion requires evidence on disk "
             f"(harness.py evidence execution={ex} kind=artifact path=...). "
@@ -781,6 +845,275 @@ def cmd_resume(argv):
     ok(f"{ex} {status} -> RUNNING")
     ok(f"  resume from checkpoint #{cp[0]}: {cp[2] or cp[1] or '(none)'}" if cp else "  no checkpoint: restart from objective")
 
+
+# ------------------------------- 21/22: risk-adaptive profiles + budget governance
+def cmd_profile(argv):
+    d = kv(argv); c = db(); migrate(verbose=False)
+    if not d.get("execution"):
+        print(f"  {'PROFILE':<16}{'EVID':<6}{'APPR':<6}{'MAXTOOLS':<10}REVIEWS")
+        for n_, me, rm, ra, mt, _ in c.execute("SELECT * FROM profiles"):
+            print(f"  {n_:<16}{me:<6}{'yes' if ra else 'no':<6}{mt or '-':<10}{rm or '(none)'}")
+        return
+    need(d, "execution", "set")
+    if not c.execute("SELECT 1 FROM profiles WHERE name=?", (d["set"],)).fetchone():
+        die(f"unknown profile '{d['set']}'")
+    c.execute("UPDATE executions SET profile=?, risk_class=COALESCE(?,risk_class) WHERE id=?",
+              (d["set"], d.get("risk"), d["execution"])); c.commit()
+    emit(d["execution"], "AgentMessage", "harness", {"profile": d["set"]})
+    ok(f"{d['execution']} profile={d['set']}")
+
+def cmd_budget(argv):
+    d = kv(argv); c = db(); migrate(verbose=False)
+    if d.get("scope") and d.get("scope_id") and (d.get("tokens") or d.get("cost_usd") or d.get("tool_calls") or d.get("wall_s")):
+        c.execute("""INSERT INTO budgets(scope,scope_id,tokens,cost_usd,tool_calls,wall_s,created)
+                     VALUES(?,?,?,?,?,?,?) ON CONFLICT(scope,scope_id) DO UPDATE SET
+                     tokens=excluded.tokens,cost_usd=excluded.cost_usd,
+                     tool_calls=excluded.tool_calls,wall_s=excluded.wall_s""",
+                  (d["scope"], d["scope_id"],
+                   int(d["tokens"]) if d.get("tokens") else None,
+                   float(d["cost_usd"]) if d.get("cost_usd") else None,
+                   int(d["tool_calls"]) if d.get("tool_calls") else None,
+                   int(d["wall_s"]) if d.get("wall_s") else None, now())); c.commit()
+        ok(f"budget set {d['scope']}:{d['scope_id']}"); return
+    print(f"  {'SCOPE':<12}{'ID':<22}{'CALLS':<14}{'TOKENS':<16}{'COST':<14}STATUS")
+    for r in c.execute("SELECT scope,scope_id,tool_calls,spent_calls,tokens,spent_tokens,cost_usd,spent_cost FROM budgets"):
+        sc, sid, tc, sc_, tk, stk, cu, scu = r
+        over = (tc and sc_ >= tc) or (tk and stk >= tk) or (cu and scu >= cu)
+        print(f"  {sc:<12}{sid:<22}{str(sc_)+'/'+str(tc or '-'):<14}"
+              f"{str(stk)+'/'+str(tk or '-'):<16}{('%.2f/%s'%(scu,cu or '-')):<14}"
+              f"{'EXCEEDED' if over else 'ok'}")
+
+def _budget_charge(c, ex, calls=0, tokens=0, cost=0.0):
+    """Charge every applicable scope. Returns list of EXCEEDED scopes."""
+    row = c.execute("SELECT task,agent FROM executions WHERE id=?", (ex,)).fetchone()
+    scopes = [("execution", ex), ("company", "company")]
+    if row and row[0]: scopes.append(("task", row[0]))
+    if row and row[1]:
+        dept = c.execute("SELECT department FROM agents WHERE id=?", (row[1],)).fetchone()
+        if dept: scopes.append(("department", dept[0]))
+    breached = []
+    for sc, sid in scopes:
+        b = c.execute("SELECT tool_calls,spent_calls,tokens,spent_tokens,cost_usd,spent_cost FROM budgets WHERE scope=? AND scope_id=?", (sc, sid)).fetchone()
+        if not b: continue
+        c.execute("""UPDATE budgets SET spent_calls=spent_calls+?, spent_tokens=spent_tokens+?,
+                     spent_cost=spent_cost+? WHERE scope=? AND scope_id=?""", (calls, tokens, cost, sc, sid))
+        nc, nt, ncost = b[1] + calls, b[3] + tokens, b[5] + cost
+        if (b[0] and nc >= b[0]) or (b[2] and nt >= b[2]) or (b[4] and ncost >= b[4]):
+            breached.append(f"{sc}:{sid}")
+    return breached
+
+# ------------------------------------------------- 20: independent review system
+_MODE_INDEPENDENT = {"PEER_REVIEW","SPECIALIST_REVIEW","ADVERSARIAL_REVIEW","SECURITY_REVIEW","FINAL_REVIEW"}
+def cmd_review(argv):
+    d = kv(argv); need(d, "execution", "mode", "reviewer", "verdict")
+    c = db(); migrate(verbose=False)
+    row = c.execute("SELECT agent FROM executions WHERE id=?", (d["execution"],)).fetchone()
+    if not row: die(f"unknown execution {d['execution']}")
+    owner = row[0]
+    if d["mode"] in _MODE_INDEPENDENT and d["reviewer"] == owner:
+        die(f"{d['mode']} requires independence. '{owner}' cannot review its own execution. "
+            f"Rule 3: no agent approves its own work.")
+    if d["mode"] == "SECURITY_REVIEW":
+        dept = c.execute("SELECT department FROM agents WHERE id=?", (d["reviewer"],)).fetchone()
+        if not dept or dept[0] != "security":
+            die(f"SECURITY_REVIEW must be performed by the security department; "
+                f"'{d['reviewer']}' is in '{dept[0] if dept else 'unknown'}'.")
+    c.execute("INSERT INTO reviews(execution,mode,reviewer,verdict,findings,ts) VALUES(?,?,?,?,?,?)",
+              (d["execution"], d["mode"], d["reviewer"], d["verdict"], d.get("findings"), now()))
+    c.commit()
+    emit(d["execution"], "ReviewCompleted", d["reviewer"], {"mode": d["mode"], "verdict": d["verdict"]})
+    ok(f"{d['execution']} {d['mode']} by {d['reviewer']}: {d['verdict']}")
+    if d["verdict"] == "REJECT":
+        c.execute("UPDATE executions SET status='FAILED' WHERE id=?", (d["execution"],)); c.commit()
+        ok("  verdict REJECT -> execution FAILED. It cannot be completed on this attempt.")
+
+
+# --------------------------------------------------- 11: live observability
+def cmd_dash(argv):
+    """Answers: WHAT IS THE COMPANY DOING RIGHT NOW - without reading raw logs."""
+    d = kv(argv); c = db()
+    if d.get("json") == "1":
+        out = {"generated": now(),
+               "executions": {k: v for k, v in c.execute("SELECT status,COUNT(*) FROM executions GROUP BY status")},
+               "tasks": {k: v for k, v in c.execute("SELECT status,COUNT(*) FROM tasks GROUP BY status")},
+               "events": c.execute("SELECT COUNT(*) FROM events").fetchone()[0],
+               "tool_calls": c.execute("SELECT COUNT(*) FROM tool_calls").fetchone()[0],
+               "denials": c.execute("SELECT COUNT(*) FROM tool_calls WHERE authorized=0").fetchone()[0],
+               "budgets_exceeded": [f"{r[0]}:{r[1]}" for r in c.execute(
+                   "SELECT scope,scope_id FROM budgets WHERE (tool_calls IS NOT NULL AND spent_calls>=tool_calls) OR (tokens IS NOT NULL AND spent_tokens>=tokens)")],
+               "control_flags": {k: v for k, v in c.execute("SELECT name,value FROM control_flags")}}
+        print(json.dumps(out, indent=2)); return
+    pause = c.execute("SELECT value FROM control_flags WHERE name='GLOBAL_PAUSE'").fetchone()
+    print("=" * 68)
+    print("  COMPANY EXECUTION STATUS" + ("   *** GLOBAL_PAUSE ACTIVE ***" if pause and pause[0] == "on" else ""))
+    print("=" * 68)
+    live = list(c.execute("""SELECT id,agent,status,profile,phase,retries,retry_budget,
+                             substr(objective,1,34) FROM executions
+                             WHERE status IN ('QUEUED','RUNNING','WAITING','RECOVERING','BLOCKED','REVIEW')
+                             ORDER BY created"""))
+    if live:
+        print(f"  {'ID':<9}{'STATUS':<11}{'PROFILE':<15}{'AGENT':<22}{'RTY':<5}OBJECTIVE")
+        for i, a, st, pf, ph, rt, bd, ob in live:
+            print(f"  {i:<9}{st:<11}{pf:<15}{a[:20]:<22}{str(rt)+'/'+str(bd):<5}{ob}")
+    else:
+        print("  no live executions")
+    done = c.execute("SELECT COUNT(*) FROM executions WHERE status='SUCCEEDED'").fetchone()[0]
+    fail = c.execute("SELECT COUNT(*) FROM executions WHERE status IN ('FAILED','BLOCKED')").fetchone()[0]
+    tot = done + fail
+    print(f"\n  OUTCOMES     succeeded={done} failed/blocked={fail}"
+          + (f"  success_rate={100.0*done/tot:.0f}%" if tot else ""))
+    tc = c.execute("SELECT COUNT(*) FROM tool_calls").fetchone()[0]
+    dn = c.execute("SELECT COUNT(*) FROM tool_calls WHERE authorized=0").fetchone()[0]
+    print(f"  TOOL CALLS   {tc} total, {dn} denied" + (f" ({100.0*dn/tc:.0f}% denial rate)" if tc else ""))
+    ev = c.execute("SELECT COUNT(*) FROM execution_evidence WHERE verified=1").fetchone()[0]
+    print(f"  EVIDENCE     {ev} sha256-verified artifacts")
+    print(f"  EVENTS       {c.execute('SELECT COUNT(*) FROM events').fetchone()[0]} appended")
+    over = list(c.execute("""SELECT scope,scope_id,spent_calls,tool_calls FROM budgets
+                             WHERE tool_calls IS NOT NULL AND spent_calls>=tool_calls"""))
+    if over:
+        print("\n  !! BUDGETS EXCEEDED")
+        for sc, sid, sp, lim in over: print(f"     {sc}:{sid}  {sp}/{lim} tool calls")
+    stale = c.execute("""SELECT COUNT(*) FROM leases l JOIN executions e ON e.id=l.execution
+                         WHERE e.status='RUNNING'""").fetchone()[0]
+    if stale: print(f"\n  {stale} execution(s) holding leases - run `harness.py reap` to check liveness")
+    print("=" * 68)
+
+# ---------------------------------------------------- 10: adaptive routing
+def cmd_route(argv):
+    """Evidence-based routing. Refuses to recommend without enough evidence -
+    a model never declares itself successful."""
+    d = kv(argv); c = db(); migrate(verbose=False)
+    if d.get("record"):
+        need(d, "task_kind", "agent", "outcome")
+        c.execute("""INSERT INTO routing_outcomes(task_kind,agent,model,difficulty,outcome,
+                     duration_s,cost_usd,retries,review_verdict,human_intervention,ts)
+                     VALUES(?,?,?,?,?,?,?,?,?,?,?)""",
+                  (d["task_kind"], d["agent"], d.get("model"), d.get("difficulty"), d["outcome"],
+                   int(d["duration_s"]) if d.get("duration_s") else None,
+                   float(d["cost_usd"]) if d.get("cost_usd") else None,
+                   int(d.get("retries", 0)), d.get("review_verdict"),
+                   int(d.get("human_intervention", 0)), now())); c.commit()
+        ok(f"routing outcome recorded: {d['task_kind']}/{d['agent']} -> {d['outcome']}"); return
+    need(d, "task_kind")
+    MIN = int(d.get("min_evidence", 5))
+    rows = list(c.execute("""SELECT agent, COUNT(*) n,
+                    SUM(CASE WHEN outcome='success' THEN 1 ELSE 0 END) ok_,
+                    AVG(COALESCE(retries,0)) rt, AVG(COALESCE(cost_usd,0)) cost,
+                    SUM(human_intervention) hi
+                    FROM routing_outcomes WHERE task_kind=? GROUP BY agent ORDER BY n DESC""",
+                 (d["task_kind"],)))
+    if not rows:
+        print(f"INSUFFICIENT EVIDENCE: no recorded outcomes for task_kind='{d['task_kind']}'.")
+        print("  Routing falls back to the Company OS (workforce.py assign). The harness does not guess.")
+        sys.exit(2)
+    print(f"  {'AGENT':<24}{'N':<5}{'SUCCESS':<10}{'RETRY':<8}{'COST':<9}{'HUMAN':<7}SCORE")
+    best = None
+    for a, n, ok_, rt, cost, hi in rows:
+        sr = (ok_ or 0) / n
+        # quality-weighted: success dominates; cost is a tiebreak, never the driver.
+        score = (sr * 0.6) + ((1 - min(rt or 0, 3) / 3) * 0.2) + ((1 - min(hi / n, 1)) * 0.15) \
+                + ((1 / (1 + (cost or 0))) * 0.05)
+        flag = "" if n >= MIN else "  (below evidence threshold)"
+        print(f"  {a[:22]:<24}{n:<5}{sr*100:>5.0f}%    {rt or 0:<8.1f}{cost or 0:<9.3f}{hi:<7}{score:.3f}{flag}")
+        if n >= MIN and (best is None or score > best[1]): best = (a, score)
+    if best: ok(f"\nRECOMMEND {best[0]}  (score {best[1]:.3f}, >= {MIN} outcomes)")
+    else:    print(f"\nNO RECOMMENDATION: no agent has >= {MIN} recorded outcomes. INSUFFICIENT EVIDENCE.")
+
+# ------------------------------------------ 13: organizational learning
+_STAGES = ["OBSERVATION", "CANDIDATE", "REPEATED", "VALIDATED", "ORGANIZATIONAL"]
+def cmd_lesson(argv):
+    """Observation -> Candidate -> Repeated -> Validated -> Organizational.
+    Nothing becomes permanent truth on one sighting."""
+    d = kv(argv); c = db(); migrate(verbose=False)
+    if not d.get("statement"):
+        print(f"  {'STAGE':<16}{'N':<4}{'TOPIC':<24}STATEMENT")
+        for st, n, tp, stm in c.execute("SELECT stage,evidence_count,topic,statement FROM lessons_h ORDER BY evidence_count DESC"):
+            print(f"  {st:<16}{n:<4}{tp[:22]:<24}{stm[:52]}")
+        return
+    need(d, "topic", "statement")
+    row = c.execute("SELECT id,evidence_count,stage FROM lessons_h WHERE topic=? AND statement=?",
+                    (d["topic"], d["statement"])).fetchone()
+    if row:
+        lid, n, stage = row; n += 1
+        idx = min(_STAGES.index(stage) + (1 if n in (2, 4, 8) else 0), len(_STAGES) - 1)
+        newstage = _STAGES[idx]
+        c.execute("UPDATE lessons_h SET evidence_count=?,stage=?,updated=? WHERE id=?", (n, newstage, now(), lid))
+        c.commit(); ok(f"lesson reinforced: n={n} stage={stage} -> {newstage}")
+    else:
+        c.execute("""INSERT INTO lessons_h(topic,statement,stage,evidence_count,source_execution,created,updated)
+                     VALUES(?,?,'OBSERVATION',1,?,?,?)""",
+                  (d["topic"], d["statement"], d.get("execution"), now(), now())); c.commit()
+        ok("lesson recorded at stage OBSERVATION (n=1). It is not organizational truth yet.")
+
+# ------------------------------------------------ 17: workspace isolation
+def cmd_workspace(argv):
+    d = kv(argv); c = db(); migrate(verbose=False)
+    if d.get("list") or not d.get("register"):
+        print(f"  {'ID':<20}{'STATUS':<12}{'BRANCH':<26}{'EXECUTION':<10}PATH")
+        for i, ex, pth, br, bc, st, cl, cr in c.execute("SELECT * FROM workspaces"):
+            print(f"  {i:<20}{st:<12}{(br or '-')[:24]:<26}{ex or '-':<10}{pth}")
+        return
+    need(d, "register", "path")
+    base = ""
+    try: base = subprocess.run(["git","rev-parse","HEAD"],cwd=str(R),capture_output=True,text=True,timeout=10).stdout.strip()
+    except Exception: pass
+    conflict = c.execute("SELECT id,execution FROM workspaces WHERE path=? AND status='active'",(d["path"],)).fetchone()
+    if conflict and conflict[1] != d.get("execution"):
+        die(f"workspace path already held by {conflict[0]} (execution {conflict[1]}). "
+            f"Parallel agents must not share a workspace.")
+    c.execute("""INSERT INTO workspaces(id,execution,path,branch,base_commit,status,cleanup,created)
+                 VALUES(?,?,?,?,?,'active',?,?) ON CONFLICT(id) DO UPDATE SET
+                 execution=excluded.execution,branch=excluded.branch""",
+              (d["register"], d.get("execution"), d["path"], d.get("branch"), base, d.get("cleanup","keep"), now()))
+    c.commit()
+    if d.get("execution"): emit(d["execution"], "AgentMessage", "harness", {"workspace": d["register"]})
+    ok(f"workspace {d['register']} registered at {d['path']} base={base[:8]}")
+
+# ---------------------------------------------------- 18: context engine
+def cmd_context(argv):
+    """Assemble task-scoped context. Never dumps the whole Company OS into an agent."""
+    d = kv(argv); need(d, "execution"); c = db(); migrate(verbose=False)
+    ex = d["execution"]
+    row = c.execute("SELECT task,agent,objective,phase,profile FROM executions WHERE id=?", (ex,)).fetchone()
+    if not row: die(f"unknown execution {ex}")
+    task, agent, obj, phase, profile = row
+    items, prov = [], []
+    items.append(("objective", obj)); prov.append("executions.objective")
+    if agent:
+        a = c.execute("SELECT title,department,blind_spots,counterbalanced_by FROM agents WHERE id=?", (agent,)).fetchone()
+        if a:
+            items.append(("your role", f"{a[0]} ({a[1]})")); prov.append("agents")
+            if a[2]: items.append(("your recorded blind spot", a[2][:220])); prov.append("agents.blind_spots")
+            if a[3]: items.append(("who counterbalances you", a[3][:120])); prov.append("agents.counterbalanced_by")
+    if task:
+        t = c.execute("SELECT title,acceptance,owner,reviewer FROM tasks WHERE id=?", (task,)).fetchone()
+        if t:
+            items.append(("task", t[0])); prov.append("tasks")
+            if t[1]: items.append(("acceptance criteria", t[1])); prov.append("tasks.acceptance")
+            if t[3]: items.append(("independent reviewer", t[3])); prov.append("tasks.reviewer")
+    pr = c.execute("SELECT min_evidence,review_modes,require_approval FROM profiles WHERE name=?", (profile,)).fetchone()
+    if pr: items.append(("completion bar", f"profile {profile}: >={pr[0]} verified evidence"
+                        + (f"; reviews required: {pr[1]}" if pr[1] else "")
+                        + ("; FOUNDER APPROVAL REQUIRED" if pr[2] else ""))); prov.append("profiles")
+    fails = list(c.execute("SELECT class,detail FROM execution_failures WHERE execution=? ORDER BY id DESC LIMIT 3", (ex,)))
+    for cl, det in fails:
+        items.append(("previous failure - do not repeat", f"{cl}: {(det or '')[:110]}")); prov.append("execution_failures")
+    cp = c.execute("SELECT state,next_action FROM checkpoints WHERE execution=? ORDER BY seq DESC LIMIT 1", (ex,)).fetchone()
+    if cp: items.append(("resume from", cp[1] or cp[0] or "")); prov.append("checkpoints")
+    for st, tp, stm in c.execute("SELECT stage,topic,statement FROM lessons_h WHERE stage IN ('VALIDATED','ORGANIZATIONAL') LIMIT 5"):
+        items.append((f"organizational lesson [{st}]", f"{tp}: {stm[:120]}")); prov.append("lessons_h")
+    for dom in c.execute("SELECT domain FROM decision_rights WHERE founder_required=1 LIMIT 30"):
+        pass
+    fr = [r[0] for r in c.execute("SELECT domain FROM decision_rights WHERE founder_required=1")]
+    items.append(("founder-required domains - you may NOT decide these", ", ".join(fr))); prov.append("decision_rights")
+    body = "\n".join(f"## {k}\n{v}" for k, v in items if v)
+    c.execute("INSERT INTO context_bundles(execution,ts,items,bytes,provenance) VALUES(?,?,?,?,?)",
+              (ex, now(), json.dumps([k for k, _ in items]), len(body), ",".join(sorted(set(prov)))))
+    c.commit()
+    if d.get("emit") == "1": print(body)
+    else: ok(f"context bundle for {ex}: {len(items)} items, {len(body)} bytes, "
+             f"provenance={len(set(prov))} sources (use emit=1 to print)")
+
 HELP = """harness.py - execution layer beneath the orchestrator
 
   migrate                                     apply pending schema migrations (idempotent)
@@ -813,6 +1146,14 @@ HELP = """harness.py - execution layer beneath the orchestrator
   control [set= value= by=founder reason=]     GLOBAL_PAUSE etc. Founder-only
   recover [execution=]                         post-crash triage + retry-safety verdict
   resume execution= [reconciled=1 force_budget=1]   refuses on unconfirmed side effects
+  profile [execution= set=LIGHT|STANDARD|HIGH_ASSURANCE|CRITICAL risk=]
+  budget [scope= scope_id= tokens= cost_usd= tool_calls= wall_s=]   enforce at 5 scopes
+  review execution= mode= reviewer= verdict= [findings=]   6 modes, independence enforced
+  dash [json=1]                                WHAT IS THE COMPANY DOING RIGHT NOW
+  route task_kind= [record=1 agent= outcome=]  evidence-based; refuses to guess
+  lesson [topic= statement= execution=]        OBSERVATION -> ... -> ORGANIZATIONAL
+  workspace [register= path= branch= execution=]   parallel agents cannot share one
+  context execution= [emit=1]                  task-scoped assembly, never the whole OS
 
 The harness records and enforces. It never decides. Authority stays in companydb.py."""
 
@@ -824,7 +1165,9 @@ CMDS = {"migrate": lambda a: migrate(), "submit": cmd_submit, "start": cmd_start
         "tasks-project": cmd_tasks_project, "event": cmd_event, "events": cmd_events,
         "permit": cmd_permit, "rule": cmd_rule, "lease": cmd_lease, "reap": cmd_reap,
         "opkey": cmd_opkey, "opkey-done": cmd_opkey_done, "approve": cmd_approve,
-        "revoke": cmd_revoke, "control": cmd_control, "recover": cmd_recover, "resume": cmd_resume, "help": lambda a: print(HELP)}
+        "revoke": cmd_revoke, "control": cmd_control, "recover": cmd_recover, "resume": cmd_resume, "profile": cmd_profile, "budget": cmd_budget,
+        "review": cmd_review, "dash": cmd_dash, "route": cmd_route, "lesson": cmd_lesson,
+        "workspace": cmd_workspace, "context": cmd_context, "help": lambda a: print(HELP)}
 
 if __name__ == "__main__":
     if not DB.exists(): die(f"company database not found at {DB}")

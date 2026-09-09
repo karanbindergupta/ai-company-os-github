@@ -2,9 +2,9 @@
   "_DERIVED": true,
   "_SOURCE": "company.db table `tasks` - THE authority",
   "_WARNING": "Read-only projection. Edits here are OVERWRITTEN and are NOT authoritative. Write via: harness.py task-add / task-update, or companydb.py task.",
-  "_generated": "2026-09-09T12:36:14+00:00",
+  "_generated": "2026-09-09T13:26:21+00:00",
   "version": 1,
-  "next_id": 28,
+  "next_id": 30,
   "tasks": [
     {
       "id": "T001",
@@ -567,6 +567,38 @@
       "attempts": 0,
       "created": "2026-09-09T12:36:14+00:00",
       "updated": "2026-09-09T12:36:14+00:00",
+      "blocked_on": null
+    },
+    {
+      "id": "T029",
+      "title": "redteam fake done",
+      "owner": "backend-lead",
+      "reviewer": null,
+      "phase": null,
+      "status": "todo",
+      "deps": [],
+      "criteria": [],
+      "parallel_group": "",
+      "evidence": [],
+      "attempts": 0,
+      "created": "2026-09-09T13:23:25+00:00",
+      "updated": "2026-09-09T13:23:25+00:00",
+      "blocked_on": null
+    },
+    {
+      "id": "T030",
+      "title": "redteam fake done",
+      "owner": "backend-lead",
+      "reviewer": null,
+      "phase": null,
+      "status": "todo",
+      "deps": [],
+      "criteria": [],
+      "parallel_group": "",
+      "evidence": [],
+      "attempts": 0,
+      "created": "2026-09-09T13:26:21+00:00",
+      "updated": "2026-09-09T13:26:21+00:00",
       "blocked_on": null
     }
   ]
