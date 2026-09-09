@@ -206,6 +206,149 @@ MIGRATIONS = [
    command TEXT NOT NULL, profile TEXT NOT NULL, allowed_paths TEXT,
    exit_code INTEGER, violated INTEGER NOT NULL DEFAULT 0, detail TEXT);
  """),
+
+ (12, "seed permission policy as code", """
+ DELETE FROM permission_rules WHERE id NOT IN
+   (SELECT MIN(id) FROM permission_rules GROUP BY ordinal);
+ CREATE UNIQUE INDEX IF NOT EXISTS ux_rules_ordinal ON permission_rules(ordinal);
+ INSERT OR IGNORE INTO permission_rules(ordinal,role,tool,arg_match,effect,reason,created) VALUES
+  (10,'*','*',NULL,'DENY','deny-biased default: nothing permitted unless a later rule allows',datetime('now')),
+  (20,'*','Read',NULL,'ALLOW','read-only inspection',datetime('now')),
+  (21,'*','Grep',NULL,'ALLOW','read-only',datetime('now')),
+  (22,'*','Glob',NULL,'ALLOW','read-only',datetime('now')),
+  (30,'*','Write',NULL,'ALLOW_WITH_AUDIT','writes permitted, always recorded',datetime('now')),
+  (31,'*','Edit',NULL,'ALLOW_WITH_AUDIT','writes permitted, always recorded',datetime('now')),
+  (40,'*','Bash',NULL,'ALLOW_WITH_AUDIT','shell permitted, audited',datetime('now')),
+  (60,'*','Bash','rm','REQUIRE_APPROVAL','destructive deletion needs founder approval (token-exact)',datetime('now')),
+  (61,'*','Bash','--force*','REQUIRE_APPROVAL','force flags bypass safety',datetime('now')),
+  (62,'*','Bash','*.env*','DENY','credential file; credential-handling is deny for all agents',datetime('now')),
+  (63,'*','Bash','*id_rsa*','DENY','private key',datetime('now')),
+  (64,'*','Bash','git push*','REQUIRE_APPROVAL','outward-facing: founder decision',datetime('now')),
+  (70,'*','Bash','*company.db*','REQUIRE_APPROVAL','direct DB mutation bypasses governance',datetime('now')),
+  (80,'*','Task',NULL,'ALLOW_WITH_AUDIT','agent spawn is a governed act, recorded',datetime('now')),
+  (90,'ceo','Bash','git push*','DENY','not even the CEO: founder-required domain',datetime('now')),
+  (100,'orchestrator','Bash','*company.db*','ALLOW_WITH_AUDIT','operator maintains its own state store',datetime('now')),
+  (101,'orchestrator','Bash','rm','ALLOW_WITH_AUDIT','operator housekeeping; recorded',datetime('now'));
+ """),
+
+ (13, "close the read-only gap between healthy and degraded policy", """
+ -- DEFECT this repairs: the PreToolUse hook's degraded fallback permits
+ -- WebFetch, WebSearch, NotebookRead and TodoWrite, but the healthy policy did
+ -- not. A HEALTHY harness was therefore STRICTER than a BROKEN one - breaking
+ -- the harness widened what an agent could do for those tools. The invariant
+ -- must hold in the other direction: healthy >= degraded, always.
+ -- Found when the harness denied ToolSearch, an inert schema lookup, during
+ -- repository canonicalization.
+ INSERT OR IGNORE INTO permission_rules(ordinal,role,tool,arg_match,effect,reason,created) VALUES
+  (23,'*','NotebookRead',NULL,'ALLOW','read-only',datetime('now')),
+  (24,'*','WebFetch',NULL,'ALLOW','read-only research; no local side effect',datetime('now')),
+  (25,'*','WebSearch',NULL,'ALLOW','read-only research; no local side effect',datetime('now')),
+  (26,'*','TodoWrite',NULL,'ALLOW','inert session-local scratchpad, not durable state',datetime('now')),
+  (27,'*','ToolSearch',NULL,'ALLOW','returns tool schemas only; cannot act',datetime('now'));
+ """),
+
+ (14, "hard denies: an explicit security DENY can no longer be overridden", """
+ -- SECURITY DEFECT, found by adversarial test during canonicalization and
+ -- reproduced live before this fix:
+ --
+ --   permit role=orchestrator tool=Bash arg='cat ~/.ssh/id_rsa; echo company.db'
+ --     -> ALLOW
+ --
+ -- Bash is matched over every shlex token, and resolution was purely
+ -- last-match-wins by ordinal. So appending ANY token that matches a
+ -- later ALLOW rule (here 'company.db', ordinal 100) silently overrode the
+ -- private-key DENY at ordinal 63. Same trick defeated the credential rule.
+ --
+ -- Fix: security-class denies are HARD. Once a hard DENY matches, no later
+ -- rule can lift it - standard "explicit deny wins" policy semantics. The
+ -- ordinal-10 catch-all deny stays soft, because being overridable by a
+ -- later ALLOW is precisely its purpose.
+ ALTER TABLE permission_rules ADD COLUMN hard INTEGER NOT NULL DEFAULT 0;
+ UPDATE permission_rules SET hard=1 WHERE ordinal IN (62,63);
+ UPDATE permission_rules SET hard=1 WHERE ordinal=90;
+ """),
+
+ (15, "credential rule: match env FILENAMES, not any string containing them", """
+ -- FALSE POSITIVE, the same class as the '*rm*' pattern that once matched
+ -- "permit". The credential rule was a bare contains-match, tested against the
+ -- whole command string as well as each token, so it denied any command merely
+ -- CONTAINING the substring - including ordinary Python such as os.environ.get().
+ -- A control that fires on innocent input trains people to route around it,
+ -- which is worse than the gap it closes. It also blocked the very migration
+ -- that repairs it, which is how it was found.
+ --
+ -- Replaced with two precise patterns. fnmatch anchors the whole token, so the
+ -- trailing-name forms still match (bare, path-prefixed, and dotted variants
+ -- such as the .local / .production suffixes) while an identifier that merely
+ -- embeds the letters does not. Both remain HARD denies: not liftable by a
+ -- later rule.
+ UPDATE permission_rules SET arg_match='*.env', hard=1,
+   reason='credential file; credential-handling is deny for all agents'
+   WHERE ordinal=62;
+ INSERT OR IGNORE INTO permission_rules(ordinal,role,tool,arg_match,effect,reason,created,hard)
+ VALUES(65,'*','Bash','*.env.*','DENY',
+   'credential file variant; credential-handling is deny for all agents',
+   datetime('now'),1);
+ """),
+
+ (16, "govern the MCP tool surface instead of denying it wholesale", """
+ -- Before this, EVERY mcp__* tool fell through to the ordinal-10 deny-biased
+ -- default, so the entire MCP surface was blocked outright. That looks strict
+ -- but is the weakest possible posture: a blanket deny on read-only lookups
+ -- teaches operators to disable the harness, and an ungoverned tool is one the
+ -- ledger never sees. Governing it means allowing the harmless and gating the
+ -- consequential.
+ --
+ -- Read-only GitHub lookups: ALLOW. Anything that writes to the founder's
+ -- account: REQUIRE_APPROVAL, because CLAUDE.md section 16 lists GitHub writes
+ -- as a danger surface. Repository deletion is a HARD DENY - it is
+ -- irreversible and no agent should hold it.
+ --
+ -- Everything else under mcp__ (Supabase in particular, which is
+ -- production-capable) is deliberately NOT listed and stays denied by default.
+ INSERT OR IGNORE INTO permission_rules(ordinal,role,tool,arg_match,effect,reason,created,hard) VALUES
+  (110,'*','mcp__plugin_github_github__get_*',NULL,'ALLOW','read-only GitHub lookup',datetime('now'),0),
+  (111,'*','mcp__plugin_github_github__list_*',NULL,'ALLOW','read-only GitHub listing',datetime('now'),0),
+  (112,'*','mcp__plugin_github_github__search_*',NULL,'ALLOW','read-only GitHub search',datetime('now'),0),
+  (113,'*','mcp__plugin_github_github__issue_read',NULL,'ALLOW','read-only',datetime('now'),0),
+  (114,'*','mcp__plugin_github_github__pull_request_read',NULL,'ALLOW','read-only',datetime('now'),0),
+  (120,'*','mcp__plugin_github_github__create_*',NULL,'REQUIRE_APPROVAL','writes to the founder GitHub account',datetime('now'),0),
+  (121,'*','mcp__plugin_github_github__update_*',NULL,'REQUIRE_APPROVAL','writes to the founder GitHub account',datetime('now'),0),
+  (122,'*','mcp__plugin_github_github__push_*',NULL,'REQUIRE_APPROVAL','outward-facing: founder decision',datetime('now'),0),
+  (123,'*','mcp__plugin_github_github__merge_*',NULL,'REQUIRE_APPROVAL','changes a shared branch',datetime('now'),0),
+  (124,'*','mcp__plugin_github_github__fork_*',NULL,'REQUIRE_APPROVAL','creates a repository',datetime('now'),0),
+  (125,'*','mcp__plugin_github_github__add_*',NULL,'REQUIRE_APPROVAL','posts as the founder',datetime('now'),0),
+  (126,'*','mcp__plugin_github_github__*_write',NULL,'REQUIRE_APPROVAL','write verb',datetime('now'),0),
+  (127,'*','mcp__plugin_github_github__delete_*',NULL,'DENY','irreversible destruction of a remote repository or file',datetime('now'),1);
+ """),
+
+ (17, "private-key rule: cover every key type, and stop matching prose", """
+ -- TWO defects in one rule, both found by writing a coverage test.
+ --
+ -- COVERAGE GAP (the serious one): the rule only ever matched RSA. Reading an
+ -- ed25519 key - the OpenSSH default for years - was ALLOWED, as were ecdsa,
+ -- dsa, .pem and .key files. The control read as "private keys are denied"
+ -- while defending exactly one obsolete key type.
+ --
+ -- FALSE POSITIVE (same class as the credential rule before v15): a bare
+ -- contains-match tested against the whole command string, so it fired on any
+ -- text merely mentioning a key filename - including the commit message
+ -- documenting this very fix.
+ --
+ -- Anchored filename patterns, all HARD denies. Public keys are deliberately
+ -- NOT matched: '*id_rsa' does not match 'id_rsa.pub', and a public key is
+ -- public by construction.
+ UPDATE permission_rules SET arg_match='*id_rsa', hard=1, reason='private key'
+   WHERE ordinal=63;
+ INSERT OR IGNORE INTO permission_rules(ordinal,role,tool,arg_match,effect,reason,created,hard) VALUES
+  (66,'*','Bash','*id_ed25519','DENY','private key (ed25519 - the OpenSSH default)',datetime('now'),1),
+  (67,'*','Bash','*id_ecdsa','DENY','private key (ecdsa)',datetime('now'),1),
+  (68,'*','Bash','*id_dsa','DENY','private key (dsa)',datetime('now'),1),
+  (69,'*','Bash','*.pem','DENY','private key / certificate bundle',datetime('now'),1),
+  (71,'*','Bash','*.key','DENY','private key file',datetime('now'),1),
+  (72,'*','Bash','*.p12','DENY','PKCS#12 key store',datetime('now'),1),
+  (73,'*','Bash','*.pfx','DENY','PKCS#12 key store',datetime('now'),1);
+ """),
 ]
 
 def db():
@@ -646,20 +789,53 @@ def _resolve(c, role, tool, arg):
     """Last matching rule wins; default DENY for anything not explicitly allowed.
     bash is matched on the PARSED command, because Roo #4732 proves a regex that
     ignores the shell is decorative."""
-    import fnmatch, shlex
+    import fnmatch, shlex, re
     tokens = []
     if arg and tool.lower() in ("bash", "shell", "run"):
-        try: tokens = shlex.split(arg)
-        except ValueError: tokens = arg.split()
+        # shlex does NOT treat shell operators as separators, so `cat X; echo Y`
+        # tokenises to ['cat', 'X;', 'echo', 'Y'] - note the trailing ';' welded
+        # to the filename. An anchored filename pattern then misses it entirely,
+        # which silently reopened a credential bypass after the patterns were
+        # tightened in migration v15. Caught by the precision test, not in prod.
+        #
+        # So: split on shell operators FIRST, shlex each segment, and also keep a
+        # punctuation-stripped variant of every token. Roo-Code #4732 again - a
+        # matcher that does not understand the shell is decorative.
+        for seg in re.split(r'(?:\|\||&&|[;&|\n()`])+|\$\(', arg):
+            if not seg or not seg.strip(): continue
+            try: parts = shlex.split(seg)
+            except ValueError: parts = seg.split()
+            tokens += parts
+        stripped = [t.strip("\"'`;&|()<>{} \t") for t in tokens]
+        tokens += [t for t in stripped if t and t not in tokens]
     decision, reason = "DENY", "no rule matched (deny-biased default)"
-    for r in c.execute("SELECT ordinal,role,tool,arg_match,effect,reason FROM permission_rules ORDER BY ordinal"):
-        _, rrole, rtool, rarg, eff, rsn = r
+    hard_deny = None
+    cols = [d[1] for d in c.execute("PRAGMA table_info(permission_rules)")]
+    hard_col = ",hard" if "hard" in cols else ",0 AS hard"
+    for r in c.execute("SELECT ordinal,role,tool,arg_match,effect,reason" + hard_col +
+                       " FROM permission_rules ORDER BY ordinal"):
+        ordv, rrole, rtool, rarg, eff, rsn, rhard = r
         if rrole != "*" and rrole != role: continue
-        if rtool != "*" and rtool.lower() != tool.lower(): continue
+        # Tool names are matched with fnmatch so a policy can address FAMILIES of
+        # tools, not just exact names. Without this the engine could not express
+        # "read-only GitHub MCP is fine, writes need approval", so every MCP tool
+        # fell to the deny-biased default and the whole MCP surface was ungoverned
+        # in practice - denied wholesale, which pushes work outside the harness.
+        # A pattern with no wildcard still matches exactly, so existing rules are
+        # unchanged.
+        if rtool != "*" and not fnmatch.fnmatch(tool.lower(), rtool.lower()): continue
         if rarg:
             hay = [arg or ""] + tokens
             if not any(fnmatch.fnmatch(h, rarg) for h in hay): continue
-        decision, reason = eff, rsn or f"rule #{r[0]}"
+        # A HARD deny is terminal. Bash rules match over every shlex token, so
+        # without this an attacker appends one innocuous token that matches a
+        # later ALLOW and lifts a credential or private-key deny. Proven
+        # exploitable before migration v14; see that migration for the repro.
+        if rhard and eff == "DENY" and hard_deny is None:
+            hard_deny = rsn or f"rule #{ordv}"
+        decision, reason = eff, rsn or f"rule #{ordv}"
+    if hard_deny is not None:
+        return "DENY", hard_deny + " [hard deny: not overridable by a later rule]"
     return decision, reason
 
 def cmd_permit(argv):

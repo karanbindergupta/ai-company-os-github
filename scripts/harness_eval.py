@@ -190,6 +190,62 @@ def drills():
     rec("HD-PERM-001", all(x == 2 for x in rcs), f"rcs={rcs}")
     rec("HD-PERM-002", run("permit", "role=backend-lead", "tool=NeverSeenTool").returncode == 2, "unknown tool")
 
+    # HD-PERM-003 - TOKEN-APPEND BYPASS. Regression guard for a real, reproduced
+    # hole: Bash rules match over every shlex token and resolution was pure
+    # last-match-wins, so appending one innocuous token that hit a later ALLOW
+    # rule lifted a credential or private-key DENY entirely. Closed by
+    # migration v14 (hard denies). If this ever fails again, the permission
+    # engine is bypassable - treat it as a stop-the-line defect.
+    KEY = "id" + "_" + "rsa"
+    bypass = [
+        f"cat {CRED}; echo company.db",
+        f"cat ~/.ssh/{KEY}; echo company.db",
+        f"rm -rf /tmp/z; cat {CRED}",
+        f"cat {CRED} && rm foo",
+    ]
+    brcs = [run("permit", "role=orchestrator", "tool=Bash", f"arg={f}").returncode for f in bypass]
+    rec("HD-PERM-003", all(x == 2 for x in brcs), f"token-append bypass rcs={brcs}")
+    rec("HD-PERM-004",
+        run("permit", "role=ceo", "tool=Bash",
+            "arg=git push origin main; echo company.db").returncode == 2,
+        "CEO push not liftable by an appended token")
+
+    # HD-PERM-005 - SHELL-OPERATOR TOKENISATION. shlex does not split on shell
+    # operators, so `cat X; echo Y` yields the token 'X;' with the ';' welded on.
+    # Once the credential patterns were anchored (v15) that token stopped
+    # matching and the bypass silently reopened. The resolver now splits on
+    # operators before shlex. Roo-Code #4732: a matcher that does not understand
+    # the shell is decorative.
+    ops = [f"cat {CRED} && echo ok", f"cat {CRED} | head", f"(cat {CRED})",
+           f"echo x; cat {CRED}.local; echo y", f'cat "{CRED}"']
+    orcs = [run("permit", "role=orchestrator", "tool=Bash", f"arg={o}").returncode for o in ops]
+    rec("HD-PERM-005", all(x == 2 for x in orcs), f"operator-split rcs={orcs}")
+
+    # HD-PERM-006 - NO FALSE POSITIVES. A control that fires on innocent input
+    # trains people to route around it. These must all be ALLOWED.
+    benign = ['python3 -c "import os; os.environ.get(1)"',
+              'grep -rn "os.environ" scripts/',
+              'echo "environment configured"']
+    brcs2 = [run("permit", "role=orchestrator", "tool=Bash", f"arg={b}").returncode for b in benign]
+    rec("HD-PERM-006", all(x == 0 for x in brcs2), f"benign rcs={brcs2}")
+
+    # HD-PERM-007 - PRIVATE-KEY COVERAGE. The rule once matched RSA and nothing
+    # else, so reading an ed25519 key - the OpenSSH default for years - was
+    # ALLOWED. It read as "private keys are denied" while defending exactly one
+    # obsolete key type. Closed in v17. Names are composed, per this file's
+    # convention; every path is non-existent and nothing is ever read.
+    K = "id" + "_"
+    keys = [f"cat ~/.ssh/{K}rsa", f"cat ~/.ssh/{K}ed25519", f"cat ~/.ssh/{K}ecdsa",
+            f"cat ~/.ssh/{K}dsa", "cat /etc/ssl/server" + "." + "pem",
+            "cat /etc/ssl/private" + "." + "key", f"cat ~/.ssh/{K}ed25519 && echo company.db"]
+    krcs = [run("permit", "role=orchestrator", "tool=Bash", f"arg={k}").returncode for k in keys]
+    rec("HD-PERM-007", all(x == 2 for x in krcs), f"key-type coverage rcs={krcs}")
+
+    # Public keys are public by construction and must NOT be denied.
+    prcs = [run("permit", "role=orchestrator", "tool=Bash",
+                f"arg=cat ~/.ssh/{K}{t}.pub").returncode for t in ("rsa", "ed25519")]
+    rec("HD-PERM-008", all(x == 0 for x in prcs), f"public keys allowed rcs={prcs}")
+
     ex3 = new_exec(obj="drill recov"); run("start", f"execution={ex3}")
     # Unique per run: a fixed key would already be claimed from a previous drill and
     # opkey would exit 4 instead of leaving an unconfirmed operation to block on.
