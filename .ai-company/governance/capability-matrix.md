@@ -5,7 +5,7 @@ source: generated from the company database by scripts/matrices.py
 ---
 # CAPABILITY MATRIX
 
-All **119 roles**. A role is fully operational only when Playbook, Tools, KPIs,
+All **121 roles**. A role is fully operational only when Playbook, Tools, KPIs,
 Reviewer and Escalation are populated. Verify any authority claim with:
 `python3 scripts/companydb.py can <role> <action> <domain>`
 
@@ -111,11 +111,13 @@ Reviewer and Escalation are populated. Verify any authority claim with:
 | `security-architect` | security | L3 | — | — | `security_family` | `security` | criticals at release (0), MTTR, fixes verified | ciso | L2 |
 | `security-reviewer` | security | L3 | — | — | `security_family` | `security` | criticals at release (0), MTTR, fixes verified | ciso | L2 |
 | `threat-modeler` | security | L3 | — | — | `security_family` | `security` | criticals at release (0), MTTR, fixes verified | ciso | L2 |
+| `airline-retailing-analyst` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cro-research | L2 |
 | `brand-strategist-research` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cso | L2 |
 | `business-model-strategist` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cso | L2 |
 | `competitor-intelligence` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cro-research | L2 |
 | `customer-researcher` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cro-research | L2 |
 | `evidence-verifier` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cro-research | L2 |
+| `fare-construction-analyst` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cro-research | L2 |
 | `feasibility-analyst` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cro-research | L2 |
 | `features-strategist` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cso | L2 |
 | `financial-strategist` | strategy-research | L3 | — | — | `researcher_family` | `research` | sourced-claim %, audit pass rate, fabrications (0) | cro-research | L2 |

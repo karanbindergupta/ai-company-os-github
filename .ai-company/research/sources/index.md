@@ -64,3 +64,4 @@ Format: `[ID] Title — Publisher — URL — published — retrieved — TIER`
 [S12] Benchmarking Patient Journey in SE Asian Medical Check-Up Tourism
       - published 2026-01-13 - retrieved 2026-09-08 - TIER 1 (peer-reviewed)
 ```
+

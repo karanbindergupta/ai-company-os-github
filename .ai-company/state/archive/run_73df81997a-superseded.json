@@ -1,0 +1,54 @@
+{
+  "run_id": "run_73df81997a",
+  "created": "2026-09-08T11:08:53+00:00",
+  "updated": "2026-09-08T11:08:54+00:00",
+  "status": "active",
+  "industry": "Medical tourism",
+  "idea": "NONE YET - founder has no idea, only a belief that the industry is attractive. The company's first job is to find whether that belief is true and where the opportunity actually is.",
+  "constraints": "solo founder; pre-revenue; explicitly open on direction",
+  "current_phase": "intake",
+  "completed_phases": [],
+  "gates": {
+    "gate_research": {
+      "status": "pending"
+    },
+    "gate_debate": {
+      "status": "pending"
+    },
+    "gate_brief": {
+      "status": "pending"
+    },
+    "gate_product_spec": {
+      "status": "pending"
+    },
+    "gate_architecture": {
+      "status": "pending"
+    },
+    "gate_design": {
+      "status": "pending"
+    },
+    "gate_plan": {
+      "status": "pending"
+    },
+    "gate_qa": {
+      "status": "pending"
+    },
+    "gate_security": {
+      "status": "pending"
+    },
+    "gate_audit": {
+      "status": "pending"
+    },
+    "gate_exec": {
+      "status": "pending"
+    },
+    "gate_release": {
+      "status": "pending"
+    },
+    "gate_retest": {
+      "status": "pending"
+    }
+  },
+  "escalations": [],
+  "notes": []
+}

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "count": 119,
+  "count": 121,
   "roles": [
     {
       "slug": "business-operations-specialist",
@@ -1003,6 +1003,16 @@
       "name": "Cassius Vale"
     },
     {
+      "slug": "airline-retailing-analyst",
+      "name": "Casimir Wrede",
+      "title": "Airline Retailing & Distribution Standards Analyst",
+      "department": "strategy-research",
+      "reports_to": "cro-research",
+      "seniority": "specialist",
+      "path": ".ai-company/org/roles/strategy-research/airline-retailing-analyst.md",
+      "artifact": ".ai-company/research/technology/distribution-standards.md"
+    },
+    {
       "slug": "brand-strategist-research",
       "title": "Brand Strategy Lead",
       "department": "strategy-research",
@@ -1051,6 +1061,16 @@
       "artifact": ".ai-company/research/evidence/",
       "path": ".ai-company/org/roles/strategy-research/evidence-verifier.md",
       "name": "Hana Sato"
+    },
+    {
+      "slug": "fare-construction-analyst",
+      "name": "Theodora Iliescu",
+      "title": "Fare Construction Analyst",
+      "department": "strategy-research",
+      "reports_to": "cro-research",
+      "seniority": "specialist",
+      "path": ".ai-company/org/roles/strategy-research/fare-construction-analyst.md",
+      "artifact": ".ai-company/research/fares/landed-cost-model.md"
     },
     {
       "slug": "feasibility-analyst",

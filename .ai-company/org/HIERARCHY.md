@@ -72,9 +72,11 @@ FOUNDER (Karan) — final authority on everything reserved to the founder
           └── Meera Iyer                 ux-researcher                 
           └── Rocco Bellini              visual-designer               
       └── Amara Diallo               cro-research                    [owns: research_acceptance]
+          └── Casimir Wrede              airline-retailing-analyst     
           └── Silvia Marchetti           competitor-intelligence       
           └── Kwame Boateng              customer-researcher           
           └── Hana Sato                  evidence-verifier             
+          └── Theodora Iliescu           fare-construction-analyst     
           └── Viktor Bålsrud             feasibility-analyst           
           └── Rosalind Achebe            financial-strategist          
           └── Oren Ashkenazi             industry-researcher           
