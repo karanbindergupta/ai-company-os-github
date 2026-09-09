@@ -6,6 +6,13 @@ PRAGMA foreign_keys=ON;
 CREATE TABLE IF NOT EXISTS schema_version (version INTEGER PRIMARY KEY, applied TEXT NOT NULL);
 
 -- ORGANIZATION ------------------------------------------------------------
+-- Least-privilege tool policy. Read by readiness_audit, capability_validation,
+-- matrices.py. Was created ad hoc during an early build phase and never captured
+-- here, so a clean checkout failed with "no such table: permission_policy".
+CREATE TABLE IF NOT EXISTS permission_policy(
+  family TEXT NOT NULL, tools TEXT NOT NULL, grant_type TEXT NOT NULL,
+  PRIMARY KEY(family, tools));
+
 CREATE TABLE IF NOT EXISTS departments (
   id TEXT PRIMARY KEY, name TEXT NOT NULL, lead TEXT, charter TEXT);
 
@@ -14,7 +21,16 @@ CREATE TABLE IF NOT EXISTS agents (          -- roles are the company's employee
   department TEXT NOT NULL REFERENCES departments(id),
   title TEXT NOT NULL, reports_to TEXT, seniority TEXT NOT NULL,
   authority_level INTEGER NOT NULL,          -- 0 founder .. 4 specialist
-  artifact TEXT, pack_path TEXT, status TEXT NOT NULL DEFAULT 'active');
+  artifact TEXT, pack_path TEXT, status TEXT NOT NULL DEFAULT 'active',
+  -- Cognitive architecture (CLAUDE.md section 7). Added ad hoc in an early phase
+  -- and never captured here, so a clean checkout failed with
+  -- "no such column: cognitive_style". Values are loaded from seed.sql.
+  name TEXT, strengths TEXT, weaknesses TEXT, reliability TEXT,
+  cognitive_profile TEXT, backup_for TEXT, last_active TEXT,
+  cognitive_style TEXT, cog_strengths TEXT, blind_spots TEXT, instincts TEXT,
+  decision_philosophy TEXT, risk_profile TEXT, evidence_threshold TEXT,
+  debate_style TEXT, pressure_behavior TEXT, failure_behavior TEXT,
+  counterbalanced_by TEXT, maturity_level INTEGER);
 
 -- AUTHORITY ---------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS decision_rights (
@@ -186,3 +202,198 @@ CREATE INDEX IF NOT EXISTS ix_tasks_status ON tasks(status);
 CREATE INDEX IF NOT EXISTS ix_tasks_owner ON tasks(owner);
 CREATE INDEX IF NOT EXISTS ix_vetoes_status ON vetoes(status);
 CREATE INDEX IF NOT EXISTS ix_audit_ts ON audit_log(ts);
+
+-- ---------------------------------------------------------------------------
+-- APPENDED: base tables proven REQUIRED by the source audit (/tmp/inventory.json).
+-- Each is referenced by at least one Company OS script; without it that script
+-- fails on a clean checkout. Six further live tables (behavioral_baselines,
+-- benchmarks, demonstrations, development_plans, environment_changes, sops) were
+-- DELIBERATELY EXCLUDED: they exist in the live database from an earlier phase but
+-- have ZERO code references. They are dead schema and are not enshrined here. A clean-checkout test proved their absence broke bootstrap
+-- (behavioral_contracts, drills, provider_usage and others).
+-- Copied verbatim from the live schema. Nothing above this line was modified.
+-- Harness tables are deliberately NOT here: migrations in scripts/harness.py own them.
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS behavioral_contracts(
+  agent TEXT PRIMARY KEY REFERENCES agents(id), profile_version TEXT,
+  professional_mission TEXT, core_behaviors TEXT, decision_behaviors TEXT,
+  evidence_behaviors TEXT, communication_behaviors TEXT, collaboration_behaviors TEXT,
+  disagreement_behaviors TEXT, escalation_behaviors TEXT, pressure_behaviors TEXT,
+  failure_behaviors TEXT, learning_behaviors TEXT, quality_behaviors TEXT,
+  authority_behaviors TEXT, risk_behaviors TEXT, business_behaviors TEXT,
+  prohibited_behaviors TEXT, anti_patterns TEXT, success_indicators TEXT,
+  measurable_outcomes TEXT, drills TEXT, regression_tests TEXT,
+  review_cadence TEXT, created TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS behavioral_regressions(
+  id INTEGER PRIMARY KEY AUTOINCREMENT, agent TEXT NOT NULL,
+  improved_dimension TEXT, improved_from REAL, improved_to REAL,
+  regressed_dimension TEXT NOT NULL, regressed_from REAL, regressed_to REAL,
+  severity TEXT, note TEXT, status TEXT DEFAULT 'open', detected TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS capability_readiness(
+  name TEXT PRIMARY KEY, category TEXT NOT NULL, configured INTEGER DEFAULT 0,
+  credentialed INTEGER DEFAULT 0, reachable INTEGER DEFAULT 0, executable INTEGER DEFAULT 0,
+  observable INTEGER DEFAULT 0, inspectable INTEGER DEFAULT 0, machine_readable INTEGER DEFAULT 0,
+  trusted_as_gate INTEGER DEFAULT 0, status TEXT NOT NULL, rag TEXT NOT NULL,
+  evidence TEXT, budget TEXT, fallback TEXT, remediation TEXT, last_probed TEXT,
+  CHECK (rag IN ('GREEN','YELLOW','RED','GRAY')));
+
+CREATE TABLE IF NOT EXISTS ci_runs(
+  id TEXT PRIMARY KEY, commit_sha TEXT, branch TEXT, workflow TEXT, trigger TEXT,
+  status TEXT NOT NULL, started TEXT, finished TEXT, duration_s REAL,
+  jobs_json TEXT, failure_reason TEXT, artifacts TEXT, observed INTEGER DEFAULT 0,
+  CHECK (status IN ('PASS','FAIL','CANCELLED','SKIPPED','UNAVAILABLE','UNKNOWN')));
+
+CREATE TABLE IF NOT EXISTS coaching(
+  id INTEGER PRIMARY KEY AUTOINCREMENT, drill_run TEXT REFERENCES drill_runs(id),
+  agent TEXT NOT NULL, failed_behavior TEXT NOT NULL, observed_evidence TEXT,
+  expected_behavior TEXT, likely_cause TEXT NOT NULL, coaching_instruction TEXT NOT NULL,
+  targeted_exercise TEXT, retest_drill TEXT, applied INTEGER DEFAULT 0,
+  retest_run TEXT, improvement REAL, created TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS cognitive_panels(
+  id TEXT PRIMARY KEY, decision TEXT, question TEXT NOT NULL, members TEXT NOT NULL,
+  independent_until TEXT, consensus TEXT, disagreements TEXT, uncertainties TEXT,
+  missing_evidence TEXT, status TEXT NOT NULL DEFAULT 'open', created TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS decision_quality(
+  decision TEXT PRIMARY KEY, evidence_quality INTEGER, reasoning_quality INTEGER,
+  assumption_quality INTEGER, downside_awareness INTEGER, upside_analysis INTEGER,
+  reversibility_assessed INTEGER, strategic_alignment INTEGER, customer_impact INTEGER,
+  financial_impact INTEGER, technical_impact INTEGER, security_impact INTEGER,
+  confidence_calibration INTEGER, scored_by TEXT, scored_at TEXT, note TEXT);
+
+CREATE TABLE IF NOT EXISTS drift_alerts(
+  id TEXT PRIMARY KEY, agent TEXT NOT NULL REFERENCES agents(id), dimension TEXT NOT NULL,
+  declared TEXT, observed TEXT, evidence TEXT, frequency INTEGER, confidence TEXT,
+  severity TEXT NOT NULL, possible_causes TEXT, recommended_investigation TEXT,
+  status TEXT NOT NULL DEFAULT 'open', profile_changed INTEGER NOT NULL DEFAULT 0,
+  created TEXT NOT NULL,
+  CHECK (severity IN ('INFO','MINOR','MODERATE','MAJOR','CRITICAL')));
+
+CREATE TABLE IF NOT EXISTS drift_observations(
+  id INTEGER PRIMARY KEY AUTOINCREMENT, role TEXT NOT NULL, pattern TEXT NOT NULL,
+  evidence TEXT, severity TEXT, recalibration TEXT, status TEXT DEFAULT 'open', recorded TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS drill_runs(
+  id TEXT PRIMARY KEY, drill TEXT NOT NULL REFERENCES drills(id),
+  agent TEXT NOT NULL REFERENCES agents(id), response TEXT, observed_behaviors TEXT,
+  anti_patterns_observed TEXT, score REAL, verdict TEXT NOT NULL,
+  evaluator TEXT NOT NULL, evaluator_independent INTEGER DEFAULT 0, method TEXT,
+  strengths TEXT, weaknesses TEXT, confidence TEXT, feedback TEXT,
+  corrective_action TEXT, retest_required INTEGER DEFAULT 0, baseline_for TEXT,
+  created TEXT NOT NULL, CHECK (verdict IN ('PASS','FAIL','PARTIAL','INCONCLUSIVE')));
+
+CREATE TABLE IF NOT EXISTS drills(
+  id TEXT PRIMARY KEY, category TEXT NOT NULL, role TEXT, capability TEXT,
+  behavioral_target TEXT NOT NULL, difficulty TEXT, scenario TEXT NOT NULL, context TEXT,
+  evidence TEXT, constraints TEXT, pressure_level TEXT, expected_behaviors TEXT NOT NULL,
+  anti_patterns TEXT NOT NULL, rubric TEXT NOT NULL, pass_criteria TEXT NOT NULL,
+  fail_criteria TEXT, version TEXT NOT NULL DEFAULT '1.0', created TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS evaluation_dimensions(
+  evaluation TEXT NOT NULL REFERENCES evaluations(id), dimension TEXT NOT NULL,
+  score REAL, evidence TEXT, confidence TEXT, sample_size INTEGER,
+  trend TEXT, limitations TEXT, PRIMARY KEY(evaluation,dimension));
+
+CREATE TABLE IF NOT EXISTS evaluations(
+  id TEXT PRIMARY KEY, agent TEXT NOT NULL REFERENCES agents(id), role TEXT, department TEXT,
+  profile_version TEXT, scenario TEXT, objective TEXT, difficulty TEXT, context TEXT,
+  constraints TEXT, evidence_available TEXT, expected_competencies TEXT,
+  authority_boundaries TEXT, tools_available TEXT, pressure_conditions TEXT,
+  agent_response TEXT, decision TEXT, assumptions TEXT, confidence TEXT, evidence_used TEXT,
+  risks_identified TEXT, dissent TEXT, escalation_behavior TEXT, outcome TEXT,
+  evaluator TEXT NOT NULL, evaluator_independent INTEGER NOT NULL DEFAULT 0,
+  evaluation_method TEXT, score REAL, weaknesses TEXT, strengths TEXT, lessons TEXT,
+  eval_type TEXT, model_version TEXT, tool_environment TEXT, reproducibility TEXT,
+  created TEXT NOT NULL,
+  CHECK (eval_type IN ('controlled','adversarial','collaborative','failure','pressure','real_work')));
+
+CREATE TABLE IF NOT EXISTS lessons(
+  id TEXT PRIMARY KEY, source TEXT, context TEXT, expected_behavior TEXT,
+  actual_behavior TEXT, outcome TEXT, root_cause TEXT, lesson TEXT NOT NULL,
+  confidence TEXT, applicability TEXT, affected_roles TEXT, affected_playbooks TEXT,
+  affected_agents TEXT, observation_count INTEGER NOT NULL DEFAULT 1,
+  independent_confirmations INTEGER NOT NULL DEFAULT 0,
+  successful_applications INTEGER NOT NULL DEFAULT 0,
+  validation_status TEXT NOT NULL DEFAULT 'OBSERVATION', reviewer TEXT, created TEXT NOT NULL,
+  CHECK (validation_status IN ('OBSERVATION','HYPOTHESIS','VALIDATED_LESSON','ESTABLISHED_PRACTICE')));
+
+CREATE TABLE IF NOT EXISTS maturity_assessments(
+  id INTEGER PRIMARY KEY AUTOINCREMENT, agent TEXT NOT NULL REFERENCES agents(id),
+  current_level TEXT, proposed_level TEXT, verdict TEXT NOT NULL,
+  evaluated_assignments INTEGER, decision_quality REAL, consistency REAL,
+  failure_handling REAL, authority_violations INTEGER, evidence_calibration REAL,
+  independent_reviews INTEGER, learning_events INTEGER, sample_size INTEGER,
+  rationale TEXT, assessed_by TEXT, assessed_at TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS playbook_coverage(
+  capability TEXT PRIMARY KEY, canonical_owner TEXT NOT NULL, supporting TEXT,
+  shared_playbooks TEXT, unique_procedures TEXT, authority TEXT, escalation TEXT,
+  reuse_evidence TEXT, ambiguity_reports INTEGER DEFAULT 0, duplication_risk TEXT,
+  recommendation TEXT NOT NULL DEFAULT 'keep_shared');
+
+CREATE TABLE IF NOT EXISTS profile_changes(
+  id INTEGER PRIMARY KEY AUTOINCREMENT, agent TEXT NOT NULL REFERENCES agents(id),
+  field TEXT NOT NULL, old_value TEXT, proposed_value TEXT, evidence TEXT,
+  observations INTEGER, confidence TEXT, reason TEXT, reviewer TEXT,
+  approved INTEGER NOT NULL DEFAULT 0, created TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS provider_usage(
+  id INTEGER PRIMARY KEY AUTOINCREMENT, task TEXT, requested_provider TEXT NOT NULL,
+  actual_provider TEXT NOT NULL, fallback_reason TEXT, research_quality TEXT,
+  evidence TEXT, recorded TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS team_formations(
+  id TEXT PRIMARY KEY, objective TEXT NOT NULL, capabilities TEXT, members TEXT NOT NULL,
+  reviewers TEXT, executive TEXT, risk TEXT, status TEXT NOT NULL DEFAULT 'active',
+  created TEXT NOT NULL, dissolved TEXT);
+
+-- ---------------------------------------------------------------------------
+-- Reconciled from the public snapshot (karanbindergupta/ai-company-os-github
+-- @3a4c1bf) during repository canonicalization, 2026-09-09.
+--
+-- These six were previously omitted as "dead tables". That call was WRONG:
+--   * benchmarks holds 7 rows of AUTHORED CONFIGURATION (scenario + rubric),
+--     which a clean install was silently losing. It is seeded in seed.sql.
+--   * environment_changes holds a RUNTIME OBSERVATION. Declared here, never
+--     seeded - seeding it would fabricate measurement evidence.
+--   * the remaining four are empty but are part of the declared architecture,
+--     and omitting them left a fresh install at 47 tables against 54 for an
+--     existing one. That drift is the exact defect this file exists to prevent.
+--
+-- sqlite_sequence is deliberately NOT declared: SQLite creates and maintains it
+-- automatically for AUTOINCREMENT tables. Declaring it forces callers to
+-- special-case it during replay (the public snapshot had to do exactly that).
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS behavioral_baselines(
+  agent TEXT NOT NULL, dimension TEXT NOT NULL, score REAL NOT NULL,
+  sample INTEGER NOT NULL, recorded TEXT NOT NULL, PRIMARY KEY(agent,dimension,recorded));
+
+CREATE TABLE IF NOT EXISTS benchmarks(
+  id TEXT PRIMARY KEY, category TEXT NOT NULL, version TEXT NOT NULL, title TEXT NOT NULL,
+  scenario TEXT NOT NULL, rubric TEXT NOT NULL, target_roles TEXT, difficulty TEXT,
+  leaked INTEGER NOT NULL DEFAULT 0, created TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS demonstrations(
+  id TEXT PRIMARY KEY, pattern TEXT NOT NULL, quality TEXT NOT NULL,
+  example TEXT NOT NULL, why TEXT, CHECK (quality IN ('GOOD','BAD','AMBIGUOUS','EDGE_CASE')));
+
+CREATE TABLE IF NOT EXISTS development_plans(
+  agent TEXT PRIMARY KEY REFERENCES agents(id), strengths TEXT, weaknesses TEXT,
+  behavioral_targets TEXT, drills_completed INTEGER DEFAULT 0, drills_failed INTEGER DEFAULT 0,
+  trend TEXT, unresolved TEXT, recommended_assignments TEXT, counterbalancing TEXT,
+  next_evaluation TEXT, drill_frequency TEXT DEFAULT 'normal', updated TEXT);
+
+CREATE TABLE IF NOT EXISTS environment_changes(
+  id INTEGER PRIMARY KEY AUTOINCREMENT, agent TEXT, change_type TEXT NOT NULL,
+  detail TEXT, before_score REAL, after_score REAL, sample_before INTEGER,
+  sample_after INTEGER, verdict TEXT, recorded TEXT NOT NULL);
+
+CREATE TABLE IF NOT EXISTS sops(
+  id TEXT PRIMARY KEY, name TEXT NOT NULL, purpose TEXT, owner TEXT, inputs TEXT,
+  steps TEXT, decision_points TEXT, tools TEXT, outputs TEXT, quality_standard TEXT,
+  failure_modes TEXT, escalation TEXT, metrics TEXT, review_date TEXT, created TEXT NOT NULL);
