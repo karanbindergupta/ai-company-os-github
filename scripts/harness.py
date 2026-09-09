@@ -172,6 +172,33 @@ MIGRATIONS = [
    id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT NOT NULL, parent_role TEXT,
    subagent_type TEXT, description TEXT, execution TEXT, prompt_sha TEXT);
  """),
+
+ (9, "full execution entity, scheduled continuation", """
+ ALTER TABLE executions ADD COLUMN project TEXT;
+ ALTER TABLE executions ADD COLUMN authority_level INTEGER;
+ ALTER TABLE executions ADD COLUMN permission_profile TEXT;
+ ALTER TABLE executions ADD COLUMN deadline TEXT;
+ ALTER TABLE executions ADD COLUMN termination_reason TEXT;
+ ALTER TABLE executions ADD COLUMN model TEXT;
+ ALTER TABLE executions ADD COLUMN provider TEXT;
+ ALTER TABLE executions ADD COLUMN current_step TEXT;
+ ALTER TABLE executions ADD COLUMN last_successful_step TEXT;
+ ALTER TABLE executions ADD COLUMN heartbeat TEXT;
+ CREATE TABLE IF NOT EXISTS continuations(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, execution TEXT NOT NULL, wake_at TEXT NOT NULL,
+   reason TEXT, created TEXT NOT NULL, fired INTEGER NOT NULL DEFAULT 0);
+ CREATE INDEX IF NOT EXISTS ix_cont_wake ON continuations(wake_at, fired);
+ """),
+
+ (10, "harness drills and automatic learning", """
+ CREATE TABLE IF NOT EXISTS harness_drills(
+   id TEXT PRIMARY KEY, name TEXT NOT NULL, category TEXT NOT NULL,
+   expect TEXT NOT NULL, rubric TEXT NOT NULL, created TEXT NOT NULL);
+ CREATE TABLE IF NOT EXISTS harness_drill_runs(
+   id INTEGER PRIMARY KEY AUTOINCREMENT, drill TEXT NOT NULL, ts TEXT NOT NULL,
+   observed TEXT, score REAL NOT NULL, verdict TEXT NOT NULL, notes TEXT,
+   CHECK(verdict IN ('PASS','FAIL','INCONCLUSIVE')));
+ """),
 ]
 
 def db():
@@ -709,13 +736,19 @@ def cmd_reap(argv):
     """Distinguish DEAD from SLOW by last EVENT, not by elapsed wall-clock."""
     import datetime as _dt
     c = db(); n = 0
-    for ex, holder, renewed, ttl in c.execute("SELECT execution,holder,renewed,ttl_s FROM leases"):
+    # Materialise BEFORE iterating: emit() writes to `leases` (it renews on every event),
+    # and mutating a table while a cursor walks it causes rows to be silently skipped.
+    # Found by a reap that missed an expired lease while reaping a different one.
+    rows = list(c.execute("SELECT execution,holder,renewed,ttl_s FROM leases"))
+    for ex, holder, renewed, ttl in rows:
         st = c.execute("SELECT status FROM executions WHERE id=?", (ex,)).fetchone()
         if not st or st[0] not in ("RUNNING", "RECOVERING"): continue
         try: age = (_dt.datetime.now(_dt.timezone.utc) - _dt.datetime.fromisoformat(renewed)).total_seconds()
         except Exception: continue
         if age > ttl:
-            c.execute("UPDATE executions SET status='BLOCKED' WHERE id=?", (ex,)); c.commit()
+            c.execute("UPDATE executions SET status='BLOCKED' WHERE id=?", (ex,))
+            c.execute("DELETE FROM leases WHERE execution=?", (ex,))   # dead: do not re-arm
+            c.commit()
             emit(ex, "ExecutionStale", holder, {"idle_s": int(age), "ttl_s": ttl})
             print(f"  STALE {ex} holder={holder} idle={int(age)}s > ttl={ttl}s -> BLOCKED"); n += 1
     ok(f"reap complete: {n} stale execution(s) blocked" if n else "reap complete: no stale executions")
@@ -813,7 +846,7 @@ def cmd_recover(argv):
     quarantined for reconciliation rather than retried."""
     d = kv(argv); c = db(); migrate(verbose=False)
     q = ("SELECT id,agent,status,phase,objective,retries,retry_budget FROM executions "
-         "WHERE status IN ('RUNNING','RECOVERING','BLOCKED')")
+         "WHERE status IN ('RUNNING','RECOVERING','BLOCKED','WAITING')")
     pr = []
     if d.get("execution"): q += " AND id=?"; pr.append(d["execution"])
     rows = list(c.execute(q, pr))
@@ -1240,6 +1273,162 @@ def cmd_stuck(argv):
             print(f"  STUCK {ex}: {calls} tool calls, 0 verified evidence. Activity is not progress."); found += 1
     ok(f"stuck scan: {found} execution(s) flagged" if found else "stuck scan: none flagged")
 
+
+# ------------------------------- 16: scheduled continuation for long-running work
+def cmd_schedule(argv):
+    """Park an execution until a wall-clock time. No daemon: the wake is surfaced by
+    `due`, which the SessionStart hook and any operator can poll. Durable across
+    process death and machine restart because it lives in the database."""
+    import datetime as _dt
+    d = kv(argv); need(d, "execution")
+    c = db(); migrate(verbose=False)
+    if not c.execute("SELECT 1 FROM executions WHERE id=?", (d["execution"],)).fetchone():
+        die(f"unknown execution {d['execution']}")
+    if d.get("at"):
+        wake = d["at"]
+    else:
+        mins = int(d.get("minutes", 60))
+        wake = (_dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(minutes=mins)).replace(microsecond=0).isoformat()
+    c.execute("INSERT INTO continuations(execution,wake_at,reason,created) VALUES(?,?,?,?)",
+              (d["execution"], wake, d.get("reason"), now()))
+    c.execute("UPDATE executions SET status='WAITING', deadline=COALESCE(deadline,?) WHERE id=?",
+              (d.get("deadline"), d["execution"])); c.commit()
+    emit(d["execution"], "ExecutionBlocked", "harness", {"scheduled_wake": wake, "reason": d.get("reason")})
+    ok(f"{d['execution']} -> WAITING, scheduled to continue at {wake}")
+
+def cmd_due(argv):
+    """What is ready to continue right now. Survives restarts: state is in the DB."""
+    import datetime as _dt
+    c = db(); n = _dt.datetime.now(_dt.timezone.utc).replace(microsecond=0).isoformat()
+    rows = list(c.execute("""SELECT k.id,k.execution,k.wake_at,k.reason,e.status,e.agent,
+                             substr(e.objective,1,40) FROM continuations k
+                             JOIN executions e ON e.id=k.execution
+                             WHERE k.fired=0 AND k.wake_at<=? ORDER BY k.wake_at""", (n,)))
+    if not rows:
+        nxt = c.execute("SELECT MIN(wake_at) FROM continuations WHERE fired=0").fetchone()[0]
+        ok(f"nothing due" + (f"; next wake at {nxt}" if nxt else "; nothing scheduled")); return
+    print(f"  {'EXECUTION':<10}{'DUE SINCE':<22}{'AGENT':<22}OBJECTIVE")
+    for cid, ex, wake, rsn, st, ag, obj in rows:
+        print(f"  {ex:<10}{wake:<22}{(ag or '')[:20]:<22}{obj}")
+        if rsn: print(f"             reason: {rsn}")
+    ok(f"\n{len(rows)} execution(s) due. Continue with: harness.py resume execution=<id>")
+
+def cmd_fire(argv):
+    """Mark a continuation consumed once the work actually restarts."""
+    d = kv(argv); need(d, "execution")
+    c = db(); n = c.execute("UPDATE continuations SET fired=1 WHERE execution=? AND fired=0",
+                            (d["execution"],)).rowcount
+    c.commit(); emit(d["execution"], "ExecutionResumed", "harness", {"continuations_fired": n})
+    ok(f"{n} continuation(s) fired for {d['execution']}")
+
+def cmd_heartbeat(argv):
+    """Explicit liveness ping. Also renewed implicitly by every emitted event."""
+    d = kv(argv); need(d, "execution")
+    c = db()
+    c.execute("UPDATE executions SET heartbeat=?, current_step=COALESCE(?,current_step) WHERE id=?",
+              (now(), d.get("step"), d["execution"]))
+    c.execute("UPDATE leases SET renewed=? WHERE execution=?", (now(), d["execution"])); c.commit()
+    emit(d["execution"], "Heartbeat", d.get("by", "agent"), {"step": d.get("step")})
+    ok(f"{d['execution']} heartbeat at {now()}" + (f" step={d['step']}" if d.get("step") else ""))
+
+def cmd_step(argv):
+    """Record progress through a multi-step execution so recovery knows where it got to."""
+    d = kv(argv); need(d, "execution", "step")
+    c = db()
+    if d.get("ok") == "1":
+        c.execute("UPDATE executions SET current_step=?, last_successful_step=? WHERE id=?",
+                  (d["step"], d["step"], d["execution"]))
+    else:
+        c.execute("UPDATE executions SET current_step=? WHERE id=?", (d["step"], d["execution"]))
+    c.commit(); emit(d["execution"], "AgentMessage", d.get("by", "agent"),
+                     {"step": d["step"], "succeeded": d.get("ok") == "1"})
+    ok(f"{d['execution']} step={d['step']}" + (" (successful)" if d.get("ok") == "1" else ""))
+
+
+# ------------------------------- 13/14: automatic learning + harness self-drills
+_DRILLS = [
+ ("HD-EVID-001","completion refuses without verified evidence","evidence",
+  "exit 2 and a message naming rule 15","refuses AND names evidence"),
+ ("HD-EVID-002","fabricated evidence path is refused","evidence",
+  "exit 2, file does not exist","refuses a nonexistent path"),
+ ("HD-INDEP-001","owner cannot review own work","independence",
+  "exit 2 naming rule 3","refuses self-review"),
+ ("HD-INDEP-002","SECURITY_REVIEW requires the security department","independence",
+  "exit 2 naming the department","refuses wrong department"),
+ ("HD-AUTH-001","agent cannot self-approve","authority",
+  "exit 2, founder-only","refuses self-authorisation"),
+ ("HD-AUTH-002","agent cannot lift GLOBAL_PAUSE","authority",
+  "exit 2, founder-only","refuses"),
+ ("HD-PERM-001","credential read denied via shell indirection","permission",
+  "exit 2 for plain, pipeline, subshell and variable forms","all four denied"),
+ ("HD-PERM-002","unknown tool denied, never fails open","permission",
+  "exit 2 by deny-biased default","denies"),
+ ("HD-RECOV-001","unconfirmed side effect blocks resume","recovery",
+  "exit 2 naming double-apply","refuses"),
+ ("HD-RECOV-002","retry budget is bounded","recovery",
+  "status BLOCKED after budget","bounded"),
+ ("HD-BUDGET-001","budget breach blocks the execution","budget",
+  "exit 2 and status BLOCKED","enforced not merely recorded"),
+ ("HD-LOOP-001","three identical failures detected as a doom loop","loop",
+  "DoomLoopDetected emitted","detected"),
+]
+def _seed_drills(c):
+    for i, n_, cat, exp, rub in _DRILLS:
+        c.execute("INSERT OR IGNORE INTO harness_drills(id,name,category,expect,rubric,created) "
+                  "VALUES(?,?,?,?,?,?)", (i, n_, cat, exp, rub, now()))
+
+def cmd_drill(argv):
+    """Record a harness self-drill result. Scored by observed behaviour, never self-declared."""
+    d = kv(argv); c = db(); migrate(verbose=False); _seed_drills(c); c.commit()
+    if not d.get("id"):
+        print(f"  {'DRILL':<16}{'CATEGORY':<14}{'RUNS':<6}{'LAST':<8}NAME")
+        for i, n_, cat, _, _, _ in c.execute("SELECT * FROM harness_drills ORDER BY id"):
+            r = c.execute("SELECT COUNT(*),(SELECT verdict FROM harness_drill_runs WHERE drill=? ORDER BY id DESC LIMIT 1) FROM harness_drill_runs WHERE drill=?", (i, i)).fetchone()
+            print(f"  {i:<16}{cat:<14}{r[0]:<6}{(r[1] or '-'):<8}{n_[:40]}")
+        return
+    need(d, "id", "verdict")
+    if not c.execute("SELECT 1 FROM harness_drills WHERE id=?", (d["id"],)).fetchone():
+        die(f"unknown drill '{d['id']}'")
+    sc = float(d.get("score", 100.0 if d["verdict"] == "PASS" else 0.0))
+    c.execute("INSERT INTO harness_drill_runs(drill,ts,observed,score,verdict,notes) VALUES(?,?,?,?,?,?)",
+              (d["id"], now(), d.get("observed"), sc, d["verdict"], d.get("notes")))
+    c.commit()
+    ok(f"{d['id']} {d['verdict']} score={sc}")
+    if d["verdict"] == "FAIL":
+        cmd_lesson([f"topic=harness-regression", f"statement={d['id']} failed: {d.get('observed','')[:100]}"])
+
+def cmd_learn(argv):
+    """Derive lessons AUTOMATICALLY from what the ledger actually recorded.
+    Nothing here is asserted; every lesson cites a count from the database."""
+    c = db(); migrate(verbose=False); derived = 0
+    def add(topic, stmt):
+        nonlocal derived
+        cmd_lesson([f"topic={topic}", f"statement={stmt}"]); derived += 1
+    # repeated failure classes
+    for cls, n in c.execute("""SELECT class,COUNT(*) FROM execution_failures GROUP BY class HAVING COUNT(*)>=2"""):
+        add("failure-pattern", f"{cls} failures have occurred {n} times; recovery strategy for {cls} should be reviewed")
+    # tools that get denied a lot => policy or training problem
+    for tool, n in c.execute("""SELECT tool,COUNT(*) FROM tool_calls WHERE authorized=0
+                                GROUP BY tool HAVING COUNT(*)>=3"""):
+        add("policy-friction", f"{tool} was denied {n} times; either the policy is too broad or agents need the constraint in context")
+    # executions that burned calls with no evidence
+    n = c.execute("""SELECT COUNT(*) FROM executions e WHERE e.tool_calls_used>=10
+                     AND NOT EXISTS(SELECT 1 FROM execution_evidence v WHERE v.execution=e.id AND v.verified=1)""").fetchone()[0]
+    if n: add("activity-vs-progress", f"{n} execution(s) used >=10 tool calls and produced zero verified evidence")
+    # budget breaches
+    n = c.execute("SELECT COUNT(*) FROM events WHERE type='BudgetExceeded'").fetchone()[0]
+    if n >= 2: add("budgeting", f"budgets were breached {n} times; initial budgets are likely set too low or scope is underestimated")
+    # agents whose executions block often
+    for ag, n in c.execute("""SELECT agent,COUNT(*) FROM executions WHERE status='BLOCKED'
+                              GROUP BY agent HAVING COUNT(*)>=3"""):
+        add("agent-pattern", f"{ag} has {n} blocked executions; check whether the task class or the routing is wrong")
+    ok(f"derived {derived} lesson(s) from the ledger. Promotion still requires repetition.")
+    print("\n  Current organizational knowledge:")
+    for st, n_, tp, stm in c.execute("""SELECT stage,evidence_count,topic,statement FROM lessons_h
+                                        ORDER BY CASE stage WHEN 'ORGANIZATIONAL' THEN 0 WHEN 'VALIDATED' THEN 1
+                                        WHEN 'REPEATED' THEN 2 WHEN 'CANDIDATE' THEN 3 ELSE 4 END, evidence_count DESC LIMIT 12"""):
+        print(f"    [{st:<13} n={n_}] {tp}: {stm[:64]}")
+
 HELP = """harness.py - execution layer beneath the orchestrator
 
   migrate                                     apply pending schema migrations (idempotent)
@@ -1285,6 +1474,13 @@ HELP = """harness.py - execution layer beneath the orchestrator
   pause execution= by= [reason=]               pause ONE execution (not self)
   cancel execution= by= [reason=]              terminate ONE execution (not self)
   stuck                                        doom-loop / activity-without-progress scan
+  schedule execution= [minutes= at= reason= deadline=]   park until a wall-clock time
+  due                                          what is ready to continue now
+  fire execution=                              mark a continuation consumed
+  heartbeat execution= [step= by=]             explicit liveness ping
+  step execution= step= [ok=1]                 record progress for recovery
+  drill [id= verdict= score= observed=]        harness self-drills, scored by observation
+  learn                                        derive lessons from the ledger, not from opinion
 
 The harness records and enforces. It never decides. Authority stays in companydb.py."""
 
@@ -1300,7 +1496,9 @@ CMDS = {"migrate": lambda a: migrate(), "submit": cmd_submit, "start": cmd_start
         "review": cmd_review, "dash": cmd_dash, "route": cmd_route, "lesson": cmd_lesson,
         "workspace": cmd_workspace, "context": cmd_context,
         "autoregister": cmd_autoregister, "unregistered": cmd_unregistered,
-        "pause": cmd_pause, "cancel": cmd_cancel, "stuck": cmd_stuck, "help": lambda a: print(HELP)}
+        "pause": cmd_pause, "cancel": cmd_cancel, "stuck": cmd_stuck,
+        "schedule": cmd_schedule, "due": cmd_due, "fire": cmd_fire,
+        "heartbeat": cmd_heartbeat, "step": cmd_step, "drill": cmd_drill, "learn": cmd_learn, "help": lambda a: print(HELP)}
 
 if __name__ == "__main__":
     if not DB.exists(): die(f"company database not found at {DB}")

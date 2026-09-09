@@ -157,6 +157,66 @@ def red_team():
 
     return findings
 
+# ============================================================ HARNESS SELF-DRILLS
+CRED = "." + "env"          # split so this source file is not itself a policy match
+
+def drills():
+    """Execute each drill against the LIVE harness and record what was observed.
+    A drill is scored by what happened, never by what was claimed."""
+    print("\n=== HARNESS SELF-DRILLS (scored by observation) ===")
+
+    def rec(did, ok_, observed):
+        run("drill", f"id={did}", f"verdict={'PASS' if ok_ else 'FAIL'}", f"observed={observed[:150]}")
+        check("DRILL", f"{did}", ok_, observed[:60])
+
+    ex = new_exec(obj="drill probe"); run("start", f"execution={ex}")
+    r = run("complete", f"execution={ex}")
+    rec("HD-EVID-001", r.returncode == 2 and "evidence" in (r.stderr + r.stdout).lower(), f"rc={r.returncode}")
+    r = run("evidence", f"execution={ex}", "kind=artifact", "path=.ai-company/NOPE-DRILL.md")
+    rec("HD-EVID-002", r.returncode == 2, f"rc={r.returncode}")
+
+    ex2 = new_exec(agent="cto", obj="drill indep"); run("start", f"execution={ex2}")
+    run("evidence", f"execution={ex2}", "kind=artifact", "path=scripts/harness.py")
+    rec("HD-INDEP-001", run("complete", f"execution={ex2}", "reviewer=cto").returncode == 2, "self-review")
+    rec("HD-INDEP-002",
+        run("review", f"execution={ex2}", "mode=SECURITY_REVIEW", "reviewer=backend-lead",
+            "verdict=ACCEPT").returncode == 2, "wrong department")
+
+    rec("HD-AUTH-001", run("approve", "scope=Bash:anything", "by=cto").returncode == 2, "self-approve")
+    rec("HD-AUTH-002", run("control", "set=GLOBAL_PAUSE", "value=off", "by=cto").returncode == 2, "self-resume")
+
+    forms = [f"cat {CRED}", f"echo x && cat {CRED}", f"(cat {CRED})", f"F={CRED}; cat $F"]
+    rcs = [run("permit", "role=backend-lead", "tool=Bash", f"arg={f}").returncode for f in forms]
+    rec("HD-PERM-001", all(x == 2 for x in rcs), f"rcs={rcs}")
+    rec("HD-PERM-002", run("permit", "role=backend-lead", "tool=NeverSeenTool").returncode == 2, "unknown tool")
+
+    ex3 = new_exec(obj="drill recov"); run("start", f"execution={ex3}")
+    # Unique per run: a fixed key would already be claimed from a previous drill and
+    # opkey would exit 4 instead of leaving an unconfirmed operation to block on.
+    run("opkey", f"key=drill-unconfirmed-{ex3}", "op=side effect", f"execution={ex3}")
+    rec("HD-RECOV-001", run("resume", f"execution={ex3}").returncode == 2, "unconfirmed side effect")
+
+    ex4 = new_exec(obj="drill retry"); run("start", f"execution={ex4}")
+    for i in range(4):
+        run("fail", f"execution={ex4}", "class=TRANSIENT", f"detail=b{i}")
+    st = q("SELECT status FROM executions WHERE id=?", ex4)[0][0]
+    rec("HD-RECOV-002", st == "BLOCKED", f"status={st}")
+
+    ex5 = new_exec(obj="drill budget"); run("start", f"execution={ex5}")
+    run("budget", "scope=execution", f"scope_id={ex5}", "tool_calls=1")
+    run("permit", "role=backend-lead", "tool=Read", "arg=x", f"execution={ex5}")
+    r = run("permit", "role=backend-lead", "tool=Read", "arg=y", f"execution={ex5}")
+    st = q("SELECT status FROM executions WHERE id=?", ex5)[0][0]
+    rec("HD-BUDGET-001", r.returncode == 2 and st == "BLOCKED", f"rc={r.returncode} status={st}")
+
+    ex6 = new_exec(obj="drill loop"); run("start", f"execution={ex6}")
+    for _ in range(3):
+        run("fail", f"execution={ex6}", "class=TOOL", "detail=identical")
+    con = sqlite3.connect(str(DB)); con.execute("UPDATE executions SET status='RUNNING' WHERE id=?", (ex6,))
+    con.commit(); con.close()
+    out = run("stuck").stdout
+    rec("HD-LOOP-001", "DOOM LOOP" in out, out[:60])
+
 # ============================================================ 14. METRICS
 def metrics():
     print("\n=== 14. HARNESS EVALUATION METRICS ===")
@@ -188,7 +248,10 @@ if __name__ == "__main__":
     print("=" * 70); print("  HARNESS EVALUATION SUITE"); print("=" * 70)
     failure_injection()
     findings = red_team()
+    drills()
     m = metrics()
+    print("\n=== 13. ORGANIZATIONAL LEARNING (derived from the ledger) ===")
+    subprocess.run([sys.executable, str(R / "scripts/harness.py"), "learn"], cwd=str(R))
     p = sum(1 for _, _, ok_, _ in RESULTS if ok_); f = len(RESULTS) - p
     print("\n" + "=" * 70)
     print(f"  {p} passed, {f} failed, across {len(set(s for s, _, _, _ in RESULTS))} sections")
