@@ -1,16 +1,10 @@
 {
-  "_DERIVED": true,
-  "_SOURCE": "company.db table `tasks` - THE authority",
-  "_WARNING": "Read-only projection. Edits here are OVERWRITTEN and are NOT authoritative. Write via: harness.py task-add / task-update, or companydb.py task.",
-  "_generated": "2026-09-09T12:36:14+00:00",
   "version": 1,
-  "next_id": 28,
   "tasks": [
     {
       "id": "T001",
       "title": "CEO mission charter for PROJECT ATLAS: objective, success criteria, department activation",
       "owner": "ceo",
-      "reviewer": null,
       "phase": "mission",
       "status": "done",
       "deps": [],
@@ -28,13 +22,12 @@
       "attempts": 0,
       "created": "2026-09-08T14:59:35+00:00",
       "updated": "2026-09-08T15:02:15+00:00",
-      "blocked_on": null
+      "note": "Departments: 3 activated, 6 held with named unlock conditions, 1 bounded task (People). Run stops before architecture per ESC-004. RISK-007 (directive not on disk) and RISK-008 (independent review unavailable) opened."
     },
     {
       "id": "T002",
       "title": "Re-verify BharatFare (RISK-002) and scan the Italy/EU diaspora air-distribution long tail",
       "owner": "competitor-intelligence",
-      "reviewer": null,
       "phase": "research",
       "status": "done",
       "deps": [],
@@ -51,13 +44,12 @@
       "attempts": 0,
       "created": "2026-09-08T15:02:53+00:00",
       "updated": "2026-09-08T15:20:06+00:00",
-      "blocked_on": null
+      "note": "BharatFare re-verified: still operating, UK-India only, WhatsApp-quote desk with off-site Trip.com comparison, 7 Trustpilot reviews. RISK-002 downgraded critical->medium on geography. Long tail found: Punjab Aviation (Brescia), Akaal Group, Bharat Aagman, one unnamed Rome agency, plus Fly Centre as an Italian consolidator."
     },
     {
       "id": "T003",
       "title": "U1 - verify or refute MyFlighty SATpro tenancy; U11 corporate/legal identity",
       "owner": "evidence-verifier",
-      "reviewer": null,
       "phase": "research",
       "status": "done",
       "deps": [],
@@ -73,13 +65,13 @@
       "attempts": 0,
       "created": "2026-09-08T15:02:53+00:00",
       "updated": "2026-09-08T15:20:25+00:00",
-      "blocked_on": "U1/U11 need an authenticated portal or a paid Italian corporate registry lookup"
+      "blocked_on": "U1/U11 need an authenticated portal or a paid Italian corporate registry lookup",
+      "note": "Acceptance met as written (verdict OR explicit blocked_on). Artifact carries status: partial. NEGATIVE RESULT: U1 and U11 both remain UNKNOWN; no SATpro client list and no P.IVA/REA exists in free sources. Recommends buying the U11 registry lookup and abandoning U1."
     },
     {
       "id": "T004",
       "title": "U2 - how restricted ethnic/net fare access is actually obtained in European air distribution",
       "owner": "industry-researcher",
-      "reviewer": null,
       "phase": "research",
       "status": "done",
       "deps": [],
@@ -95,13 +87,12 @@
       "attempts": 0,
       "created": "2026-09-08T15:02:53+00:00",
       "updated": "2026-09-08T15:20:06+00:00",
-      "blocked_on": null
+      "note": "U2 answered at mechanism level: net/ethnic fares reach agencies via consolidators; IATA/ARC accreditation is NOT required for that route. Three enumerated routes R1/R2/R3 handed to the founder for ESC-004."
     },
     {
       "id": "T005",
       "title": "U3 plus feasibility - agency self-service vs staff-mediated ticketing, and what a solo pre-revenue founder can obtain in distribution access",
       "owner": "feasibility-analyst",
-      "reviewer": null,
       "phase": "research",
       "status": "done",
       "deps": [],
@@ -117,13 +108,13 @@
       "attempts": 0,
       "created": "2026-09-08T15:02:53+00:00",
       "updated": "2026-09-08T15:20:25+00:00",
-      "blocked_on": "U3 needs an authenticated agency account or a founder-led partner conversation"
+      "blocked_on": "U3 needs an authenticated agency account or a founder-led partner conversation",
+      "note": "Acceptance met as written. Artifact status: partial. U3 UNRESOLVED. Delivers the credential-free build surface (C1) and the hard blocked surface (C2)."
     },
     {
       "id": "T006",
       "title": "U4 - will diaspora travellers and small agencies switch from WhatsApp/branch to a platform",
       "owner": "customer-researcher",
-      "reviewer": null,
       "phase": "research",
       "status": "done",
       "deps": [],
@@ -139,13 +130,13 @@
       "attempts": 0,
       "created": "2026-09-08T15:02:53+00:00",
       "updated": "2026-09-08T15:20:25+00:00",
-      "blocked_on": "U4 needs primary customer research; founder-executable, not agent-executable"
+      "blocked_on": "U4 needs primary customer research; founder-executable, not agent-executable",
+      "note": "Acceptance met as written. Artifact status: partial. U4 = INSUFFICIENT EVIDENCE. Four independent signals point away from the consumer surface and toward the agency buyer."
     },
     {
       "id": "T007",
       "title": "Market structure and size - Italy/EU to South Asia air corridor and the Italian travel agency market",
       "owner": "market-researcher",
-      "reviewer": null,
       "phase": "research",
       "status": "done",
       "deps": [],
@@ -161,13 +152,13 @@
       "attempts": 0,
       "created": "2026-09-08T15:02:53+00:00",
       "updated": "2026-09-08T15:20:25+00:00",
-      "blocked_on": "no revenue/volume/margin/software-spend figure exists for the target channel"
+      "blocked_on": "no revenue/volume/margin/software-spend figure exists for the target channel",
+      "note": "Acceptance met as written. Artifact status: partial. 159,618 Indian residents in Italy (govt, 31-12-2024); India-Italy capacity +194% to 42k seats Sep-2026 (OAG). NO TAM presented - deliberately."
     },
     {
       "id": "T008",
       "title": "Trends - NDC adoption, ONE Order, IATA timelines, AI in travel distribution",
       "owner": "trend-analyst",
-      "reviewer": null,
       "phase": "research",
       "status": "done",
       "deps": [],
@@ -183,13 +174,13 @@
       "attempts": 0,
       "created": "2026-09-08T15:02:53+00:00",
       "updated": "2026-09-08T15:20:25+00:00",
-      "blocked_on": "IATA NDC/ONE Order fact-sheet figures not extractable; no PDF rendering in this environment"
+      "blocked_on": "IATA NDC/ONE Order fact-sheet figures not extractable; no PDF rendering in this environment",
+      "note": "Acceptance met as written. Artifact status: partial. Went to IATA primary and FAILED - recorded as a retrieval failure. All adoption numbers labelled secondary and unverified."
     },
     {
       "id": "T009",
       "title": "EU/Italy regulatory and compliance exposure for a travel distribution entrant",
       "owner": "compliance-specialist",
-      "reviewer": null,
       "phase": "research",
       "status": "done",
       "deps": [],
@@ -204,13 +195,12 @@
       "attempts": 0,
       "created": "2026-09-08T15:02:53+00:00",
       "updated": "2026-09-08T15:20:06+00:00",
-      "blocked_on": null
+      "note": "Italian direttore tecnico + SCIA is a hard personal gate on R1/R2 and does not apply to R3. Revised EU PTD applies 29 Mar 2029, LTAs abolished. MOTO is SCA-exempt: the incumbent's phone channel has a payment-friction advantage a web checkout cannot match."
     },
     {
       "id": "T010",
       "title": "Product discovery: name the riskiest assumption; validate or invalidate the problem the directive solves",
       "owner": "product-discovery-specialist",
-      "reviewer": null,
       "phase": "discovery",
       "status": "done",
       "deps": [],
@@ -226,14 +216,13 @@
       ],
       "attempts": 0,
       "created": "2026-09-08T15:21:30+00:00",
-      "updated": "2026-09-08T15:23:46+00:00",
-      "blocked_on": null
+      "note": "Riskiest assumption A1 (the traveller is the customer) named and CONTRA-INDICATED by 4 independent signals. Problem set validated/invalidated line by line: 5 VALIDATED, 3 INVALIDATED, 3 CONTRA-INDICATED, 3 UNVALIDATED. Recommends re-weighting: S3 fare intelligence as wedge, S2 agency OS as business, S1 consumer deferred pending A1 test.",
+      "updated": "2026-09-08T15:23:46+00:00"
     },
     {
       "id": "T011",
       "title": "D-11 assessment of the directive PART XXXII proposal for ~16 travel-specialist roles against the existing 119",
       "owner": "chief-people-officer",
-      "reviewer": null,
       "phase": "discovery",
       "status": "done",
       "deps": [],
@@ -249,14 +238,13 @@
       ],
       "attempts": 0,
       "created": "2026-09-08T15:21:30+00:00",
-      "updated": "2026-09-08T15:33:46+00:00",
-      "blocked_on": null
+      "note": "2 roles created (fare-construction-analyst Theodora Iliescu; airline-retailing-analyst Casimir Wrede), 14 refused with the existing role that owns each. Headcount 119->121. No .claude/agents file created (D-1). roles.json re-synced from packs (D-14). Assessment run against a RECONSTRUCTED PART XXXII - RISK-010.",
+      "updated": "2026-09-08T15:33:46+00:00"
     },
     {
       "id": "T012",
       "title": "Formalise the risk register: RISK-001..009 with owner, status, evidence and trigger",
       "owner": "risk-analyst",
-      "reviewer": null,
       "phase": "discovery",
       "status": "done",
       "deps": [],
@@ -271,14 +259,13 @@
       ],
       "attempts": 0,
       "created": "2026-09-08T15:21:30+00:00",
-      "updated": "2026-09-08T15:33:46+00:00",
-      "blocked_on": null
+      "note": "Risk register is the DB (D-2), not a markdown file. RISK-010..013 registered. Numbering collision found and corrected: my RISK-007/008/009 collided with founder-supplied entries added mid-session; my artifacts were renumbered, the DB entries were left untouched. Reconciliation of founder portal evidence vs desk research written.",
+      "updated": "2026-09-08T15:33:46+00:00"
     },
     {
       "id": "T013",
       "title": "Business model and unit economics under each fare-access route; declare closure or non-viability",
       "owner": "cfo",
-      "reviewer": null,
       "phase": "business",
       "status": "done",
       "deps": [],
@@ -294,14 +281,13 @@
       ],
       "attempts": 0,
       "created": "2026-09-08T15:34:12+00:00",
-      "updated": "2026-09-08T15:37:01+00:00",
-      "blocked_on": null
+      "note": "Model 1 (sell tickets) declared NON-VIABLE on structure - cost of goods is dominated by a 20+ carrier VFR portfolio plus block space. Model 2 (software to agencies) UNDETERMINABLE but closeable by measurement M1. No price set, no TAM, no projection: six pricing inputs, six unknowns. CFO recorded dissent against her own known bias.",
+      "updated": "2026-09-08T15:37:01+00:00"
     },
     {
       "id": "T014",
       "title": "Strategy and positioning: state differentiation, and name the moat or its absence honestly",
       "owner": "cso",
-      "reviewer": null,
       "phase": "strategy",
       "status": "done",
       "deps": [],
@@ -317,14 +303,13 @@
       ],
       "attempts": 0,
       "created": "2026-09-08T15:37:10+00:00",
-      "updated": "2026-09-08T15:38:57+00:00",
-      "blocked_on": null
+      "note": "Moat stated honestly: Atlas has NONE today; the incumbent's is real and itemised (20+ carrier VFR portfolio, block space, wholesale layer, live NDC/Sabre). One candidate moat compounds: accumulated true-landed-cost data. Strategy deliberately robust to ESC-004. RISK-007 named as the biggest threat, with 'sell TO the wholesaler' raised as an unexplored inversion.",
+      "updated": "2026-09-08T15:38:57+00:00"
     },
     {
       "id": "T015",
       "title": "Fix: amend operator-testimony \u00a79 compliance line to include the carrier-contract boundary (IATA Res 830a / fictitious-speculative bookings), not only document fraud",
       "owner": "compliance-specialist",
-      "reviewer": null,
       "phase": "remediate",
       "status": "todo",
       "deps": [],
@@ -336,15 +321,12 @@
       "parallel_group": "",
       "evidence": [],
       "attempts": 0,
-      "created": "2026-09-09T01:44:31+00:00",
-      "updated": "2026-09-09T01:44:31+00:00",
-      "blocked_on": null
+      "created": "2026-09-09T01:44:31+00:00"
     },
     {
       "id": "T016",
       "title": "Fix: correct novel-revenue-models.md Model 2 premise - unsold block space does not generally expire worthless (release ladder is TIER 1 evidenced)",
       "owner": "cso",
-      "reviewer": null,
       "phase": "remediate",
       "status": "todo",
       "deps": [],
@@ -356,15 +338,12 @@
       "parallel_group": "",
       "evidence": [],
       "attempts": 0,
-      "created": "2026-09-09T01:44:31+00:00",
-      "updated": "2026-09-09T01:44:31+00:00",
-      "blocked_on": null
+      "created": "2026-09-09T01:44:31+00:00"
     },
     {
       "id": "T017",
       "title": "Fix: remove Model 3 (credit bureau) from the revenue list; restate as internal single-controller exposure record",
       "owner": "cso",
-      "reviewer": null,
       "phase": "remediate",
       "status": "todo",
       "deps": [],
@@ -375,51 +354,45 @@
       "parallel_group": "",
       "evidence": [],
       "attempts": 0,
-      "created": "2026-09-09T01:44:31+00:00",
-      "updated": "2026-09-09T01:44:31+00:00",
-      "blocked_on": null
+      "created": "2026-09-09T01:44:31+00:00"
     },
     {
       "id": "T018",
-      "title": "Harness V2 phase-2 probe",
-      "owner": "backend-lead",
-      "reviewer": null,
-      "phase": "build",
-      "status": "done",
+      "title": "Research: does the incumbent's Stripe/Apple Pay move signal a D2C channel that disintermediates the shopkeeper layer all five models recruit",
+      "owner": "competitive-analyst",
+      "phase": "remediate",
+      "status": "todo",
       "deps": [],
-      "criteria": [],
-      "parallel_group": "",
-      "evidence": [
-        ".ai-company/harness/ARCHITECTURE.md"
+      "criteria": [
+        "Evidence-labelled assessment of consumer-channel signals",
+        " explicit statement of what happens to Atlas's addressable population if the incumbent goes D2C",
+        " recorded as a risk with an ID"
       ],
+      "parallel_group": "",
+      "evidence": [],
       "attempts": 0,
-      "created": "2026-09-09T12:36:13+00:00",
-      "updated": "2026-09-09T12:36:14+00:00",
-      "blocked_on": null
+      "created": "2026-09-09T01:44:31+00:00"
     },
     {
       "id": "T019",
-      "title": "reviewed probe",
-      "owner": "backend-lead",
-      "reviewer": "qa-lead",
-      "phase": null,
-      "status": "done",
+      "title": "Research: verify market structure against a second wholesaler - the evidence base is n=1",
+      "owner": "competitive-analyst",
+      "phase": "remediate",
+      "status": "todo",
       "deps": [],
-      "criteria": [],
-      "parallel_group": "",
-      "evidence": [
-        ".ai-company/harness/ARCHITECTURE.md"
+      "criteria": [
+        "Two sub-agents of a wholesaler other than MyFlighty asked whether they can self-issue and whether they see negotiated fares in their own office ID",
+        " findings recorded with evidence class"
       ],
+      "parallel_group": "",
+      "evidence": [],
       "attempts": 0,
-      "created": "2026-09-09T12:36:14+00:00",
-      "updated": "2026-09-09T12:36:14+00:00",
-      "blocked_on": null
+      "created": "2026-09-09T01:44:31+00:00"
     },
     {
       "id": "T020",
       "title": "Escalate to founder: legal footing for competitive use of authenticated-portal billing documents and internal agent emails",
       "owner": "cro-risk",
-      "reviewer": null,
       "phase": "remediate",
       "status": "todo",
       "deps": [],
@@ -430,15 +403,12 @@
       "parallel_group": "",
       "evidence": [],
       "attempts": 0,
-      "created": "2026-09-09T01:44:31+00:00",
-      "updated": "2026-09-09T01:44:31+00:00",
-      "blocked_on": null
+      "created": "2026-09-09T01:44:31+00:00"
     },
     {
       "id": "T021",
       "title": "Design the outcome-feedback loop into Model 4 v1 - it is the only thing that answers Ivo's dissent",
       "owner": "cpo",
-      "reviewer": null,
       "phase": "remediate",
       "status": "todo",
       "deps": [],
@@ -448,15 +418,12 @@
       "parallel_group": "",
       "evidence": [],
       "attempts": 0,
-      "created": "2026-09-09T01:44:31+00:00",
-      "updated": "2026-09-09T01:44:31+00:00",
-      "blocked_on": null
+      "created": "2026-09-09T01:44:31+00:00"
     },
     {
       "id": "T022",
       "title": "Kill-test Model 4: 20 real fare bases parsed blind, graded independently by THREE working sub-agents, pre-registered kill criteria",
       "owner": "cpo",
-      "reviewer": null,
       "phase": "remediate",
       "status": "todo",
       "deps": [],
@@ -469,105 +436,8 @@
       "parallel_group": "",
       "evidence": [],
       "attempts": 0,
-      "created": "2026-09-09T01:44:36+00:00",
-      "updated": "2026-09-09T01:44:36+00:00",
-      "blocked_on": null
-    },
-    {
-      "id": "T023",
-      "title": "retry probe",
-      "owner": "devops-engineer",
-      "reviewer": null,
-      "phase": null,
-      "status": "failed",
-      "deps": [],
-      "criteria": [],
-      "parallel_group": "",
-      "evidence": [],
-      "attempts": 2,
-      "created": "2026-09-09T12:36:14+00:00",
-      "updated": "2026-09-09T12:36:14+00:00",
-      "blocked_on": null
-    },
-    {
-      "id": "T024",
-      "title": "concurrent-1",
-      "owner": "backend-lead",
-      "reviewer": null,
-      "phase": null,
-      "status": "todo",
-      "deps": [],
-      "criteria": [],
-      "parallel_group": "",
-      "evidence": [],
-      "attempts": 0,
-      "created": "2026-09-09T12:36:14+00:00",
-      "updated": "2026-09-09T12:36:14+00:00",
-      "blocked_on": null
-    },
-    {
-      "id": "T025",
-      "title": "concurrent-2",
-      "owner": "backend-lead",
-      "reviewer": null,
-      "phase": null,
-      "status": "todo",
-      "deps": [],
-      "criteria": [],
-      "parallel_group": "",
-      "evidence": [],
-      "attempts": 0,
-      "created": "2026-09-09T12:36:14+00:00",
-      "updated": "2026-09-09T12:36:14+00:00",
-      "blocked_on": null
-    },
-    {
-      "id": "T026",
-      "title": "concurrent-4",
-      "owner": "backend-lead",
-      "reviewer": null,
-      "phase": null,
-      "status": "todo",
-      "deps": [],
-      "criteria": [],
-      "parallel_group": "",
-      "evidence": [],
-      "attempts": 0,
-      "created": "2026-09-09T12:36:14+00:00",
-      "updated": "2026-09-09T12:36:14+00:00",
-      "blocked_on": null
-    },
-    {
-      "id": "T027",
-      "title": "concurrent-5",
-      "owner": "backend-lead",
-      "reviewer": null,
-      "phase": null,
-      "status": "todo",
-      "deps": [],
-      "criteria": [],
-      "parallel_group": "",
-      "evidence": [],
-      "attempts": 0,
-      "created": "2026-09-09T12:36:14+00:00",
-      "updated": "2026-09-09T12:36:14+00:00",
-      "blocked_on": null
-    },
-    {
-      "id": "T028",
-      "title": "concurrent-3",
-      "owner": "backend-lead",
-      "reviewer": null,
-      "phase": null,
-      "status": "todo",
-      "deps": [],
-      "criteria": [],
-      "parallel_group": "",
-      "evidence": [],
-      "attempts": 0,
-      "created": "2026-09-09T12:36:14+00:00",
-      "updated": "2026-09-09T12:36:14+00:00",
-      "blocked_on": null
+      "created": "2026-09-09T01:44:36+00:00"
     }
-  ]
+  ],
+  "next_id": 22
 }
