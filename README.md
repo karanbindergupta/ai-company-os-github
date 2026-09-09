@@ -150,7 +150,7 @@ python3 scripts/cognitive_validation.py   # 23 checks
 python3 scripts/capability_validation.py  # 14 checks
 python3 scripts/behavior_tests.py         # 35 checks
 python3 scripts/audit_org.py              # structural audit of the organization
-python3 scripts/harness_eval.py           # 45 checks incl. 12-class self-red-team
+python3 scripts/harness_eval.py           # 47 checks incl. 12-class self-red-team
 python3 scripts/harness_bench.py          # 15 representative scenarios
 ```
 
@@ -219,7 +219,7 @@ python3 scripts/sync_registry.py && python3 scripts/gen_memory.py && python3 scr
 |---|---|
 | Clean install reproducible from source | No real mission has run under the harness |
 | 43/43 · 23/23 · 14/14 · 35/35 on an established runtime | 110 of 121 agents have never been drilled |
-| 45/45 harness eval, 15/15 benchmark | No agent holds outcome-validated maturity evidence |
+| 47/47 harness eval, 15/15 benchmark | No agent holds outcome-validated maturity evidence |
 | Permission bypasses found by test, then closed | CI has never executed on GitHub |
 | Deterministic matrices, idempotent migrations | Every test is a self-test |
 

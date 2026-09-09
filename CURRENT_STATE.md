@@ -30,7 +30,7 @@ FOUNDER (L0) -> EXECUTIVE COUNCIL (13) -> COMPANY OS -> MASTER ORCHESTRATOR
 | Cognitive profiles | 121/121 · behavioural contracts 121/121 |
 | Decision domains | 29 · 11 founder-required |
 | SOP | 23 phases · 13 gates |
-| Harness schema | **v16** · one orchestrator · one authority engine · one task truth |
+| Harness schema | **v17** · one orchestrator · one authority engine · one task truth |
 | Database | 81 tables at runtime; 53 declared in `schema.sql`; the rest from migrations |
 | Language | Python 3.9, **stdlib only** |
 
@@ -47,7 +47,7 @@ FOUNDER (L0) -> EXECUTIVE COUNCIL (13) -> COMPANY OS -> MASTER ORCHESTRATOR
 | `capability_validation` | **14/14** |
 | `behavior_tests` | **35/35** |
 | `audit_org` | **0 findings** |
-| `harness_eval` (incl. self-red-team) | **45/45** |
+| `harness_eval` (incl. self-red-team) | **47/47** |
 | `harness_bench` | **15/15** |
 | `companydb verify` · `harness verify` · `tasks-check` · `secret_scan` | PASS |
 
@@ -57,7 +57,7 @@ FOUNDER (L0) -> EXECUTIVE COUNCIL (13) -> COMPANY OS -> MASTER ORCHESTRATOR
 agents=121  domains=29  cognitive=121  contracts=121
 permission_rules=43  benchmarks=7  tables=81
 executions=0  drill_runs=0  ci_runs=0
-readiness 43/43 · cognitive 23/23 · capability 14/14 · audit 0 · eval 45/45 · bench 15/15
+readiness 43/43 · cognitive 23/23 · capability 14/14 · audit 0 · eval 47/47 · bench 15/15
 behavior_tests --clean-install: 19/35  BASELINE OK
 ```
 
@@ -71,7 +71,7 @@ injecting fake drill rows: the gate caught it.
 
 ## 4. WHAT CHANGED THIS SESSION
 
-**Four permission defects, all found by test and closed:**
+**Five permission defects, all found by test and closed:**
 
 1. **Token-append bypass (critical).** `cat ~/.ssh/id_rsa; echo company.db` resolved to **ALLOW** —
    a later ALLOW matching any appended token lifted the private-key deny. Closed with *hard denies*
@@ -86,6 +86,11 @@ injecting fake drill rows: the gate caught it.
    surface was blocked wholesale — the weakest posture, since a blanket deny drives work outside
    the harness. Now governed (v16): read-only GitHub allowed, writes require founder approval,
    repository deletion is a hard deny, Supabase still denied by default.
+5. **Private-key coverage gap (v17) — the most serious of the five.** The rule matched RSA and
+   nothing else, so reading an ed25519 key — the OpenSSH default for years — was **allowed**, as
+   were ecdsa, dsa, and the common certificate and key-store extensions. It read as "private keys
+   are denied" while defending exactly one obsolete key type. Guarded by `HD-PERM-007/008`; public
+   keys stay allowed, being public by construction.
 
 **Reconciled from the public snapshot** (its PR #1 — work we did not have, found by it actually
 running CI remotely):
